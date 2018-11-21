@@ -1,23 +1,26 @@
 // @flow
 import React, { Component } from 'react';
-import { Provider } from 'react-redux';
-import { ConnectedRouter } from 'connected-react-router';
-import type { Store } from '../reducers/types';
+import { Provider } from 'mobx-react';
+// import { ConnectedRouter } from 'connected-react-router';
+import { BrowserRouter } from 'react-router-dom';
+// import type { Store } from '../reducers/types';
+import { AppState } from '../store';
 import Routes from '../Routes';
 
 type Props = {
-  store: Store,
+  appState: AppState,
   history: {}
 };
 
 export default class Root extends Component<Props> {
   render() {
-    const { store, history } = this.props;
+    const { appState } = this.props;
+    console.log(appState);
     return (
-      <Provider store={store}>
-        <ConnectedRouter history={history}>
+      <Provider appState={appState}>
+        <BrowserRouter>
           <Routes />
-        </ConnectedRouter>
+        </BrowserRouter>
       </Provider>
     );
   }

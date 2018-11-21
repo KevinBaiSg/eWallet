@@ -1,42 +1,56 @@
-// @flow
 import React, { Component } from 'react';
 import { Link } from 'react-router-dom';
+import { inject, observer } from 'mobx-react';
+// import PropTypes from 'prop-types'
+import withStyles from '@material-ui/core/styles/withStyles';
 import styles from './Counter.css';
 import routes from '../constants/routes';
 
-type Props = {
-  increment: () => void,
-  incrementIfOdd: () => void,
-  incrementAsync: () => void,
-  decrement: () => void,
-  counter: number
-};
+// type Props = {
+//   increment: () => void,
+//   classes: PropTypes.object.isRequired,
+//   appState: PropTypes.object.isRequired,
+//   counter: number
+// };
 
-export default class Counter extends Component<Props> {
-  props: Props;
+class Counter extends Component<Props> {
+  // props: Props;
+
+  constructor(props) {
+    super(props);
+    this.increment = this.increment.bind(this);
+    this.counter = this.counter.bind(this);
+  }
+
+  increment() {
+    const { appState } = this.props;
+    appState.increment();
+  }
+
+  counter() {
+    const { appState } = this.props;
+    console.log(appState);
+    console.log(appState.counter);
+    return appState.counter;
+  }
 
   render() {
-    const {
-      increment,
-      incrementIfOdd,
-      incrementAsync,
-      decrement,
-      counter
-    } = this.props;
+    const { classes } = this.props;
+
     return (
       <div>
-        <div className={styles.backButton} data-tid="backButton">
+        <div className={classes.backButton} data-tid="backButton">
           <Link to={routes.HOME}>
             <i className="fa fa-arrow-left fa-3x" />
           </Link>
         </div>
-        <div className={`counter ${styles.counter}`} data-tid="counter">
-          {counter}
+        <div className={`counter ${classes.counter}`} data-tid="counter">
+          {this.counter()}
         </div>
-        <div className={styles.btnGroup}>
+        <div className={classes.btnGroup}>
           <button
-            className={styles.btn}
-            onClick={increment}
+            className={classes.btn}
+            onClick={this.increment}
             data-tclass="btn"
             type="button"
           >
@@ -44,7 +58,7 @@ export default class Counter extends Component<Props> {
           </button>
           <button
             className={styles.btn}
-            onClick={decrement}
+            onClick={this.increment}
             data-tclass="btn"
             type="button"
           >
@@ -52,7 +66,7 @@ export default class Counter extends Component<Props> {
           </button>
           <button
             className={styles.btn}
-            onClick={incrementIfOdd}
+            onClick={this.increment}
             data-tclass="btn"
             type="button"
           >
@@ -60,7 +74,7 @@ export default class Counter extends Component<Props> {
           </button>
           <button
             className={styles.btn}
-            onClick={() => incrementAsync()}
+            onClick={this.increment}
             data-tclass="btn"
             type="button"
           >
@@ -71,3 +85,11 @@ export default class Counter extends Component<Props> {
     );
   }
 }
+
+export default withStyles(styles)(
+  inject(stores => {
+    return {
+      appState: stores.appState
+    };
+  })(observer(Counter))
+);
