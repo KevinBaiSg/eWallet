@@ -10,8 +10,10 @@
 <PROJECT_ROOT>/git/.*
 
 [include]
+<PROJECT_ROOT>/node_modules/trezor-link/.flowconfig
 
 [libs]
+<PROJECT_ROOT>/node_modules/trezor-link/flowtype/
 
 [options]
 esproposal.class_static_fields=enable
