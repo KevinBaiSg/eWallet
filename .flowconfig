@@ -26,3 +26,7 @@ module.name_mapper.extension='png' -> '<PROJECT_ROOT>/internals/flow/WebpackAsse
 module.name_mapper.extension='jpg' -> '<PROJECT_ROOT>/internals/flow/WebpackAsset.js.flow'
 suppress_comment=\\(.\\|\n\\)*\\$FlowFixMe
 suppress_comment=\\(.\\|\n\\)*\\$FlowIssue
+module.name_mapper='^components' ->'<PROJECT_ROOT>/app/components'
+module.name_mapper='^assets' ->'<PROJECT_ROOT>/app/assets'
+module.name_mapper='^Layouts' ->'<PROJECT_ROOT>/app/layouts'
+module.name_mapper='^Views' ->'<PROJECT_ROOT>/app/views'

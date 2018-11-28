@@ -34,6 +34,13 @@ export default {
    * Determine the array of extensions that should be used to resolve modules.
    */
   resolve: {
+    alias: {
+      // config alias
+      components: path.resolve(__dirname, '../app/components'),
+      assets: path.resolve(__dirname, '../app/assets'),
+      Layouts: path.resolve(__dirname, '../app/layouts'),
+      Views: path.resolve(__dirname, '../app/views')
+    },
     extensions: ['.js', '.jsx', '.json']
   },
 

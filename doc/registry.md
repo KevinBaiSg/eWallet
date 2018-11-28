@@ -11,8 +11,8 @@ npm config set registry https://registry.npmjs.org/ --global
 ### taobao
 
 ```bash
-yarn config set registry https://registry.npm.taobao.org --global
-yarn config set disturl https://npm.taobao.org/dist --global
+npm config set registry https://registry.npm.taobao.org --global
+npm config set disturl https://npm.taobao.org/dist --global
 ```
 
 ### delete registry
