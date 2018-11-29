@@ -57,7 +57,8 @@
     "*.{yml,md}": [
       "prettier --ignore-path .eslintignore --single-quote --write",
       "git add"
-    ]
+    ],
+    "ignore": ["/app/utils/connect/**"]
   },
   "main": "./app/main.prod.js",
   "build": {
