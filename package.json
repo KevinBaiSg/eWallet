@@ -256,10 +256,15 @@
   },
   "dependencies": {
     "@fortawesome/fontawesome-free": "^5.5.0",
+    "bchaddrjs": "^0.2.2",
+    "bip44-constants": "^7.0.0",
+    "bitcoinjs-lib-zcash": "^3.5.3",
     "devtron": "^1.4.0",
     "electron-debug": "^2.0.0",
     "electron-log": "^2.2.17",
     "electron-updater": "^3.2.3",
+    "flowtype": "^2.0.0",
+    "hd-wallet": "^8.0.4",
     "history": "^4.7.2",
     "react": "^16.6.3",
     "react-dom": "^16.6.3",
@@ -269,9 +274,9 @@
     "react-router-dom": "^4.3.1",
     "redux": "^4.0.1",
     "redux-thunk": "^2.3.0",
+    "source-map-support": "^0.5.9",
     "trezor-link": "^1.6.0",
-    "trezor.js": "^6.19.0",
-    "source-map-support": "^0.5.9"
+    "trezor.js": "^6.19.0"
   },
   "devEngines": {
     "node": ">=7.x",

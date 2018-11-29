@@ -16,6 +16,8 @@ import { spawn, execSync } from 'child_process';
 import baseConfig from './webpack.config.base';
 import CheckNodeEnv from '../internals/scripts/CheckNodeEnv';
 
+// TODO:
+process.env.NODE_ENV = 'development';
 CheckNodeEnv('development');
 
 const port = process.env.PORT || 1212;
