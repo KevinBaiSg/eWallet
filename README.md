@@ -68,7 +68,9 @@ $ yarn test-e2e
 DEBUG_PROD=true yarn package
 ```
 
-About [Electron React Boilerplate](https://github.com/electron-react-boilerplate/electron-react-boilerplate)
+About [Electron React Boilerplate](https://github.com/electron-react-boilerplate/electron-react-boilerplate)  
+About [Trezor](https://trezor.io/)  
+
 ## Maintainers
 
 - [Kevin Bai](https://github.com/kevinbaisg)
