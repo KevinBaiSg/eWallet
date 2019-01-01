@@ -77,4 +77,4 @@ About [Trezor](https://trezor.io/)
 
 ## License
 
-MIT © [eWallet](https://github.com/Electron-Wallet/ewallet)
+LGPL © [eWallet](https://github.com/Electron-Wallet/ewallet)
