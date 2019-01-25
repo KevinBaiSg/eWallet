@@ -58,7 +58,9 @@
       "prettier --ignore-path .eslintignore --single-quote --write",
       "git add"
     ],
-    "ignore": ["/app/utils/connect/**"]
+    "ignore": [
+      "/app/utils/connect/**"
+    ]
   },
   "main": "./app/main.prod.js",
   "build": {
@@ -261,27 +263,40 @@
   },
   "dependencies": {
     "@fortawesome/fontawesome-free": "^5.5.0",
+    "@material-ui/core": "^3.9.0",
+    "@material-ui/icons": "^3.0.2",
     "bchaddrjs": "^0.2.2",
     "bip44-constants": "^7.0.0",
     "bitcoinjs-lib-zcash": "^3.5.3",
+    "bowser": "^2.0.0-beta.3",
+    "classnames": "^2.2.6",
     "devtron": "^1.4.0",
     "electron-debug": "^2.0.0",
     "electron-log": "^2.2.17",
     "electron-updater": "^3.2.3",
+    "events": "^3.0.0",
+    "exenv": "^1.2.2",
     "flowtype": "^2.0.0",
     "hd-wallet": "^8.0.4",
     "history": "^4.7.2",
+    "parse-uri": "^1.0.0",
     "react": "^16.6.3",
+    "react-bootstrap-sweetalert": "^4.4.1",
     "react-dom": "^16.6.3",
     "react-hot-loader": "^4.3.12",
+    "react-particles-js": "^2.4.2",
     "react-redux": "^5.1.1",
     "react-router": "^4.3.1",
     "react-router-dom": "^4.3.1",
     "redux": "^4.0.1",
     "redux-thunk": "^2.3.0",
+    "sharedworker-loader": "^2.1.1",
     "source-map-support": "^0.5.9",
     "trezor-link": "^1.6.0",
-    "trezor.js": "^6.19.0"
+    "trezor.js": "^6.19.0",
+    "whatwg-fetch": "^3.0.0",
+    "window-or-global": "^1.0.1",
+    "worker-loader": "^2.0.0"
   },
   "devEngines": {
     "node": ">=7.x",
