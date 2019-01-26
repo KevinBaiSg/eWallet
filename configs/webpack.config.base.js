@@ -39,7 +39,11 @@ export default {
       components: path.resolve(__dirname, '../app/components'),
       assets: path.resolve(__dirname, '../app/assets'),
       Layouts: path.resolve(__dirname, '../app/layouts'),
-      Views: path.resolve(__dirname, '../app/views')
+      Views: path.resolve(__dirname, '../app/views'),
+      reducers: path.resolve(__dirname, '../app/reducers'),
+      actions: path.resolve(__dirname, '../app/actions'),
+      services: path.resolve(__dirname, '../app/services'),
+      utils: path.resolve(__dirname, '../app/utils')
     },
     extensions: ['.js', '.jsx', '.json']
   },
