@@ -38,12 +38,14 @@ export default {
       // config alias
       components: path.resolve(__dirname, '../app/components'),
       assets: path.resolve(__dirname, '../app/assets'),
-      Layouts: path.resolve(__dirname, '../app/layouts'),
-      Views: path.resolve(__dirname, '../app/views'),
+      support: path.resolve(__dirname, '../app/support'),
+      views: path.resolve(__dirname, '../app/views'),
       reducers: path.resolve(__dirname, '../app/reducers'),
       actions: path.resolve(__dirname, '../app/actions'),
       services: path.resolve(__dirname, '../app/services'),
-      utils: path.resolve(__dirname, '../app/utils')
+      utils: path.resolve(__dirname, '../app/utils'),
+      images: path.resolve(__dirname, '../app/images'),
+      config: path.resolve(__dirname, '../app/config')
     },
     extensions: ['.js', '.jsx', '.json']
   },
