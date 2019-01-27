@@ -296,6 +296,7 @@
     "react-select": "^2.3.0",
     "redux": "^4.0.1",
     "redux-thunk": "^2.3.0",
+    "scrypt": "^6.0.3",
     "sharedworker-loader": "^2.1.1",
     "source-map-support": "^0.5.9",
     "styled-components": "^4.1.3",
