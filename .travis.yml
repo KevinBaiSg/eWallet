@@ -1,3 +1,6 @@
+branches:
+  only:
+    - eWallet
 matrix:
   allow_failures:
     - os: windows
