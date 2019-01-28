@@ -45,7 +45,9 @@ export default {
       services: path.resolve(__dirname, '../app/services'),
       utils: path.resolve(__dirname, '../app/utils'),
       images: path.resolve(__dirname, '../app/images'),
-      config: path.resolve(__dirname, '../app/config')
+      config: path.resolve(__dirname, '../app/config'),
+      constants: path.resolve(__dirname, '../app/constants'),
+      public: path.resolve(__dirname, '../public')
     },
     extensions: ['.js', '.jsx', '.json']
   },
