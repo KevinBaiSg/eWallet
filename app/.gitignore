@@ -1,8 +1,2 @@
 assets
 layouts
-views
-components
-!components/Counter.css
-!components/Counter.js
-!components/Home.css
-!components/Home.js
