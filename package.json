@@ -282,6 +282,7 @@
     "events": "^3.0.0",
     "exenv": "^1.2.2",
     "flowtype": "^2.0.0",
+    "git-revision-webpack-plugin": "^3.0.3",
     "hd-wallet": "^8.0.4",
     "hdkey": "^1.1.0",
     "history": "^4.7.2",
