@@ -71,7 +71,14 @@ app.on('ready', async () => {
     show: false,
     width: 1024,
     height: 728,
-    webPreferences: {webSecurity: false},
+    webPreferences: {
+      webSecurity: false,
+      nativeWindowOpen:true,
+      allowpopups: true,
+      allowRunningInsecureContent: true,
+      allowDisplayingInsecureContent: true
+    },
+
   });
 
   mainWindow.loadURL(`file://${__dirname}/app.html`);
