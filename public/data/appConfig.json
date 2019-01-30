@@ -11,7 +11,7 @@
             "defaultGasLimit": 21000,
             "defaultGasLimitTokens": 200000,
             "decimals": 18,
-            "tokens": "./data/ethereumTokens.json",
+            "tokens": "./public/data/ethereumTokens.json",
             "web3": [
                 "wss://eth2.trezor.io/geth"
             ],
@@ -31,7 +31,7 @@
             "defaultGasLimit": 21000,
             "defaultGasLimitTokens": 200000,
             "decimals": 18,
-            "tokens": "./data/ethereumClassicTokens.json",
+            "tokens": "./public/data/ethereumClassicTokens.json",
             "web3": [
                 "wss://etc2.trezor.io/geth"
             ],
@@ -40,7 +40,7 @@
                 "address": "https://gastracker.io/addr/"
             }
         },
-        { 
+        {
             "type": "ethereum",
             "name": "Ethereum Ropsten",
             "testnet": true,
@@ -64,7 +64,7 @@
                     { "name": "Low", "value": "48", "multiplier": 0.75 }
                 ]
             },
-            "tokens": "./data/ropstenTokens.json",
+            "tokens": "./public/data/ropstenTokens.json",
             "web3": [
                 "wss://ropsten1.trezor.io/geth"
             ],
@@ -117,15 +117,15 @@
     ],
 
     "fiatValueTickers": [
-        { 
+        {
             "network": "eth",
             "url": "https://api.coingecko.com/api/v3/coins/ethereum"
         },
-        { 
+        {
             "network": "etc",
             "url": "https://api.coingecko.com/api/v3/coins/ethereum-classic"
         },
-        { 
+        {
             "network": "xrp",
             "url": "https://api.coingecko.com/api/v3/coins/ripple"
         }
