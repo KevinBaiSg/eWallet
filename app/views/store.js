@@ -8,8 +8,8 @@ import { createLogger } from 'redux-logger';
 import createRootReducer from 'reducers';
 import services from 'services';
 
-import Raven from 'raven-js';
-import RavenMiddleware from 'redux-raven-middleware';
+// import Raven from 'raven-js';
+// import RavenMiddleware from 'redux-raven-middleware';
 import * as buildUtils from 'utils/build';
 
 import type { Action, GetState } from 'flowtype';
@@ -25,12 +25,12 @@ const middlewares = [
 ];
 
 // sentry io middleware only in dev and beta build
-if (buildUtils.isDev() || buildUtils.isBeta()) {
-    const RAVEN_KEY = 'https://34b8c09deb6c4cd2a4dc3f0029cd02d8@sentry.io/1279550';
-    const ravenMiddleware = RavenMiddleware(RAVEN_KEY);
-    Raven.config(RAVEN_KEY).install();
-    middlewares.push(ravenMiddleware);
-}
+// if (buildUtils.isDev() || buildUtils.isBeta()) {
+//     const RAVEN_KEY = 'https://34b8c09deb6c4cd2a4dc3f0029cd02d8@sentry.io/1279550';
+//     const ravenMiddleware = RavenMiddleware(RAVEN_KEY);
+//     Raven.config(RAVEN_KEY).install();
+//     middlewares.push(ravenMiddleware);
+// }
 
 let composedEnhancers: any;
 if (buildUtils.isDev()) {
