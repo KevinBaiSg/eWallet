@@ -3652,7 +3652,7 @@ ccount@^1.0.0:
   resolved "https://registry.yarnpkg.com/ccount/-/ccount-1.0.3.tgz#f1cec43f332e2ea5a569fd46f9f5bde4e6102aff"
   integrity sha512-Jt9tIBkRc9POUof7QA/VwWd+58fKkEEfI+/t1/eOlxKM7ZhrczNzMFefge7Ai+39y1pR/pP6cI19guHy3FSLmw==
 
-"cell@github:jkroso/cell":
+cell@jkroso/cell:
   version "1.0.2"
   resolved "https://codeload.github.com/jkroso/cell/tar.gz/6db4991ebff09e344d7c1211c4abdcc62aff479e"
 
@@ -9957,7 +9957,7 @@ merge@^1.2.0:
   resolved "https://registry.yarnpkg.com/merge/-/merge-1.2.1.tgz#38bebf80c3220a8a487b6fcfb3941bb11720c145"
   integrity sha512-VjFo4P5Whtj4vsLzsYBu5ayHhoHJ0UqNm7ibvShmbmoz7tGi0vXaoJbGdB+GmDMLUdg8DpQXEIeVDAe8MaABvQ==
 
-"merge@github:yields/merge":
+merge@yields/merge:
   version "1.0.1"
   resolved "https://codeload.github.com/yields/merge/tar.gz/2f357cb501cd06f1a86394b7817e5df73c53f644"
 
@@ -14881,12 +14881,9 @@ tree-kill@^1.1.0:
   resolved "https://registry.yarnpkg.com/tree-kill/-/tree-kill-1.2.1.tgz#5398f374e2f292b9dcc7b2e71e30a5c3bb6c743a"
   integrity sha512-4hjqbObwlh2dLyW4tcz0Ymw0ggoaVDMveUB9w8kFSQScdRLo0gxO9J7WFcUBo+W3C1TLdFIEwNOWebgZZ0RH9Q==
 
-trezor-connect@^6.0.3:
+"trezor-connect@file:../trezor-connect":
   version "6.0.3"
-  resolved "https://registry.yarnpkg.com/trezor-connect/-/trezor-connect-6.0.3.tgz#35e1c168c5f8ac2c33a268ffb8dff7c5cc8f547c"
-  integrity sha512-QqgnulN9uQstVjxYTF9+gcNk01kBUQA4xXy2abyPOgxh8Wio9iiSGftQa12KkFfWLZKkZD1sL03KvQ2ievL05g==
   dependencies:
-    babel-runtime "^6.26.0"
     events "^1.1.1"
     whatwg-fetch "^2.0.4"
 
