@@ -35,6 +35,7 @@ if (
   process.env.DEBUG_PROD === 'true'
 ) {
   require('electron-debug')();
+  app.commandLine.appendSwitch('remote-debugging-port', '9222');
 }
 
 const installExtensions = async () => {
@@ -50,7 +51,6 @@ const installExtensions = async () => {
 /**
  * Add event listeners...
  */
-
 app.on('window-all-closed', () => {
   // Respect the OSX convention of having the application in memory even
   // after all windows have been closed
