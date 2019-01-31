@@ -45,12 +45,13 @@ export default {
       views: path.resolve(__dirname, '../app/views'),
       reducers: path.resolve(__dirname, '../app/reducers'),
       actions: path.resolve(__dirname, '../app/actions'),
-      services: path.resolve(__dirname, '../app/services'),
+      'services': path.resolve(__dirname, '../app/services'),
       utils: path.resolve(__dirname, '../app/utils'),
       images: path.resolve(__dirname, '../app/images'),
       config: path.resolve(__dirname, '../app/config'),
       constants: path.resolve(__dirname, '../app/constants'),
-      public: path.resolve(__dirname, '../public')
+      public: path.resolve(__dirname, '../public'),
+      trezorconnect: path.resolve(__dirname, '../../trezor-connect/src/js'),
     },
     extensions: ['.js', '.jsx', '.json']
   },
