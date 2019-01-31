@@ -1,6 +1,5 @@
 /* @flow */
 
-
 import * as CONNECT from 'actions/constants/TrezorConnect';
 import * as ACCOUNT from 'actions/constants/account';
 import * as TOKEN from 'actions/constants/token';
@@ -16,6 +15,7 @@ import { getAccountTokens } from 'reducers/utils';
 import type { Account } from 'reducers/AccountsReducer';
 import type { Token } from 'reducers/TokensReducer';
 import type { Discovery } from 'reducers/DiscoveryReducer';
+
 
 import type {
     TrezorDevice,
@@ -139,14 +139,16 @@ const loadJSON = (): AsyncAction => async (dispatch: Dispatch): Promise<void> =>
     if (typeof window.localStorage === 'undefined') return;
 
     try {
-        const config: Config = await httpRequest(AppConfigJSON, 'json');
+        // const config: Config = await httpRequest(AppConfigJSON, 'json');
+        const config: Config = await httpRequest('public/data/appConfig.json', 'json');
 
-        // remove testnets from config networks
+      // remove testnets from config networks
         if (!buildUtils.isDev()) {
             config.networks = config.networks.filter(n => !n.testnet);
         }
 
-        const ERC20Abi = await httpRequest(Erc20AbiJSON, 'json');
+        // const ERC20Abi = await httpRequest(Erc20AbiJSON, 'json');
+      const ERC20Abi = await httpRequest('public/data/ERC20Abi.json', 'json');
 
         window.addEventListener('storage', (event) => {
             dispatch(update(event));
@@ -169,6 +171,7 @@ const loadJSON = (): AsyncAction => async (dispatch: Dispatch): Promise<void> =>
             ERC20Abi,
         });
     } catch (error) {
+        console.log(`=======errors:${error}`)
         dispatch({
             type: STORAGE.ERROR,
             error,
