@@ -51,7 +51,7 @@ export default {
       config: path.resolve(__dirname, '../app/config'),
       constants: path.resolve(__dirname, '../app/constants'),
       public: path.resolve(__dirname, '../public'),
-      trezorconnect: path.resolve(__dirname, '../../trezor-connect/src/js'),
+      trezorconnect: path.resolve(__dirname, '../app/trezor-connect/src/js'),
     },
     extensions: ['.js', '.jsx', '.json']
   },
