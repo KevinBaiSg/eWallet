@@ -14,6 +14,7 @@
     "compat/compat": "error",
     "consistent-return": "off",
     "comma-dangle": "off",
+    "no-undef": "off",
     "flowtype/boolean-style": ["error", "boolean"],
     "flowtype/define-flow-type": "warn",
     "flowtype/delimiter-dangle": ["error", "never"],
@@ -60,6 +61,7 @@
       { "extensions": [".js", ".jsx"] }
     ],
     "react/prefer-stateless-function": "off",
+    "react/forbid-prop-types": "off",
     "arrow-body-style": "off"
   },
   "plugins": ["flowtype", "import", "promise", "compat", "react"],

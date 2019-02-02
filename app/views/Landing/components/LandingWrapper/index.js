@@ -19,7 +19,7 @@ import colors from 'config/colors';
 
 const Wrapper = styled.div`
     min-height: 100vh;
-
+    
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -39,9 +39,9 @@ const LandingLoader = styled(Loader)`
 `;
 
 const LandingWrapper = () => (
-    <Wrapper>
-      <LandingLoader text="Loading" size={100} />
-    </Wrapper>
+  <Wrapper>
+    <LandingLoader text="Loading" size={100} />
+  </Wrapper>
 );
 
 LandingWrapper.propTypes = {
