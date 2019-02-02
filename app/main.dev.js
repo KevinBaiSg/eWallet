@@ -15,6 +15,10 @@ import { autoUpdater } from 'electron-updater';
 import log from 'electron-log';
 import MenuBuilder from './menu';
 
+// for ipc
+// const { ipcMain } = require('electron');
+
+
 export default class AppUpdater {
   constructor() {
     log.transports.file.level = 'info';
@@ -35,6 +39,7 @@ if (
   process.env.DEBUG_PROD === 'true'
 ) {
   require('electron-debug')();
+  app.commandLine.appendSwitch('remote-debugging-port', '9222');
 }
 
 const installExtensions = async () => {
@@ -70,7 +75,11 @@ app.on('ready', async () => {
   mainWindow = new BrowserWindow({
     show: false,
     width: 1024,
-    height: 728
+    height: 728,
+    // for ipc
+    // webPreferences: {
+    //   preload: `${__dirname}/preload.js`
+    // }
   });
 
   mainWindow.loadURL(`file://${__dirname}/app.html`);
@@ -100,3 +109,20 @@ app.on('ready', async () => {
   // eslint-disable-next-line
   new AppUpdater();
 });
+
+
+/*
+* IPC
+* ref: https://electronjs.org/docs/api/ipc-main
+* */
+// for ipc
+// ipcMain.on('synchronous-message', (event, arg) => {
+//   console.log(`-----------------${arg}`) // prints "ping"
+//   event.sender.send('synchronous-reply', 'pong')
+// });
+
+// for ipc, run on render process
+// window.ipcRenderer.send('synchronous-message', 'ping')
+// window.ipcRenderer.on('asynchronous-reply', (event, arg) => {
+//   console.log(arg) // prints "pong"
+// })
