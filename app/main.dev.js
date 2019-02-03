@@ -18,7 +18,6 @@ import MenuBuilder from './menu';
 // for ipc
 // const { ipcMain } = require('electron');
 
-
 export default class AppUpdater {
   constructor() {
     log.transports.file.level = 'info';
@@ -118,7 +117,7 @@ app.on('ready', async () => {
 // for ipc
 // ipcMain.on('synchronous-message', (event, arg) => {
 //   console.log(`-----------------${arg}`) // prints "ping"
-//   event.sender.send('synchronous-reply', 'pong')
+//   // event.sender.send('synchronous-reply', 'pong')
 // });
 
 // for ipc, run on render process

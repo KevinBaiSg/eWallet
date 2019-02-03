@@ -40,11 +40,11 @@ export default {
       utils: path.resolve(__dirname, '../app/utils'),
       components: path.resolve(__dirname, '../app/components'),
       config: path.resolve(__dirname, '../app/config'),
+      // 'trezor.js': path.resolve(__dirname, '../app/trezor.js/src/index-node'),
       // assets: path.resolve(__dirname, '../app/assets'),
       // support: path.resolve(__dirname, '../app/support'),
       // reducers: path.resolve(__dirname, '../app/reducers'),
       // actions: path.resolve(__dirname, '../app/actions'),
-      // images: path.resolve(__dirname, '../app/images'),
 
       // constants: path.resolve(__dirname, '../app/constants'),
     },
