@@ -76,9 +76,11 @@ app.on('ready', async () => {
     width: 1024,
     height: 728,
     // for ipc
-    // webPreferences: {
-    //   preload: `${__dirname}/preload.js`
-    // }
+    webPreferences: {
+      nodeIntegrationInWorker: true,
+      nodeIntegration: true
+      // preload: `${__dirname}/preload.js`
+    }
   });
 
   mainWindow.loadURL(`file://${__dirname}/app.html`);
