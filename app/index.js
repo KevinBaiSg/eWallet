@@ -22,7 +22,7 @@ render(
 );
 
 if (module.hot) {
-  module.hot.accept('./views', () => {
+  module.hot.accept('./', () => {
     // eslint-disable-next-line global-require
     const NextRoot = require('./views').default;
     render(

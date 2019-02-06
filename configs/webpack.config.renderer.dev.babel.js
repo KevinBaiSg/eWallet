@@ -54,7 +54,8 @@ export default merge.smart(baseConfig, {
 
   output: {
     publicPath: `http://localhost:${port}/dist/`,
-    filename: 'renderer.dev.js'
+    filename: 'renderer.dev.js',
+    globalObject: 'this'
   },
 
   module: {
@@ -234,9 +235,8 @@ export default merge.smart(baseConfig, {
 
   node: {
     __dirname: false,
-    __filename: false
+    __filename: false,
   },
-
   devServer: {
     port,
     publicPath,

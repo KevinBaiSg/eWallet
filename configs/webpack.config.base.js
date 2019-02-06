@@ -46,7 +46,7 @@ export default {
       // reducers: path.resolve(__dirname, '../app/reducers'),
       // actions: path.resolve(__dirname, '../app/actions'),
 
-      // constants: path.resolve(__dirname, '../app/constants'),
+      constants: path.resolve(__dirname, '../app/constants'),
     },
     extensions: ['.js', '.jsx', '.json']
   },
