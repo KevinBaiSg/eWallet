@@ -5,8 +5,8 @@ import {
     buildTx,
 } from 'hd-wallet';
 
-import Account from '../../../account';
-import BlockBook from '../../../backend';
+import Account from 'utils/account';
+import BlockBook from 'utils/backend';
 
 import { init as initFees, getFeeLevels, getActualFee, getBlocks } from './fees';
 
