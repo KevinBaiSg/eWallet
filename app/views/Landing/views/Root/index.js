@@ -27,86 +27,16 @@ class Root extends React.Component {
 
   constructor() {
     super();
-    // this.test3 = this.test3.bind(this)
   }
-  //
-  // async test3() {
-  //   parseCoinsJson(CoinsJson);
-  //   const coinInfo: ?CoinInfo = getCoinInfoByCurrency('bitcoin');
-  //   console.log('log coinInfo');
-  //   console.log(coinInfo);
-  //   const backend = await createBackend(coinInfo);
-  //   console.log('log backend');
-  //   console.log(backend);
-  //
-  // }
 
   componentDidMount() {
-    // const { appState } = this.props;
-    // appState.test2();
-    // window.ipcRenderer.send('synchronous-message', 'ping')
-    // const debug = true;
-    // const list = new DeviceList({ debug: true });
-    // list.on('connect', function (device) {
-    //   console.log('Connected a device:', device);
-    //   console.log("Connected device " + device.features.label);
-    //
-    //   device.on('disconnect', function () {
-    //     if (debug) {
-    //       console.log('Disconnected an opened device');
-    //     }
-    //   });
-    //
-    //   // You generally want to filter out devices connected in bootloader mode:
-    //   // if (device.isBootloader()) {
-    //   //   throw new Error('Device is in bootloader mode, re-connected it');
-    //   // }
-    //
-    //   var hardeningConstant = 0x80000000;
-    //   device.waitForSessionAndRun(function (session) {
-    //     return session.getAddress([
-    //       (44 | hardeningConstant) >>> 0,
-    //       (0 | hardeningConstant) >>> 0,
-    //       (0 | hardeningConstant) >>> 0,
-    //       0,
-    //       0
-    //     ], 'bitcoin', true)
-    //   }).then(function (result) {
-    //     console.log('Address:', result.message.address);
-    //   }).catch(function (error) {
-    //     // Errors can happen easily, i.e. when device is disconnected or request rejected
-    //     // Note: if there is general error handler, that listens on device.on('error'),
-    //     // both this and the general error handler gets called
-    //     console.error('Call rejected:', error);
-    //   });
-    // })
   }
-
-  // test(device) {
-  //   console.log('=================2');
-  //
-  //   if (debug) {
-  //     console.log(`DeviceList connect; Device: ${device}`);
-  //   }
-  //
-  //   console.log("Connected device " + d.features.label);
-  //
-  //   device.on('disconnect', function () {
-  //     if (debug) {
-  //       console.log('Disconnected an opened device');
-  //     }
-  //   });
-  //
-  //   // You generally want to filter out devices connected in bootloader mode:
-  //   if (device.isBootloader()) {
-  //     throw new Error('Device is in bootloader mode, re-connected it');
-  //   }
-  // }
 
   render() {
     if (!canUseDOM) { return null }
     const { appState } = this.props;
-    appState.test2();
+    // appState.test();
+    appState.test3();
 
     return (
       <LandingWrapper loading />

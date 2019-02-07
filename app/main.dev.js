@@ -78,7 +78,7 @@ app.on('ready', async () => {
     // for ipc
     webPreferences: {
       nodeIntegrationInWorker: true,
-      nodeIntegration: true
+      // nodeIntegration: true
       // preload: `${__dirname}/preload.js`
     }
   });
