@@ -1,7 +1,7 @@
 /* @flow */
 'use strict';
 
-import BlockBook from '../../../../backend';
+import BlockBook from 'utils/backend';
 import type { FeeHandler } from './index';
 import type { CoinInfo } from 'flowtype';
 import type { FeeLevel, FeeLevelInfo } from 'flowtype/fee';

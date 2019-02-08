@@ -1,8 +1,8 @@
 /* @flow */
 'use strict';
 
-import { btckb2satoshib } from '../../../../utils/formatUtils';
-import BlockBook from '../../../../backend';
+import { btckb2satoshib } from 'utils/formatUtils';
+import BlockBook from 'utils/backend';
 
 import type { FeeHandler } from './index';
 import type {

@@ -1,12 +1,12 @@
 /* @flow */
 'use strict';
 import EventEmitter from 'events';
-import Account, { create as createAccount, remove as removeAccount } from '../../../account';
-import BlockBook from '../../../backend';
-import { cloneCoinInfo, fixCoinInfoNetwork } from '../../../data/CoinInfo';
-import { getPathFromIndex } from '../../../utils/pathUtils';
+import Account, { create as createAccount, remove as removeAccount } from 'utils/account';
+import BlockBook from 'utils/backend';
+import { cloneCoinInfo, fixCoinInfoNetwork } from 'utils/data/CoinInfo';
+import { getPathFromIndex } from 'utils/pathUtils';
 import type { CoinInfo } from 'flowtype';
-import type { HDNodeResponse } from '../../../types/trezor';
+import type { HDNodeResponse } from 'utils/types/trezor';
 import type { AccountInfo } from 'hd-wallet';
 
 export type DiscoveryOptions = {

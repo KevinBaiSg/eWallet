@@ -26,6 +26,8 @@ import { validateParams } from 'utils/helpers/paramsValidator';
 import type { Transaction } from 'trezor.js/lib/session';
 import type { BuildTxInput } from 'hd-wallet';
 
+import ComposeTransaction from 'utils/ComposeTransaction'
+
 const hardeningConstant = 0x80000000;
 const bitCoinPath = [
   (44 | hardeningConstant) >>> 0,
@@ -59,64 +61,64 @@ export default class AppState {
 
   // @action
   async test2() {
-    parseCoinsJson(CoinsJson);
-    const coinInfo: ?CoinInfo = getCoinInfoByCurrency('bitcoin');
-    console.log('log coinInfo');
-    console.log(coinInfo);
-    const backend = await createBackend(coinInfo);
-    console.log('log backend');
-    console.log(backend);
-
-    const pinputs = [
-      {
-        address_n: [44 | 0x80000000, 0 | 0x80000000, 2 | 0x80000000, 1, 0],
-        prev_index: 0,
-        prev_hash: 'b035d89d4543ce5713c553d69431698116a822c57c03ddacf3f04b763d1999ac'
-      }
-    ];
-
-    const poutputs = [
-      {
-        address_n: [44 | 0x80000000, 0 | 0x80000000, 2 | 0x80000000, 1, 1],
-        amount: '3181747',
-        script_type: 'PAYTOADDRESS'
-      }, {
-        address: '18WL2iZKmpDYWk1oFavJapdLALxwSjcSk2',
-        amount: '200000',
-        script_type: 'PAYTOADDRESS'
-      }
-    ];
-
-    pinputs.forEach(utxo => {
-      validateParams(utxo, [
-        { name: 'amount', type: 'string' },
-      ]);
-    });
-
-    poutputs.forEach(utxo => {
-      validateParams(utxo, [
-        { name: 'amount', type: 'string' },
-      ]);
-    });
-
-    const inputs: Array<TransactionInput> = validateTrezorInputs(pinputs, coinInfo);
-    const hdInputs: Array<BuildTxInput> = inputs.map(inputToHD);
-    const outputs: Array<TransactionOutput> = validateTrezorOutputs(poutputs, coinInfo);
-
-    const total: number = outputs.reduce((t, r) => t + r.amount, 0);
-    if (total <= coinInfo.dustLimit) {
-      throw new Error('Total amount is too low.');
-    }
-
-    const buildTxInput = getReferencedTransactions(hdInputs);
-    console.log('buildTxInput');
-    console.log(buildTxInput);
-    const bjsRefTxs = await backend.loadTransactions(buildTxInput);
-    console.log('bjsRefTxs');
-    console.log(bjsRefTxs);
-    const refTxs = transformReferencedTransactions(bjsRefTxs);
-    console.log('refTxs');
-    console.log(refTxs);
+    // parseCoinsJson(CoinsJson);
+    // const coinInfo: ?CoinInfo = getCoinInfoByCurrency('bitcoin');
+    // console.log('log coinInfo');
+    // console.log(coinInfo);
+    // const backend = await createBackend(coinInfo);
+    // console.log('log backend');
+    // console.log(backend);
+    //
+    // const pinputs = [
+    //   {
+    //     address_n: [44 | 0x80000000, 0 | 0x80000000, 2 | 0x80000000, 1, 0],
+    //     prev_index: 0,
+    //     prev_hash: 'b035d89d4543ce5713c553d69431698116a822c57c03ddacf3f04b763d1999ac'
+    //   }
+    // ];
+    //
+    // const poutputs = [
+    //   {
+    //     address_n: [44 | 0x80000000, 0 | 0x80000000, 2 | 0x80000000, 1, 1],
+    //     amount: '3181747',
+    //     script_type: 'PAYTOADDRESS'
+    //   }, {
+    //     address: '18WL2iZKmpDYWk1oFavJapdLALxwSjcSk2',
+    //     amount: '200000',
+    //     script_type: 'PAYTOADDRESS'
+    //   }
+    // ];
+    //
+    // pinputs.forEach(utxo => {
+    //   validateParams(utxo, [
+    //     { name: 'amount', type: 'string' },
+    //   ]);
+    // });
+    //
+    // poutputs.forEach(utxo => {
+    //   validateParams(utxo, [
+    //     { name: 'amount', type: 'string' },
+    //   ]);
+    // });
+    //
+    // const inputs: Array<TransactionInput> = validateTrezorInputs(pinputs, coinInfo);
+    // const hdInputs: Array<BuildTxInput> = inputs.map(inputToHD);
+    // const outputs: Array<TransactionOutput> = validateTrezorOutputs(poutputs, coinInfo);
+    //
+    // const total: number = outputs.reduce((t, r) => t + r.amount, 0);
+    // if (total <= coinInfo.dustLimit) {
+    //   throw new Error('Total amount is too low.');
+    // }
+    //
+    // const buildTxInput = getReferencedTransactions(hdInputs);
+    // console.log('buildTxInput');
+    // console.log(buildTxInput);
+    // const bjsRefTxs = await backend.loadTransactions(buildTxInput);
+    // console.log('bjsRefTxs');
+    // console.log(bjsRefTxs);
+    // const refTxs = transformReferencedTransactions(bjsRefTxs);
+    // console.log('refTxs');
+    // console.log(refTxs);
   }
 
   @action
@@ -307,6 +309,45 @@ export default class AppState {
           console.log('signTx txid');
           console.log(txid);
 
+        } catch (e) {
+          console.error('Call rejected:', e);
+        }
+      }).catch(function(error) {
+        console.error('Call rejected:', error);
+      })
+    })
+  }
+
+  async test4() {
+    this.counter = this.counter + 1;
+    const debug = true;
+    const list = new DeviceList({ debug: true });
+    list.on('connect', (device) => {
+      if (debug) {
+        console.log(`Connected a device: ${device}`);
+      }
+      console.log(`Connected device ${device.features.label}`);
+
+      device.on('disconnect', function() {
+        if (debug) {
+          console.log('Disconnected an opened device');
+        }
+      });
+
+      console.log(`Current firmware version: ${device.getVersion()}`);
+
+      device.waitForSessionAndRun(async (session) => {
+        try {
+          parseCoinsJson(CoinsJson);
+          const compose = new ComposeTransaction({
+            outputs: [
+              { amount: "100000", address: "35HQ9JNYdvrX5efXCo8KasKuQ16yJ7JQCv" }
+            ],
+            coin: "btc",
+            // push: true
+            session: session
+          });
+          await compose.run();
         } catch (e) {
           console.error('Call rejected:', e);
         }

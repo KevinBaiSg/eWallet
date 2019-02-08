@@ -36,7 +36,7 @@ class Root extends React.Component {
     if (!canUseDOM) { return null }
     const { appState } = this.props;
     // appState.test();
-    appState.test3();
+    appState.test4();
 
     return (
       <LandingWrapper loading />

@@ -5,7 +5,7 @@ import { legacyBitcoreHandler } from './legacy';
 import { smartBitcoreHandler } from './smart';
 import { preloadedHandler } from './preloaded';
 
-import BlockBook from '../../../../backend';
+import BlockBook from 'utils/backend';
 // import {getCoinInfo, waitForCoinInfo} from '../../../common/CoinInfo';
 // import * as ang from '../../../angularHelper';
 

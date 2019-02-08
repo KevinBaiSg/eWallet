@@ -1,7 +1,7 @@
 /* @flow */
 'use strict';
 
-import { getIndexFromPath } from '../utils/pathUtils';
+import { getIndexFromPath } from 'utils/pathUtils';
 
 import type { AccountInfo } from 'hd-wallet';
 import type { CoinInfo, SimpleAccount } from 'flowtype';
