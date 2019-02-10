@@ -38,6 +38,8 @@ class Root extends React.Component {
     // appState.test();
     appState.test4();
 
+    // window.ipcRenderer.send('synchronous-message', 'ping');
+
     return (
       <LandingWrapper loading />
     );

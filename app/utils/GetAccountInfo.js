@@ -98,7 +98,8 @@ export default class GetAccountInfo {
             coinInfo,
         };
 
-        this._getHDNode = this._getHDNode.bind(this)
+        this._getHDNode = this._getHDNode.bind(this);
+        this.getBitcoinHDNode = this.getBitcoinHDNode.bind(this);
     }
 
     async confirmation(): Promise<boolean> {
@@ -191,8 +192,76 @@ export default class GetAccountInfo {
         // return await deferred.promise;
     }
 
+    async getBitcoinHDNode(
+      path: Array<number>,
+      coinInfo?: ?CoinInfo
+    ): Promise<trezor.HDNodeResponse> {
+      const suffix: number = 0;
+      const childPath: Array<number> = path.concat([suffix]);
+
+      const resKeyMessage: MessageResponse<trezor.PublicKey> =
+        await this.session.getPublicKey(path, 'Bitcoin');
+      const resKey: trezor.PublicKey = resKeyMessage.message;
+
+      const childKeyMessage: MessageResponse<trezor.PublicKey>=
+        await this.session.getPublicKey(childPath, 'Bitcoin');
+      const childKey: trezor.PublicKey = childKeyMessage.message;
+
+      const publicKey: trezor.PublicKey =
+        hdnodeUtils.xpubDerive(resKey, childKey, suffix);
+
+      // const resKey: trezor.PublicKey = await this.session.getPublicKey(path, 'Bitcoin');
+      // const childKey: trezor.PublicKey = await this.session.getPublicKey(childPath, 'Bitcoin');
+      // const publicKey: trezor.PublicKey = hdnodeUtils.xpubDerive(resKey, childKey, suffix);
+
+      const response: trezor.HDNodeResponse = {
+        path,
+        serializedPath: getSerializedPath(path),
+        childNum: publicKey.node.child_num,
+        // xpub: coinInfo ? hdnodeUtils.convertBitcoinXpub(publicKey.xpub, coinInfo.network) : publicKey.xpub,
+        xpub: publicKey.xpub,
+        chainCode: publicKey.node.chain_code,
+        publicKey: publicKey.node.public_key,
+        fingerprint: publicKey.node.fingerprint,
+        depth: publicKey.node.depth,
+      };
+
+      // if requested path is a segwit
+      // convert xpub to new format
+      if (coinInfo) {
+        const segwitNetwork = getSegwitNetwork(coinInfo);
+        if (segwitNetwork && isSegwitPath(path)) {
+          response.xpubSegwit = hdnodeUtils.convertBitcoinXpub(publicKey.xpub, segwitNetwork);
+        }
+      }
+      return response;
+    }
+
+  async getPublicKey(
+    address_n: Array<number>,
+    coin_name: string,
+    script_type?: ?string,
+  ): Promise<trezor.PublicKey> {
+    const response: MessageResponse<trezor.PublicKey> =
+      await this.session.typedCall('GetPublicKey', 'PublicKey', {
+      address_n,
+      coin_name,
+      script_type,
+    });
+    return response.message;
+  }
+
     async _getHDNode(path: Array<number>, coinInfo: ?CoinInfo): Promise<trezor.HDNodeResponse> {
       // return this._getBitcoinHDNode(path, coinInfo);
+      // if (!this.device.atLeast(['1.7.2', '2.0.10']))
+      // const isOld = true;
+      // if (isOld) {
+      //   return await this.getBitcoinHDNode(path, coinInfo);
+      // }
+      if (!coinInfo) {
+        return await this.getBitcoinHDNode(path);
+      }
+
       const suffix: number = 0;
       const childPath: Array<number> = path.concat([suffix]);
       let network: ?bitcoin.Network;
@@ -212,14 +281,21 @@ export default class GetAccountInfo {
         }
       }
 
-      const resKeyMessage: MessageResponse<trezor.PublicKey> =
-        await this.session.getPublicKey(path, coinInfo.name, scriptType);
-      const resKey: trezor.PublicKey = resKeyMessage.message;
+      // const resKeyMessage: MessageResponse<trezor.PublicKey> =
+      //   await this.getPublicKey(path, coinInfo.name, scriptType);
+      // const resKey: trezor.PublicKey = resKeyMessage.message;
+      //
+      // const childKeyMessage: MessageResponse<trezor.PublicKey>=
+      //   await this.getPublicKey(childPath, coinInfo.name, scriptType);
+      // const childKey: trezor.PublicKey = childKeyMessage.message;
+      //
+      // const publicKey: trezor.PublicKey =
+      //   hdnodeUtils.xpubDerive(resKey, childKey, suffix, network, coinInfo.network);
 
-      const childKeyMessage: MessageResponse<trezor.PublicKey>=
-        await this.session.getPublicKey(childPath, coinInfo.name, scriptType);
-      const childKey: trezor.PublicKey = childKeyMessage.message;
-
+      const resKey: MessageResponse<trezor.PublicKey> =
+        await this.getPublicKey(path, coinInfo.name, scriptType);
+      const childKey: MessageResponse<trezor.PublicKey>=
+        await this.getPublicKey(childPath, coinInfo.name, scriptType);
       const publicKey: trezor.PublicKey =
         hdnodeUtils.xpubDerive(resKey, childKey, suffix, network, coinInfo.network);
 

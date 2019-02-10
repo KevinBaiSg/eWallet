@@ -78,7 +78,7 @@ app.on('ready', async () => {
     // for ipc
     webPreferences: {
       nodeIntegrationInWorker: true,
-      // nodeIntegration: true
+      nodeIntegration: true,
       // preload: `${__dirname}/preload.js`
     }
   });
@@ -108,7 +108,7 @@ app.on('ready', async () => {
 
   // Remove this if your app does not use auto updates
   // eslint-disable-next-line
-  new AppUpdater();
+  // new AppUpdater();
 });
 
 
@@ -119,7 +119,6 @@ app.on('ready', async () => {
 // for ipc
 // ipcMain.on('synchronous-message', (event, arg) => {
 //   console.log(`-----------------${arg}`) // prints "ping"
-//   // event.sender.send('synchronous-reply', 'pong')
 // });
 
 // for ipc, run on render process

@@ -27,6 +27,7 @@ import type { Transaction } from 'trezor.js/lib/session';
 import type { BuildTxInput } from 'hd-wallet';
 
 import ComposeTransaction from 'utils/ComposeTransaction'
+import GetAccountInfo from 'utils/GetAccountInfo'
 
 const hardeningConstant = 0x80000000;
 const bitCoinPath = [
@@ -339,10 +340,18 @@ export default class AppState {
       device.waitForSessionAndRun(async (session) => {
         try {
           parseCoinsJson(CoinsJson);
-          const compose = new ComposeTransaction({
-            outputs: [
-              { amount: "100000", address: "35HQ9JNYdvrX5efXCo8KasKuQ16yJ7JQCv" }
-            ],
+          // const compose = new ComposeTransaction({
+          //   outputs: [
+          //     { amount: "100000", address: "35HQ9JNYdvrX5efXCo8KasKuQ16yJ7JQCv" }
+          //   ],
+          //   coin: "btc",
+          //   // push: true
+          //   session: session
+          // });
+          // await compose.run();
+
+          const compose = new GetAccountInfo({
+            path: "m/49'/0'/0'",
             coin: "btc",
             // push: true
             session: session

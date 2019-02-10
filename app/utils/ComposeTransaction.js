@@ -1,14 +1,14 @@
 /* @flow */
 'use strict';
 
-// import AbstractMethod from './AbstractMethod';
+import * as trezor from 'utils/types/trezor';
+import * as hdnodeUtils from 'utils/hdnode';
+import { create as createDeferred } from 'utils/deferred';
 import Discovery from 'utils/helpers/Discovery';
-// import * as UI from '../../constants/ui';
 import { getCoinInfoByCurrency } from 'utils/data/CoinInfo';
 import { validateParams } from 'utils/helpers/paramsValidator';
-import { resolveAfter } from 'utils/promiseUtils';
 import { formatAmount } from 'utils/formatUtils';
-import { NO_COIN_INFO } from 'utils/constants/errors';
+import { NO_COIN_INFO } from 'constants/errors';
 
 import BlockBook, { create as createBackend } from 'utils/backend';
 import Account from 'utils/account';
@@ -21,6 +21,15 @@ import {
     transformReferencedTransactions,
 } from 'utils/tx';
 import * as helper from 'utils/helpers/signtx';
+import { getSegwitNetwork, getBech32Network } from 'utils/data/CoinInfo';
+
+import {
+  isMultisigPath,
+  isSegwitPath,
+  isBech32Path,
+  getSerializedPath,
+  getScriptType
+} from 'utils/pathUtils';
 
 // import { UiMessage } from '../../message/builder';
 
@@ -47,9 +56,8 @@ export default class ComposeTransaction  {
     composer: TransactionComposer;
 
     constructor(options: Options) {
-        // super(message);
-        // this.requiredPermissions = ['read', 'write'];
 
+        this.session = options.session;
         // validate incoming parameters
         validateParams(options, [
             { name: 'outputs', type: 'array', obligatory: true },
@@ -61,9 +69,6 @@ export default class ComposeTransaction  {
         if (!coinInfo) {
             throw NO_COIN_INFO;
         }
-
-        // set required firmware from coinInfo support
-        // this.requiredFirmware = [ coinInfo.support.trezor1, coinInfo.support.trezor2 ];
 
         // validate each output and transform into hd-wallet format
         const outputs: Array<BuildTxOutputRequest> = [];
@@ -99,7 +104,9 @@ export default class ComposeTransaction  {
             outputs,
             coinInfo,
             push: options.hasOwnProperty('push') ? options.push : false,
+            session: options.session
         };
+        this._getHDNode = this._getHDNode.bind(this)
     }
 
     async run(): Promise<SignedTx> {
@@ -122,40 +129,134 @@ export default class ComposeTransaction  {
         }
     }
 
+    async _getBitcoinHDNode(
+      path: Array<number>,
+      coinInfo: ?CoinInfo
+    ): Promise<trezor.HDNodeResponse> {
+      const suffix: number = 0;
+      const childPath: Array<number> = path.concat([suffix]);
+
+      const resKey: trezor.PublicKey = await this.session.getPublicKey(path, 'Bitcoin');
+      const childKey: trezor.PublicKey = await this.session.getPublicKey(childPath, 'Bitcoin');
+      const publicKey: trezor.PublicKey = hdnodeUtils.xpubDerive(resKey, childKey, suffix);
+
+      const response: trezor.HDNodeResponse = {
+        path,
+        serializedPath: getSerializedPath(path),
+        childNum: publicKey.node.child_num,
+        xpub: coinInfo ? hdnodeUtils.convertBitcoinXpub(publicKey.xpub, coinInfo.network) : publicKey.xpub,
+        chainCode: publicKey.node.chain_code,
+        publicKey: publicKey.node.public_key,
+        fingerprint: publicKey.node.fingerprint,
+        depth: publicKey.node.depth,
+      };
+
+      // if requested path is a segwit
+      // convert xpub to new format
+      if (coinInfo) {
+        const segwitNetwork = getSegwitNetwork(coinInfo);
+        if (segwitNetwork && isSegwitPath(path)) {
+          response.xpubSegwit = hdnodeUtils.convertBitcoinXpub(publicKey.xpub, segwitNetwork);
+        }
+      }
+      // return response;
+      return Promise.resolve(response)
+    }
+
+    async _getHDNode(path: Array<number>, coinInfo: ?CoinInfo): Promise<trezor.HDNodeResponse> {
+      // return this._getBitcoinHDNode(path, coinInfo);
+      const suffix: number = 0;
+      const childPath: Array<number> = path.concat([suffix]);
+      let network: ?bitcoin.Network;
+      if (isMultisigPath(path)) {
+        network = coinInfo.network;
+      } else if (isSegwitPath(path)) {
+        network = getSegwitNetwork(coinInfo);
+      } else if (isBech32Path(path)) {
+        network = getBech32Network(coinInfo);
+      }
+
+      let scriptType: ?string = getScriptType(path);
+      if (!network) {
+        network = coinInfo.network;
+        if (scriptType !== 'SPENDADDRESS') {
+          scriptType = undefined;
+        }
+      }
+
+      const resKeyMessage: MessageResponse<trezor.PublicKey> =
+        await this.session.getPublicKey(path, coinInfo.name, scriptType);
+      const resKey: trezor.PublicKey = resKeyMessage.message;
+
+      const childKeyMessage: MessageResponse<trezor.PublicKey>=
+        await this.session.getPublicKey(childPath, coinInfo.name, scriptType);
+      const childKey: trezor.PublicKey = childKeyMessage.message;
+
+      const publicKey: trezor.PublicKey =
+        hdnodeUtils.xpubDerive(resKey, childKey, suffix, network, coinInfo.network);
+
+      const response: trezor.HDNodeResponse = {
+        path,
+        serializedPath: getSerializedPath(path),
+        childNum: publicKey.node.child_num,
+        // xpub: coinInfo ? hdnodeUtils.convertBitcoinXpub(publicKey.xpub, coinInfo.network) : publicKey.xpub,
+        xpub: publicKey.xpub,
+        chainCode: publicKey.node.chain_code,
+        publicKey: publicKey.node.public_key,
+        fingerprint: publicKey.node.fingerprint,
+        depth: publicKey.node.depth,
+      };
+
+      // if requested path is a segwit
+      // convert xpub to new format
+      // if (coinInfo) {
+      //   const segwitNetwork = getSegwitNetwork(coinInfo);
+      //   if (segwitNetwork && isSegwitPath(path)) {
+      //     response.xpubSegwit = hdnodeUtils.convertBitcoinXpub(publicKey.xpub, segwitNetwork);
+      //   }
+      // }
+
+      if (network !== coinInfo.network) {
+        response.xpubSegwit = response.xpub;
+        response.xpub = hdnodeUtils.convertXpub(publicKey.xpub, network, coinInfo.network);
+      }
+      return response;
+    }
+
     async _getAccount(): Promise<Account | { error: string }> {
-        // 替换自己的实现
-        const discovery: Discovery = this.discovery || new Discovery({
-            getHDNode: this.device.getCommands().getHDNode.bind(this.device.getCommands()),
-            coinInfo: this.params.coinInfo,
-            backend: this.backend,
-        });
+      // 替换自己的实现
+      const discovery: Discovery = this.discovery || new Discovery({
+          getHDNode: this._getHDNode,
+          coinInfo: this.params.coinInfo,
+          backend: this.backend,
+      });
 
-      const initPromise: Deferred<void> = createDeferred();
+      const discoveryPromise: Deferred<void> = createDeferred();
 
-        discovery.on('update', (accounts: Array<Account>) => {
-          console.log('discovery.on update')
-        });
+      discovery.on('update', (accounts: Array<Account>) => {
+        console.log('discovery.on update')
+      });
 
-        discovery.on('complete', (accounts: Array<Account>) => {
-          console.log('discovery.on complete');
-          initPromise.resolve();
-        });
+      discovery.on('complete', (accounts: Array<Account>) => {
+        console.log('discovery.on complete');
+        discoveryPromise.resolve();
+      });
 
-        if (!this.discovery) {
-            this.discovery = discovery;
-        }
-        discovery.start();
+      if (!this.discovery) {
+          this.discovery = discovery;
+      }
+      discovery.start();
 
-        // 增加 permise， 在 utils event complate 中完成
-        await initPromise.promise;
-        discovery.removeAllListeners();
-        discovery.stop();
+      // 增加 permise， 在 utils event complate 中完成
+      await discoveryPromise.promise;
+      discovery.removeAllListeners();
+      discovery.stop();
 
-        if (discovery.accounts.length === 0) {
-          return 'not found account'
-        }
+      if (discovery.accounts.length === 0) {
+        return 'not found account'
+      }
 
-        return discovery.accounts[0];
+      return discovery.accounts[0];
     }
 
     async _getFee(account: Account): Promise<string | SignedTx> {

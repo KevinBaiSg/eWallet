@@ -83,25 +83,32 @@ export default class Discovery extends EventEmitter {
 
     dispose() {
         // TODO: clear up all references
-        this.accounts.forEach(a => removeAccount(a));
+        this.accounts.forEach(a =>
+          removeAccount(a)
+        );
         delete this.accounts;
         delete this.options;
     }
 
     async discoverAccount(path: Array<number>, coinInfo: CoinInfo): Promise<?Account> {
-        if (this.interrupted) return null;
+        if (this.interrupted)
+          return null;
 
         const node: HDNodeResponse = await this.options.getHDNode(path, coinInfo);
-        if (this.interrupted) return null;
+        if (this.interrupted)
+          return null;
 
         const account = createAccount(path, node.xpub, coinInfo);
         this.accounts.push(account);
         this.emit('update', this.accounts);
 
-        if (!this.loadInfo) { return account; }
+        if (!this.loadInfo) {
+          return account;
+        }
 
         await this.getAccountInfo(account);
-        if (this.interrupted) return null;
+        if (this.interrupted)
+          return null;
 
         this.emit('update', this.accounts);
 

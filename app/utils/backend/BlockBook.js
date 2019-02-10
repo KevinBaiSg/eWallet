@@ -28,6 +28,7 @@ import FastXpubWorker from 'worker-loader?name=js/fastxpub-worker.[hash].js!hd-w
 // const FastXpubWorker = 'worker-loader?name=js/fastxpub-worker.[hash].js!hd-wallet/lib/fastxpub/fastxpub.js';
 /* $FlowIssue loader notation */
 import DiscoveryWorker from 'worker-loader?name=js/discovery-worker.[hash].js!hd-wallet/lib/discovery/worker/inside';
+// import DiscoveryWorker from '../../hd-wallet/src/discovery/worker/inside';
 // const DiscoveryWorker = 'worker-loader?name=js/discovery-worker.[hash].js!hd-wallet/lib/discovery/worker/inside';
 /* $FlowIssue loader notation */
 import SocketWorker from 'worker-loader?name=js/socketio-worker.[hash].js!hd-wallet/lib/socketio-worker/inside';
@@ -57,8 +58,13 @@ export default class BlockBook {
         // // $FlowIssue WebAssembly
 
         //
-        const filePromise = typeof WebAssembly !== 'undefined' ? httpRequest(FastXpubWasm, 'binary') : Promise.reject();
-
+        // const filePromise = typeof WebAssembly !== 'undefined' ? httpRequest(FastXpubWasm, 'binary') : Promise.reject();const filePromise
+        var filePromise;
+        if (WebAssembly !== 'undefined') {
+          filePromise = httpRequest(FastXpubWasm, 'binary')
+        } else {
+          filePromise = Promise.reject('not support webassembly');
+        }
         // this.blockchain.errors.values.attach(() => { this._setError(); });
         this.blockchain.errors.values.attach(this._setError.bind(this));
         this.discovery = new WorkerDiscovery(
@@ -106,7 +112,7 @@ export default class BlockBook {
         const segwit_s: 'p2sh' | 'off' = coinInfo.segwit ? 'p2sh' : 'off';
 
         const discovery = this.discovery.discoverAccount(data, xpub, coinInfo.network, segwit_s, !!(coinInfo.cashAddrPrefix));
-        setDisposer(() => discovery.dispose(new Error('Interrupted by user')));
+        setDisposer(() => discovery.dispose(new Error('Interrupted by userds')));
 
         discovery.stream.values.attach(status => {
             progress(status);
