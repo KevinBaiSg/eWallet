@@ -199,14 +199,11 @@ export default class GetAccountInfo {
       const suffix: number = 0;
       const childPath: Array<number> = path.concat([suffix]);
 
-      const resKeyMessage: MessageResponse<trezor.PublicKey> =
-        await this.session.getPublicKey(path, 'Bitcoin');
-      const resKey: trezor.PublicKey = resKeyMessage.message;
 
-      const childKeyMessage: MessageResponse<trezor.PublicKey>=
-        await this.session.getPublicKey(childPath, 'Bitcoin');
-      const childKey: trezor.PublicKey = childKeyMessage.message;
-
+      const resKey: MessageResponse<trezor.PublicKey> =
+        await this.getPublicKey(path, 'Bitcoin');
+      const childKey: MessageResponse<trezor.PublicKey>=
+        await this.getPublicKey(childPath, 'Bitcoin');
       const publicKey: trezor.PublicKey =
         hdnodeUtils.xpubDerive(resKey, childKey, suffix);
 
@@ -218,8 +215,7 @@ export default class GetAccountInfo {
         path,
         serializedPath: getSerializedPath(path),
         childNum: publicKey.node.child_num,
-        // xpub: coinInfo ? hdnodeUtils.convertBitcoinXpub(publicKey.xpub, coinInfo.network) : publicKey.xpub,
-        xpub: publicKey.xpub,
+        xpub: coinInfo ? hdnodeUtils.convertBitcoinXpub(publicKey.xpub, coinInfo.network) : publicKey.xpub,
         chainCode: publicKey.node.chain_code,
         publicKey: publicKey.node.public_key,
         fingerprint: publicKey.node.fingerprint,
@@ -254,10 +250,10 @@ export default class GetAccountInfo {
     async _getHDNode(path: Array<number>, coinInfo: ?CoinInfo): Promise<trezor.HDNodeResponse> {
       // return this._getBitcoinHDNode(path, coinInfo);
       // if (!this.device.atLeast(['1.7.2', '2.0.10']))
-      // const isOld = true;
-      // if (isOld) {
-      //   return await this.getBitcoinHDNode(path, coinInfo);
-      // }
+      const isOld = true;
+      if (isOld) {
+        return await this.getBitcoinHDNode(path, coinInfo);
+      }
       if (!coinInfo) {
         return await this.getBitcoinHDNode(path);
       }

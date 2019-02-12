@@ -78,7 +78,12 @@ app.on('ready', async () => {
     // for ipc
     webPreferences: {
       nodeIntegrationInWorker: true,
-      nodeIntegration: true,
+      // nodeIntegration: true,
+      // webSecurity: false,
+      // nativeWindowOpen:true,
+      // allowpopups: true,
+      // allowRunningInsecureContent: true,
+      // allowDisplayingInsecureContent: true,
       // preload: `${__dirname}/preload.js`
     }
   });

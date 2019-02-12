@@ -340,23 +340,23 @@ export default class AppState {
       device.waitForSessionAndRun(async (session) => {
         try {
           parseCoinsJson(CoinsJson);
-          // const compose = new ComposeTransaction({
-          //   outputs: [
-          //     { amount: "100000", address: "35HQ9JNYdvrX5efXCo8KasKuQ16yJ7JQCv" }
-          //   ],
+          const compose = new ComposeTransaction({
+            outputs: [
+              { amount: "100000", address: "1MZwZoyyW1Z4Yd6dCg7VivYHGfPzTGUpcR" }
+            ],
+            coin: "btc",
+            push: true,
+            session: session
+          });
+          await compose.run();
+
+          // const compose = new GetAccountInfo({
+          //   path: "m/49'/0'/0'",
           //   coin: "btc",
           //   // push: true
           //   session: session
           // });
           // await compose.run();
-
-          const compose = new GetAccountInfo({
-            path: "m/49'/0'/0'",
-            coin: "btc",
-            // push: true
-            session: session
-          });
-          await compose.run();
         } catch (e) {
           console.error('Call rejected:', e);
         }

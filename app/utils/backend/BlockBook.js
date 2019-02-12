@@ -22,7 +22,7 @@ import type { CoinInfo, EthereumNetworkInfo } from 'flowtype';
 /* $FlowIssue loader notation */
 // const FastXpubWasm = require('hd-wallet');
 // import FastXpubWasm from 'hd-wallet';
-const FastXpubWasm = '../node_modules/hd-wallet/lib/fastxpub/fastxpub.wasm';
+const FastXpubWasm = './node_modules/hd-wallet/lib/fastxpub/fastxpub.wasm';
 /* $FlowIssue loader notation */
 import FastXpubWorker from 'worker-loader?name=js/fastxpub-worker.[hash].js!hd-wallet/lib/fastxpub/fastxpub.js';
 // const FastXpubWorker = 'worker-loader?name=js/fastxpub-worker.[hash].js!hd-wallet/lib/fastxpub/fastxpub.js';
@@ -56,12 +56,12 @@ export default class BlockBook {
         this.blockchain = blockchain;
 
         // // $FlowIssue WebAssembly
-
-        //
-        // const filePromise = typeof WebAssembly !== 'undefined' ? httpRequest(FastXpubWasm, 'binary') : Promise.reject();const filePromise
+        // const filePromise = typeof WebAssembly !== 'undefined' ? httpRequest(FastXpubWasm, 'binary') : Promise.reject();
         var filePromise;
         if (WebAssembly !== 'undefined') {
-          filePromise = httpRequest(FastXpubWasm, 'binary')
+          const fs = require('fs');
+          filePromise = require('util').promisify(fs.readFile)(FastXpubWasm);
+          // filePromise = httpRequest(FastXpubWasm, 'binary')
         } else {
           filePromise = Promise.reject('not support webassembly');
         }

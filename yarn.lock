@@ -3107,7 +3107,7 @@ bitcoin-script@^0.1.1:
     sha1 "^1.1.0"
     sha256 "^0.1.1"
 
-bitcoinjs-lib-zcash@^3.5.2:
+bitcoinjs-lib-zcash@^3.4.1, bitcoinjs-lib-zcash@^3.5.2:
   version "3.5.3"
   resolved "http://registry.npm.taobao.org/bitcoinjs-lib-zcash/download/bitcoinjs-lib-zcash-3.5.3.tgz#19c74f36a2f9b0bd6680a02087567db8454639e5"
   integrity sha1-GcdPNqL5sL1mgKAgh1Z9uEVGOeU=
@@ -7343,14 +7343,14 @@ hash.js@^1.0.0, hash.js@^1.0.3:
     inherits "^2.0.3"
     minimalistic-assert "^1.0.1"
 
-hd-wallet@^8.0.4:
-  version "8.0.4"
-  resolved "http://registry.npm.taobao.org/hd-wallet/download/hd-wallet-8.0.4.tgz#bff2557b48c158e6adc7f0fd941c04b15e7810fa"
-  integrity sha1-v/JVe0jBWOatx/D9lBwEsV54EPo=
+hd-wallet@7.14.3:
+  version "7.14.3"
+  resolved "http://registry.npm.taobao.org/hd-wallet/download/hd-wallet-7.14.3.tgz#dd8a8c9196b53c738d55121dc68d31f99f9c5dc5"
+  integrity sha1-3YqMkZa1PHONVRIdxo0x+Z+cXcU=
   dependencies:
     babel-cli "^6.26.0"
     bchaddrjs "^0.2.1"
-    bitcoinjs-lib-zcash "^3.5.2"
+    bitcoinjs-lib-zcash "^3.4.1"
     queue "^4.4.2"
     socket.io-client "^1.7.3"
     whatwg-fetch "^0.11.0"
