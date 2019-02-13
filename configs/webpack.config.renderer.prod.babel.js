@@ -9,6 +9,7 @@ import OptimizeCSSAssetsPlugin from 'optimize-css-assets-webpack-plugin';
 import { BundleAnalyzerPlugin } from 'webpack-bundle-analyzer';
 import merge from 'webpack-merge';
 import UglifyJSPlugin from 'uglifyjs-webpack-plugin';
+import CopyWebpackPlugin from 'copy-webpack-plugin'
 import baseConfig from './webpack.config.base';
 import CheckNodeEnv from '../internals/scripts/CheckNodeEnv';
 
@@ -175,7 +176,12 @@ export default merge.smart(baseConfig, {
           new UglifyJSPlugin({
             parallel: true,
             sourceMap: true,
-            cache: true
+            cache: true,
+            uglifyOptions: {
+              mangle: {
+                reserved: ['Array','BigInteger','Boolean','Buffer','ECPair','Function','Number','Point']
+              }
+            }
           }),
           new OptimizeCSSAssetsPlugin({
             cssProcessorOptions: {
@@ -210,6 +216,6 @@ export default merge.smart(baseConfig, {
       analyzerMode:
         process.env.OPEN_ANALYZER === 'true' ? 'server' : 'disabled',
       openAnalyzer: process.env.OPEN_ANALYZER === 'true'
-    })
+    }),
   ]
 });
