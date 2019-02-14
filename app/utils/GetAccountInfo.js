@@ -1,10 +1,8 @@
 /* @flow */
 'use strict';
 
-// import AbstractMethod from './AbstractMethod';
 import { validateParams, validateCoinPath } from './helpers/paramsValidator';
 import Discovery from 'utils/helpers/Discovery';
-// import * as UI from '../../constants/ui';
 import { NO_COIN_INFO } from 'constants/errors';
 import * as hdnodeUtils from 'utils/hdnode';
 import {
@@ -21,10 +19,8 @@ import { create as createDeferred } from 'utils/deferred';
 import Account, { create as createAccount } from 'utils/account';
 import BlockBook, { create as createBackend } from 'utils/backend';
 import { getCoinInfoByCurrency, fixCoinInfoNetwork, getCoinInfoFromPath } from 'utils/data/CoinInfo';
-// import { UiMessage } from '../../message/builder';
 import type {
   CoinInfo,
-  // UiPromiseResponse,
 } from 'flowtype';
 import type { AccountInfo, HDNodeResponse } from 'utils/types/trezor';
 import type { Deferred, CoreMessage } from 'utils/types';
