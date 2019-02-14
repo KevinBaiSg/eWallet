@@ -46,12 +46,15 @@ export default class Discovery extends EventEmitter {
 
   async start(): Promise<void> {
     this.interrupted = false;
+
     while (!this.completed && !this.interrupted) {
       const prevAccount: ?Account = this.accounts[ this.accounts.length - 1 ];
       let index = prevAccount ? prevAccount.id + 1 : 0;
-      const coinInfo = cloneCoinInfo(prevAccount ? prevAccount.coinInfo : this.options.coinInfo);
+      const coinInfo =
+        cloneCoinInfo(prevAccount ? prevAccount.coinInfo : this.options.coinInfo);
 
-      if (index >= this.limit || (this.loadInfo && prevAccount && !prevAccount.isUsed())) {
+      if (index >= this.limit ||
+        (this.loadInfo && prevAccount && !prevAccount.isUsed())) {
         if (!coinInfo.segwit) {
           this.completed = true;
           this.emit('complete', this.accounts);
@@ -63,8 +66,16 @@ export default class Discovery extends EventEmitter {
         }
       }
 
-      const path: Array<number> = getPathFromIndex(coinInfo.segwit ? 49 : 44, coinInfo.slip44, index);
-      await this.discoverAccount(path, fixCoinInfoNetwork(coinInfo, path));
+      const path: Array<number> =
+        getPathFromIndex(coinInfo.segwit ? 49 : 44, coinInfo.slip44, index);
+
+      try {
+        await this.discoverAccount(path, fixCoinInfoNetwork(coinInfo, path));
+      } catch (e) {
+        console.log('discovery start error');
+        console.log(e);
+        return Promise.reject(e);
+      }
     }
   }
 

@@ -4,8 +4,6 @@
 import 'whatwg-fetch';
 
 export const httpRequest = async (url: string, type: string = 'text'): any => {
-    console.log('===================');
-    console.log(url);
     const response: Response = await fetch(url, { credentials: 'same-origin' });
     if (response.ok) {
         if (type === 'json') {

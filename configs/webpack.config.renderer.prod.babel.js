@@ -165,7 +165,15 @@ export default merge.smart(baseConfig, {
       {
         test: /\.(?:ico|gif|png|jpg|jpeg|webp)$/,
         use: 'url-loader'
-      }
+      },
+      {
+        type: 'javascript/auto',
+        test: /\.wasm$/,
+        loader: 'file-loader',
+        query: {
+          name: 'js/[name].[hash].[ext]',
+        },
+      },
     ]
   },
 

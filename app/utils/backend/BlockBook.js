@@ -1,6 +1,8 @@
 /* @flow */
 'use strict';
 
+import path from 'path';
+
 import {
     BitcoreBlockchain,
     WorkerDiscovery,
@@ -20,16 +22,11 @@ import type {
 import type { CoinInfo, EthereumNetworkInfo } from 'flowtype';
 
 /* $FlowIssue loader notation */
-// const FastXpubWasm = require('hd-wallet');
-// import FastXpubWasm from 'hd-wallet';
-const FastXpubWasm = './node_modules/hd-wallet/lib/fastxpub/fastxpub.wasm';
+import FastXpubWasm from 'hd-wallet/lib/fastxpub/fastxpub.wasm';
 /* $FlowIssue loader notation */
 import FastXpubWorker from 'worker-loader?name=js/fastxpub-worker.[hash].js!hd-wallet/lib/fastxpub/fastxpub.js';
-// const FastXpubWorker = 'worker-loader?name=js/fastxpub-worker.[hash].js!hd-wallet/lib/fastxpub/fastxpub.js';
 /* $FlowIssue loader notation */
 import DiscoveryWorker from 'worker-loader?name=js/discovery-worker.[hash].js!hd-wallet/lib/discovery/worker/inside';
-// import DiscoveryWorker from '../../hd-wallet/src/discovery/worker/inside';
-// const DiscoveryWorker = 'worker-loader?name=js/discovery-worker.[hash].js!hd-wallet/lib/discovery/worker/inside';
 /* $FlowIssue loader notation */
 import SocketWorker from 'worker-loader?name=js/socketio-worker.[hash].js!hd-wallet/lib/socketio-worker/inside';
 
@@ -56,15 +53,7 @@ export default class BlockBook {
         this.blockchain = blockchain;
 
         // // $FlowIssue WebAssembly
-        // const filePromise = typeof WebAssembly !== 'undefined' ? httpRequest(FastXpubWasm, 'binary') : Promise.reject();
-        var filePromise;
-        if (WebAssembly !== 'undefined') {
-          const fs = require('fs');
-          filePromise = require('util').promisify(fs.readFile)(FastXpubWasm);
-          // filePromise = httpRequest(FastXpubWasm, 'binary')
-        } else {
-          filePromise = Promise.reject('not support webassembly');
-        }
+        const filePromise = typeof WebAssembly !== 'undefined' ? httpRequest(FastXpubWasm, 'binary') : Promise.reject();
         // this.blockchain.errors.values.attach(() => { this._setError(); });
         this.blockchain.errors.values.attach(this._setError.bind(this));
         this.discovery = new WorkerDiscovery(
