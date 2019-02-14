@@ -74,7 +74,6 @@ app.on('ready', async () => {
     show: false,
     width: 1024,
     height: 728,
-    // for ipc
     webPreferences: {
       nodeIntegrationInWorker: true,
       // nodeIntegration: true,
@@ -83,7 +82,7 @@ app.on('ready', async () => {
       // allowpopups: true,
       // allowRunningInsecureContent: true,
       // allowDisplayingInsecureContent: true,
-      // preload: `${__dirname}/preload.js`
+      // preload: `${__dirname}/preload.js` // for ipc
     }
   });
 
