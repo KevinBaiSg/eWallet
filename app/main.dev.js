@@ -54,7 +54,6 @@ const installExtensions = async () => {
 /**
  * Add event listeners...
  */
-
 app.on('window-all-closed', () => {
   // Respect the OSX convention of having the application in memory even
   // after all windows have been closed
@@ -103,6 +102,20 @@ app.on('ready', async () => {
       mainWindow.focus();
     }
   });
+
+  mainWindow.webContents.session.webRequest.onBeforeSendHeaders(
+    (details, callback) => {
+      console.log('webRequest onBeforeSendHeaders');
+      // eslint-disable-next-line
+      details.requestHeaders['User-Agent'] =
+        `Mozilla/5.0 (Macintosh; Intel Mac OS X 10_14_0) 
+      AppleWebKit/537.36 (KHTML, like Gecko) Chrome/71.0.3578.98 Safari/537.36`;
+      // eslint-disable-next-line
+      details.requestHeaders['Origin'] = 'https://wallet.trezor.io';
+      // eslint-disable-next-line
+      details.requestHeaders['Referer'] = 'https://wallet.trezor.io';
+      callback({ requestHeaders: details.requestHeaders })
+    });
 
   mainWindow.on('closed', () => {
     mainWindow = null;
