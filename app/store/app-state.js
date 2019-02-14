@@ -26,7 +26,10 @@ import { validateParams } from 'utils/helpers/paramsValidator';
 import type { Transaction } from 'trezor.js/lib/session';
 import type { BuildTxInput } from 'hd-wallet';
 
-import ComposeTransaction from 'utils/ComposeTransaction'
+import ComposeTransaction from 'utils/ComposeTransaction';
+import configLocal from '../static/config_signed.bin';
+import { httpRequest } from 'utils/networkUtils';
+
 import GetAccountInfo from 'utils/GetAccountInfo'
 
 const hardeningConstant = 0x80000000;
@@ -322,7 +325,8 @@ export default class AppState {
   async test4() {
     this.counter = this.counter + 1;
     const debug = true;
-    const list = new DeviceList({ debug: true });
+    const config = await httpRequest(configLocal);
+    const list = new DeviceList({ debug: true, config });
     list.on('connect', (device) => {
       if (debug) {
         console.log(`Connected a device: ${device}`);

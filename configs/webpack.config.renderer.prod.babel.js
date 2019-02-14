@@ -174,6 +174,11 @@ export default merge.smart(baseConfig, {
           name: 'js/[name].[hash].[ext]',
         },
       },
+      {
+        type: 'javascript/auto',
+        test: /\.bin$/,
+        loader: 'file-loader',
+      },
     ]
   },
 

@@ -10,10 +10,7 @@ export const httpRequest = async (url: string, type: string = 'text'): any => {
             const txt: string = await response.text();
             return JSON.parse(txt);
         } else if (type === 'binary') {
-            // return await response.arrayBuffer();
-          const bin = await response.arrayBuffer();
-          console.log(bin.byteLength);
-          return bin
+            return await response.arrayBuffer();
         } else {
             return await response.text();
         }
