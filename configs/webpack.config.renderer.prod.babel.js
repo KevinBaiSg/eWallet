@@ -2,7 +2,6 @@
  * Build config for electron renderer process
  */
 
-import path from 'path';
 import webpack from 'webpack';
 import MiniCssExtractPlugin from 'mini-css-extract-plugin';
 import OptimizeCSSAssetsPlugin from 'optimize-css-assets-webpack-plugin';
@@ -11,6 +10,8 @@ import merge from 'webpack-merge';
 import UglifyJSPlugin from 'uglifyjs-webpack-plugin';
 import baseConfig from './webpack.config.base';
 import CheckNodeEnv from '../internals/scripts/CheckNodeEnv';
+
+const path = require('path');
 
 CheckNodeEnv('production');
 export default merge.smart(baseConfig, {

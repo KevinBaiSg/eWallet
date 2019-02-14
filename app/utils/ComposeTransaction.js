@@ -1,5 +1,4 @@
 /* @flow */
-'use strict';
 
 import * as trezor from 'utils/types/trezor';
 import * as hdnodeUtils from 'utils/hdnode';
@@ -31,29 +30,30 @@ import {
   getScriptType
 } from 'utils/pathUtils';
 
-import type { CoinInfo, UiPromiseResponse } from 'flowtype';
-import type { CoreMessage } from 'utils/types';
+import type { CoinInfo } from 'flowtype';
 import type { SignedTx } from 'utils/types/trezor';
 
 import type {
     BuildTxOutputRequest,
     BuildTxResult,
 } from 'hd-wallet';
-import type { Options } from './backend/BlockBook';
 
 type Params = {
     outputs: Array<BuildTxOutputRequest>,
     coinInfo: CoinInfo,
-    push: boolean,
-}
+    push: boolean
+};
 
 export default class ComposeTransaction  {
     params: Params;
+
     backend: BlockBook;
+
     discovery: ?Discovery;
+
     composer: TransactionComposer;
 
-    constructor(options: Options) {
+    constructor(options) {
 
         this.session = options.session;
         // validate incoming parameters

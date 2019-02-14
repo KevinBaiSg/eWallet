@@ -263,6 +263,7 @@
     "exenv": "^1.2.2",
     "hd-wallet": "7.14.3",
     "history": "^4.7.2",
+    "lodash": "^4.17.11",
     "mobx": "^5.6.0",
     "mobx-devtools-mst": "^0.9.18",
     "mobx-react": "^5.3.6",

@@ -7,7 +7,6 @@
  * https://webpack.js.org/concepts/hot-module-replacement/
  */
 
-import path from 'path';
 import fs from 'fs';
 import webpack from 'webpack';
 import chalk from 'chalk';
@@ -15,6 +14,8 @@ import merge from 'webpack-merge';
 import { spawn, execSync } from 'child_process';
 import baseConfig from './webpack.config.base';
 import CheckNodeEnv from '../internals/scripts/CheckNodeEnv';
+
+const path = require('path');
 
 CheckNodeEnv('development');
 
@@ -245,11 +246,6 @@ export default merge.smart(baseConfig, {
       debug: true
     })
   ],
-
-  node: {
-    __dirname: false,
-    __filename: false,
-  },
   devServer: {
     port,
     publicPath,
