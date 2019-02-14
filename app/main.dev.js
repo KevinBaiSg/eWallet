@@ -104,7 +104,6 @@ app.on('ready', async () => {
 
   mainWindow.webContents.session.webRequest.onBeforeSendHeaders(
     (details, callback) => {
-      console.log('webRequest onBeforeSendHeaders');
       // eslint-disable-next-line
       details.requestHeaders['User-Agent'] =
         `Mozilla/5.0 (Macintosh; Intel Mac OS X 10_14_0) 

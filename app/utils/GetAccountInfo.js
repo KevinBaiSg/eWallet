@@ -339,7 +339,7 @@ export default class GetAccountInfo {
             //     coinInfo: this.params.coinInfo,
             //     accounts: accounts.map(a => a.toMessage()),
             // }));
-          console.log('discovery.on update')
+          // console.log('discovery.on update')
         });
 
         discovery.on('complete', (accounts: Array<Account>) => {
@@ -348,7 +348,7 @@ export default class GetAccountInfo {
             //     accounts: accounts.map(a => a.toMessage()),
             //     complete: true,
             // }));
-          console.log('discovery.on complete');
+          // console.log('discovery.on complete');
           discoveryPromise.resolve();
         });
 
