@@ -33,7 +33,6 @@
     "flowtype/use-flow-type": "error",
     "flowtype/valid-syntax": "error",
     "generator-star-spacing": "off",
-    "import/no-unresolved": "error",
     "import/no-extraneous-dependencies": "off",
     "jsx-a11y/anchor-is-valid": "off",
     "no-console": "off",
@@ -43,6 +42,18 @@
     "promise/always-return": "error",
     "promise/catch-or-return": "error",
     "promise/no-native": "off",
+    "import/no-unresolved": [
+      "error",
+      {
+        "ignore": [ "@fortawesome/" ]
+      }
+    ],
+    "import/extensions": [
+      "error",
+      {
+        "ignore": [ "@fortawesome/" ]
+      }
+    ],
     "react/sort-comp": [
       "error",
       {
