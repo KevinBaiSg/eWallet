@@ -10,7 +10,7 @@ export const reverseBuffer = (buf: Buffer): Buffer => {
 };
 
 export function uniq<X>(array: Array<X>, fun: (inp: X) => string | number): Array<X> {
-    return _.uniq(array, fun);
+    return _.uniqBy(array, fun);
 }
 
 export const stringToHex = (str: string): string => {

@@ -1,58 +1,83 @@
 /* @flow */
 'use strict';
 
-import { validateParams, validateCoinPath } from './helpers/paramsValidator';
-import Discovery from 'utils/helpers/Discovery';
-import { NO_COIN_INFO } from 'constants/errors';
-import * as hdnodeUtils from 'utils/hdnode';
-import {
-    isMultisigPath,
-    isSegwitPath,
-    isBech32Path,
-    validatePath,
-    getAccountLabel,
-    getSerializedPath,
-    getScriptType,
-} from 'utils/pathUtils';
-import { create as createDeferred } from 'utils/deferred';
+import * as bitcoin from 'bitcoinjs-lib-zcash';
 
+import * as hdnodeUtils from 'utils/hdnode';
 import Account, { create as createAccount } from 'utils/account';
 import BlockBook, { create as createBackend } from 'utils/backend';
-import { getBitcoinNetwork, fixCoinInfoNetwork } from 'utils/data/CoinInfo';
-import type {
-  CoinInfo,
-} from 'flowtype';
-import type { AccountInfo, HDNodeResponse } from 'utils/types/trezor';
-import type { Deferred, CoreMessage } from 'utils/types';
-import type { Options } from './backend/BlockBook';
+import Discovery from 'utils/helpers/Discovery';
+import { create as createDeferred } from 'utils/deferred';
+import {
+  isMultisigPath,
+  isSegwitPath,
+  isBech32Path,
+  validatePath,
+  getAccountLabel,
+  getSerializedPath,
+  getScriptType,
+} from 'utils/pathUtils';
 
-import { getSegwitNetwork, getBech32Network } from 'utils/data/CoinInfo';
+import {
+  validateParams,
+  validateCoinPath
+} from './helpers/paramsValidator';
+
+import { NO_COIN_INFO } from 'constants/errors';
+
+import {
+  getBitcoinNetwork,
+  fixCoinInfoNetwork,
+  getSegwitNetwork,
+  getBech32Network
+} from 'utils/data/CoinInfo';
+
+import * as trezor from 'utils/types/trezor';
+ import type {
+  Deferred
+ } from 'utils/types';
+ import type {
+  HDNodeResponse,
+ } from 'utils/types/trezor';
+ import type { CoinInfo } from 'flowtype';
+ import type { MessageResponse } from './helpers/MessageResponse';
+ import type { AccountInfoPayload } from 'utils/types/response';
+ import type { Session as TrezorSession } from 'trezor.js';
 
 type Params = {
     path: ?Array<number>,
     xpub: ?string,
     coinInfo: CoinInfo,
+    session: TrezorSession,
 }
 
-type Response = AccountInfo | {
-    error: string,
-}
+type Response = AccountInfoPayload;
+
+export type GetAccountInfoOptions = {
+  coin?: string,
+  xpub?: string,
+  path?: string,
+  crossChain?: boolean,
+  session: TrezorSession,
+};
 
 export default class GetAccountInfo {
+
     params: Params;
-    confirmed: boolean = false;
+
     backend: BlockBook;
+
     discovery: ?Discovery;
 
-    constructor(options: Options) {
+    // _getHDNode: (path: Array<number>,
+    //   coinInfo: ?CoinInfo) => Promise<trezor.HDNodeResponse>
+    //
+    // _getBitcoinHDNode: (path: Array<number>,
+    //   coinInfo?: ?CoinInfo) => Promise<trezor.HDNodeResponse>;
 
-        this.session = options.session;
+    constructor(options: GetAccountInfoOptions) {
 
-        // super(message);
-        this.requiredPermissions = ['read'];
-        this.info = 'Export account info';
-
-        // const payload: Object = message.payload;
+        // this.session = options.session;
 
         // validate incoming parameters
         validateParams(options, [
@@ -81,52 +106,18 @@ export default class GetAccountInfo {
             throw NO_COIN_INFO;
         } else {
             // check required firmware with coinInfo support
-            this.requiredFirmware = [ coinInfo.support.trezor1, coinInfo.support.trezor2 ];
+            // this.requiredFirmware = [ coinInfo.support.trezor1, coinInfo.support.trezor2 ];
         }
-
-        // delete payload.path;
-        // payload.xpub = 'ypub6XKbB5DSkq8Royg8isNtGktj6bmEfGJXDs83Ad5CZ5tpDV8QofwSWQFTWP2Pv24vNdrPhquehL7vRMvSTj2GpKv6UaTQCBKZALm6RJAmxG6'
-        // payload.xpub = 'xpub6BiVtCpG9fQQNBuKZoKzhzmENDKdCeXQsNVPF2Ynt8rhyYznmPURQNDmnNnX9SYahZ1DVTaNtsh3pJ4b2jKvsZhpv2oVj76YETCGztKJ3LM'
 
         this.params = {
             path: path,
             xpub: options.xpub,
             coinInfo,
+            session: options.session
         };
 
-        // this._getHDNode = this._getHDNode.bind(this);
-        // this.getBitcoinHDNode = this.getBitcoinHDNode.bind(this);
-    }
-
-    async confirmation(): Promise<boolean> {
-        if (this.confirmed) return true;
-        // wait for popup window
-        // await this.getPopupPromise().promise;
-        // initialize user response promise
-        // const uiPromise = this.createUiPromise(UI.RECEIVE_CONFIRMATION, this.device);
-
-        let label: string;
-        if (this.params.path) {
-            label = getAccountLabel(this.params.path, this.params.coinInfo);
-        } else if (this.params.xpub) {
-            label = `Export ${ this.params.coinInfo.label } account for public key <span>${ this.params.xpub }</span>`;
-        } else {
-            return true;
-        }
-
-        // request confirmation view
-        // this.postMessage(new UiMessage(UI.REQUEST_CONFIRMATION, {
-        //     view: 'export-account-info',
-        //     label,
-        // }));
-
-        // wait for user action
-        // const uiResp: UiPromiseResponse = await uiPromise.promise;
-        // const resp: string = uiResp.payload;
-
-        // this.confirmed = (resp === 'true');
-        this.confirmed = true;
-        return this.confirmed;
+        this._getHDNode = this._getHDNode.bind(this);
+        this._getBitcoinHDNode = this._getBitcoinHDNode.bind(this);
     }
 
     async run(): Promise<Response> {
@@ -160,35 +151,35 @@ export default class GetAccountInfo {
     }
 
     async _getAccountFromPublicKey(): Promise<Response> {
-        // const discovery: Discovery = this.discovery = new Discovery({
-        //     getHDNode: this.device.getCommands().getHDNode.bind(this.device.getCommands()),
-        //     coinInfo: this.params.coinInfo,
-        //     backend: this.backend,
-        //     loadInfo: false,
-        // });
-        //
-        // const deferred: Deferred<Response> = createDeferred('account_discovery');
-        // discovery.on('update', async (accounts: Array<Account>) => {
-        //     const account = accounts.find(a => a.xpub === this.params.xpub);
-        //     if (account) {
-        //         discovery.removeAllListeners();
-        //         discovery.completed = true;
-        //
-        //         await discovery.getAccountInfo(account);
-        //         discovery.stop();
-        //         deferred.resolve(this._response(account));
-        //     }
-        // });
-        // discovery.on('complete', () => {
-        //     deferred.resolve(this._response(null));
-        // });
-        //
-        // discovery.start();
-        //
-        // return await deferred.promise;
+      const discovery: Discovery = this.discovery = new Discovery({
+          getHDNode: this._getHDNode,
+          coinInfo: this.params.coinInfo,
+          backend: this.backend,
+          loadInfo: false,
+      });
+
+      const deferred: Deferred<Response> = createDeferred('account_discovery');
+      discovery.on('update', async (accounts: Array<Account>) => {
+          const account = accounts.find(a => a.xpub === this.params.xpub);
+          if (account) {
+              discovery.removeAllListeners();
+              discovery.completed = true;
+
+              await discovery.getAccountInfo(account);
+              discovery.stop();
+              deferred.resolve(this._response(account));
+          }
+      });
+      discovery.on('complete', () => {
+          deferred.resolve(this._response(null));
+      });
+
+      discovery.start();
+
+      return await deferred.promise;
     }
 
-    async getBitcoinHDNode(
+    async _getBitcoinHDNode(
       path: Array<number>,
       coinInfo?: ?CoinInfo
     ): Promise<trezor.HDNodeResponse> {
@@ -196,9 +187,9 @@ export default class GetAccountInfo {
       const childPath: Array<number> = path.concat([suffix]);
 
 
-      const resKey: MessageResponse<trezor.PublicKey> =
+      const resKey: trezor.PublicKey =
         await this.getPublicKey(path, 'Bitcoin');
-      const childKey: MessageResponse<trezor.PublicKey>=
+      const childKey: trezor.PublicKey=
         await this.getPublicKey(childPath, 'Bitcoin');
       const publicKey: trezor.PublicKey =
         hdnodeUtils.xpubDerive(resKey, childKey, suffix);
@@ -235,7 +226,7 @@ export default class GetAccountInfo {
     script_type?: ?string,
   ): Promise<trezor.PublicKey> {
     const response: MessageResponse<trezor.PublicKey> =
-      await this.session.typedCall('GetPublicKey', 'PublicKey', {
+      await this.params.session.typedCall('GetPublicKey', 'PublicKey', {
       address_n,
       coin_name,
       script_type,
@@ -248,10 +239,10 @@ export default class GetAccountInfo {
       // if (!this.device.atLeast(['1.7.2', '2.0.10']))
       const isOld = true;
       if (isOld) {
-        return await this.getBitcoinHDNode(path, coinInfo);
+        return await this._getBitcoinHDNode(path, coinInfo);
       }
       if (!coinInfo) {
-        return await this.getBitcoinHDNode(path);
+        return await this._getBitcoinHDNode(path);
       }
 
       const suffix: number = 0;
@@ -273,20 +264,9 @@ export default class GetAccountInfo {
         }
       }
 
-      // const resKeyMessage: MessageResponse<trezor.PublicKey> =
-      //   await this.getPublicKey(path, coinInfo.name, scriptType);
-      // const resKey: trezor.PublicKey = resKeyMessage.message;
-      //
-      // const childKeyMessage: MessageResponse<trezor.PublicKey>=
-      //   await this.getPublicKey(childPath, coinInfo.name, scriptType);
-      // const childKey: trezor.PublicKey = childKeyMessage.message;
-      //
-      // const publicKey: trezor.PublicKey =
-      //   hdnodeUtils.xpubDerive(resKey, childKey, suffix, network, coinInfo.network);
-
-      const resKey: MessageResponse<trezor.PublicKey> =
+      const resKey: trezor.PublicKey =
         await this.getPublicKey(path, coinInfo.name, scriptType);
-      const childKey: MessageResponse<trezor.PublicKey>=
+      const childKey: trezor.PublicKey=
         await this.getPublicKey(childPath, coinInfo.name, scriptType);
       const publicKey: trezor.PublicKey =
         hdnodeUtils.xpubDerive(resKey, childKey, suffix, network, coinInfo.network);
@@ -321,8 +301,6 @@ export default class GetAccountInfo {
 
     async _getAccountFromDiscovery(): Promise<Response> {
         const discovery: Discovery = this.discovery = new Discovery({
-            // 替换
-            // getHDNode: this.device.getCommands().getHDNode.bind(this.device.getCommands()),
             getHDNode: this._getHDNode,
             coinInfo: this.params.coinInfo,
             backend: this.backend,
@@ -331,73 +309,49 @@ export default class GetAccountInfo {
         const discoveryPromise: Deferred<void> = createDeferred();
 
         discovery.on('update', (accounts: Array<Account>) => {
-            // this.postMessage(new UiMessage(UI.SELECT_ACCOUNT, {
-            //     coinInfo: this.params.coinInfo,
-            //     accounts: accounts.map(a => a.toMessage()),
-            // }));
-          // console.log('discovery.on update')
+          console.log('discovery.on update')
         });
 
         discovery.on('complete', (accounts: Array<Account>) => {
-            // this.postMessage(new UiMessage(UI.SELECT_ACCOUNT, {
-            //     coinInfo: this.params.coinInfo,
-            //     accounts: accounts.map(a => a.toMessage()),
-            //     complete: true,
-            // }));
-          // console.log('discovery.on complete');
+          console.log('discovery.on complete');
           discoveryPromise.resolve();
         });
 
         try {
             discovery.start();
         } catch (error) {
-            return {
-                error,
-            };
+          throw error;
         }
-
-        // set select account view
-        // this view will be updated from discovery events
-        // this.postMessage(new UiMessage(UI.SELECT_ACCOUNT, {
-        //     coinInfo: this.params.coinInfo,
-        //     accounts: [],
-        //     start: true,
-        // }));
-
-        // wait for user action
-        // const uiResp: UiPromiseResponse = await this.createUiPromise(UI.RECEIVE_ACCOUNT, this.device).promise;
 
         await discoveryPromise.promise;
         discovery.stop();
-
-        // const resp: number = parseInt(uiResp.payload);
-        console.log(`discovery accounts count: ${discovery.accounts.length}`)
+        // TODO: 处理多账户选择
         const account = discovery.accounts[0];
-
         return this._response(account);
     }
 
-    _response(account: ?Account): Response {
-        if (!account) {
-            return {
-                error: 'No account found',
-            };
-        }
+    _response(account: ?Account): Response  {
+      if (!account) {
+        throw new Error('Account not found');
+      }
 
-        const nextAddress: string = account.getNextAddress();
-
-        return {
-            id: account.id,
-            path: account.path,
-            serializedPath: getSerializedPath(account.path),
-            address: nextAddress,
-            addressIndex: account.getNextAddressId(),
-            addressPath: account.getAddressPath(nextAddress),
-            addressSerializedPath: getSerializedPath(account.getAddressPath(nextAddress)),
-            xpub: account.xpub,
-            balance: account.getBalance(),
-            confirmed: account.getConfirmedBalance(),
-        };
+      const nextAddress: string = account.getNextAddress();
+      return {
+          id: account.id,
+          path: account.path,
+          serializedPath: getSerializedPath(account.path),
+          address: nextAddress,
+          addressIndex: account.getNextAddressId(),
+          addressPath: account.getAddressPath(nextAddress),
+          addressSerializedPath: getSerializedPath(account.getAddressPath(nextAddress)),
+          xpub: account.xpub,
+          balance: account.getBalance(),
+          confirmed: account.getConfirmedBalance(),
+          transactions: account.getTransactionsCount(),
+          utxo: account.getUtxos(),
+          usedAddresses: account.getUsedAddresses(),
+          unusedAddresses: account.getUnusedAddresses(),
+      };
     }
 
     dispose() {

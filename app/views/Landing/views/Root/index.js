@@ -1,12 +1,13 @@
 /* @flow */
 
-import React from 'react';
+import React, { Component } from 'react';
 import {
   inject,
   observer,
 } from 'mobx-react'
 import PropTypes from 'prop-types'
 import { canUseDOM } from 'exenv'
+import { AppState } from 'store';
 
 // import { stringToHex } from 'utils/bufferUtils'
 // import * as bitcoin from "bitcoinjs-lib-zcash";
@@ -23,7 +24,12 @@ import LandingWrapper from 'views/Landing/components/LandingWrapper'
 // import BetaDisclaimer from 'views/Landing/components/BetaDisclaimer';
 // import ConnectDevice from 'views/Landing/components/ConnectDevice';
 
-class Root extends React.Component {
+type Props = {
+  className?: string,
+  appState: AppState,
+};
+
+class Root extends Component<Props> {
 
   constructor() {
     super();

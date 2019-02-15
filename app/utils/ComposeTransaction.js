@@ -1,5 +1,7 @@
 /* @flow */
 
+import * as bitcoin from 'bitcoinjs-lib-zcash';
+import type { Session as TrezorSession } from 'trezor.js';
 import * as trezor from 'utils/types/trezor';
 import * as hdnodeUtils from 'utils/hdnode';
 import { create as createDeferred } from 'utils/deferred';
@@ -21,6 +23,10 @@ import {
 } from 'utils/tx';
 import * as helper from 'utils/helpers/signtx';
 import { getSegwitNetwork, getBech32Network } from 'utils/data/CoinInfo';
+import type {
+  MessageResponse,
+  DefaultMessageResponse
+} from './helpers/MessageResponse';
 
 import {
   isMultisigPath,
@@ -32,6 +38,8 @@ import {
 
 import type { CoinInfo } from 'flowtype';
 import type { SignedTx } from 'utils/types/trezor';
+import type { Deferred } from 'utils/types';
+import type { TransactionOutput } from 'utils/types/trezor';
 
 import type {
     BuildTxOutputRequest,
@@ -41,7 +49,15 @@ import type {
 type Params = {
     outputs: Array<BuildTxOutputRequest>,
     coinInfo: CoinInfo,
-    push: boolean
+    push: boolean,
+    session: TrezorSession,
+};
+
+export type ComposeTransactionOptions = {
+  outputs: Array<TransactionOutput>,
+  coin: string,
+  push?: boolean,
+  session: TrezorSession,
 };
 
 export default class ComposeTransaction  {
@@ -53,9 +69,13 @@ export default class ComposeTransaction  {
 
     composer: TransactionComposer;
 
-    constructor(options) {
+    // _getHDNode: (path: Array<number>,
+    //   coinInfo: ?CoinInfo) => Promise<trezor.HDNodeResponse>;
+    //
+    // _typedCall: (type: string,
+    //   resType: string, msg: Object) => Promise<DefaultMessageResponse>;
 
-        this.session = options.session;
+    constructor(options: ComposeTransactionOptions) {
         // validate incoming parameters
         validateParams(options, [
             { name: 'outputs', type: 'array', obligatory: true },
@@ -72,13 +92,14 @@ export default class ComposeTransaction  {
         const outputs: Array<BuildTxOutputRequest> = [];
         let total: number = 0;
         options.outputs.forEach(out => {
-            const output = validateHDOutput(out, coinInfo);
-            if (typeof output.amount === 'number') {
-                total += output.amount;
-            }
-            outputs.push(output);
+          const output = validateHDOutput(out.valueOf(), coinInfo);
+          if (typeof output.amount === 'number') {
+              total += output.amount;
+          }
+          outputs.push(output);
         });
 
+        // TODO: 处理 sendMax
         const sendMax: boolean = outputs.find(o => o.type === 'send-max') !== undefined;
 
         // there should be only one output when using send-max option
@@ -91,21 +112,20 @@ export default class ComposeTransaction  {
         if (outputs.find(o => o.type === 'complete') !== undefined && total <= coinInfo.dustLimit) {
             throw new Error('Total amount is too low.');
         }
-
-        if (sendMax) {
-            this.info = 'Send maximum amount';
+        let push: boolean;
+        if (options.push) {
+          push = options.push
         } else {
-            this.info = `Send ${ formatAmount(total, coinInfo) }`;
+          push = false
         }
-
         this.params = {
             outputs,
             coinInfo,
-            push: options.hasOwnProperty('push') ? options.push : false,
+            push,
             session: options.session
         };
-        // this._getHDNode = this._getHDNode.bind(this);
-        // this.typedCall = this.typedCall.bind(this);
+        this._getHDNode = this._getHDNode.bind(this);
+        this._typedCall = this._typedCall.bind(this);
     }
 
     async run(): Promise<SignedTx> {
@@ -136,9 +156,9 @@ export default class ComposeTransaction  {
     const childPath: Array<number> = path.concat([suffix]);
 
 
-    const resKey: MessageResponse<trezor.PublicKey> =
+    const resKey: trezor.PublicKey =
       await this.getPublicKey(path, 'Bitcoin');
-    const childKey: MessageResponse<trezor.PublicKey>=
+    const childKey: trezor.PublicKey=
       await this.getPublicKey(childPath, 'Bitcoin');
     const publicKey: trezor.PublicKey =
       hdnodeUtils.xpubDerive(resKey, childKey, suffix);
@@ -171,7 +191,7 @@ export default class ComposeTransaction  {
     script_type?: ?string,
   ): Promise<trezor.PublicKey> {
     const response: MessageResponse<trezor.PublicKey> =
-      await this.session.typedCall('GetPublicKey', 'PublicKey', {
+      await this.params.session.typedCall('GetPublicKey', 'PublicKey', {
         address_n,
         coin_name,
         script_type,
@@ -179,7 +199,8 @@ export default class ComposeTransaction  {
     return response.message;
   }
 
-  async _getHDNode(path: Array<number>, coinInfo: ?CoinInfo): Promise<trezor.HDNodeResponse> {
+  async _getHDNode(path: Array<number>,
+    coinInfo: ?CoinInfo): Promise<trezor.HDNodeResponse> {
     // return this._getBitcoinHDNode(path, coinInfo);
     // if (!this.device.atLeast(['1.7.2', '2.0.10']))
     const isOld = true;
@@ -209,9 +230,9 @@ export default class ComposeTransaction  {
       }
     }
 
-    const resKey: MessageResponse<trezor.PublicKey> =
+    const resKey: trezor.PublicKey =
       await this.getPublicKey(path, coinInfo.name, scriptType);
-    const childKey: MessageResponse<trezor.PublicKey>=
+    const childKey: trezor.PublicKey=
       await this.getPublicKey(childPath, coinInfo.name, scriptType);
     const publicKey: trezor.PublicKey =
       hdnodeUtils.xpubDerive(resKey, childKey, suffix, network, coinInfo.network);
@@ -274,7 +295,7 @@ export default class ComposeTransaction  {
       discovery.stop();
 
       if (discovery.accounts.length === 0) {
-        return 'not found account'
+        throw new Error('not found account');
       }
 
       return discovery.accounts[0];
@@ -297,8 +318,9 @@ export default class ComposeTransaction  {
         return await this._send(feeLevel.name);
     }
 
-    async typedCall(type: string, resType: string, msg: Object): Promise<DefaultMessageResponse> {
-      return this.session.typedCall(type, resType, msg);
+    async _typedCall(type: string,
+      resType: string, msg: Object): Promise<DefaultMessageResponse> {
+      return this.params.session.typedCall(type, resType, msg);
     }
 
     async _send(feeLevel: string): Promise<SignedTx> {
@@ -312,7 +334,7 @@ export default class ComposeTransaction  {
         const coinInfo: CoinInfo = this.composer.account.coinInfo;
 
         const response = await helper.signTx(
-            this.typedCall,
+            this._typedCall,
             tx.transaction.inputs.map(inp => inputToTrezor(inp, 0)),
             tx.transaction.outputs.sorted.map(out => outputToTrezor(out, coinInfo)),
             refTxs,

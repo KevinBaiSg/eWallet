@@ -1,6 +1,6 @@
 /* @flow */
 'use strict';
-import type { Deferred } from '../types';
+import type { Deferred } from 'utils/types';
 
 export type AsyncDeferred<T> = {
     promise: Promise<T>,

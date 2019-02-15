@@ -5,6 +5,17 @@
 <PROJECT_ROOT>/resources/.*
 <PROJECT_ROOT>/node_modules/webpack-cli
 <PROJECT_ROOT>/node_modules/protobufjs-old-fixed-webpack
+<PROJECT_ROOT>/node_modules/trezor-link/lib/bridge
+<PROJECT_ROOT>/node_modules/trezor-link/lib/lowlevel/send.js.flow
+<PROJECT_ROOT>/node_modules/trezor-link/lib/lowlevel/webusb.js.flow
+<PROJECT_ROOT>/node_modules/trezor-link/lib/lowlevel/withSharedConnections.js.flow
+<PROJECT_ROOT>/node_modules/trezor-link/lib/device-list.js.flow
+<PROJECT_ROOT>/node_modules/trezor-link/lib/fallback.js.flow
+<PROJECT_ROOT>/node_modules/trezor-link/lib/index.js.flow
+<PROJECT_ROOT>/node_modules/trezor.js/lib/session.js.flow
+<PROJECT_ROOT>/node_modules/trezor.js/lib/device-list.js.flow
+<PROJECT_ROOT>/node_modules/trezor.js/lib/device.js.flow
+<PROJECT_ROOT>/node_modules/trezor.js/lib/utils/hdnode.js.flow
 <PROJECT_ROOT>/release/.*
 <PROJECT_ROOT>/dll/.*
 <PROJECT_ROOT>/release/.*
@@ -31,4 +42,5 @@ module.name_mapper='^components' ->'<PROJECT_ROOT>/app/components'
 module.name_mapper='^config' ->'<PROJECT_ROOT>/app/config'
 module.name_mapper='^constants' ->'<PROJECT_ROOT>/app/constants'
 module.name_mapper='^utils' ->'<PROJECT_ROOT>/app/utils'
+module.name_mapper='^store' ->'<PROJECT_ROOT>/app/store'
 module.name_mapper='^flowtype' ->'<PROJECT_ROOT>/flowtype'

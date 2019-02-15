@@ -35,6 +35,7 @@ export default {
    */
   resolve: {
     alias: {
+      store: path.resolve(__dirname, '../app/store'),
       views: path.resolve(__dirname, '../app/views'),
       utils: path.resolve(__dirname, '../app/utils'),
       components: path.resolve(__dirname, '../app/components'),
