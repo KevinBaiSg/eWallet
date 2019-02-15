@@ -2,8 +2,8 @@
 'use strict';
 
 import * as bs58check from 'bs58check';
-import type { TezosOperation } from '../../../types/tezos';
-import type { TezosTransaction } from '../../../types/trezor';
+import type { TezosOperation } from 'utils/types/tezos';
+import type { TezosTransaction } from 'utils/types/trezor';
 import { validateParams } from './../helpers/paramsValidator';
 
 const prefix = {

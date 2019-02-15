@@ -1,13 +1,13 @@
 /* @flow */
 'use strict';
 
-import type { MessageResponse, DefaultMessageResponse } from '../../../device/DeviceCommands';
+import type { MessageResponse, DefaultMessageResponse } from './MessageResponse';
 import type {
     CardanoTxRequest,
     CardanoSignedTx,
     CardanoTxInput,
     CardanoTxOutput,
-} from '../../../types/trezor';
+} from 'utils/types/trezor';
 
 const processTxRequest = async (typedCall: (type: string, resType: string, msg: Object) => Promise<DefaultMessageResponse>,
     request: CardanoTxRequest,

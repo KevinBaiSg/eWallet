@@ -4,7 +4,7 @@ import * as trezor from 'utils/types/trezor';
 import * as hdnodeUtils from 'utils/hdnode';
 import { create as createDeferred } from 'utils/deferred';
 import Discovery from 'utils/helpers/Discovery';
-import { getCoinInfoByCurrency } from 'utils/data/CoinInfo';
+import { getBitcoinNetwork } from 'utils/data/CoinInfo';
 import { validateParams } from 'utils/helpers/paramsValidator';
 import { formatAmount } from 'utils/formatUtils';
 import { NO_COIN_INFO } from 'constants/errors';
@@ -63,7 +63,7 @@ export default class ComposeTransaction  {
             { name: 'push', type: 'boolean' },
         ]);
 
-        const coinInfo: ?CoinInfo = getCoinInfoByCurrency(options.coin);
+        const coinInfo: ?CoinInfo = getBitcoinNetwork(options.coin);
         if (!coinInfo) {
             throw NO_COIN_INFO;
         }
@@ -104,8 +104,8 @@ export default class ComposeTransaction  {
             push: options.hasOwnProperty('push') ? options.push : false,
             session: options.session
         };
-        this._getHDNode = this._getHDNode.bind(this);
-        this.typedCall = this.typedCall.bind(this);
+        // this._getHDNode = this._getHDNode.bind(this);
+        // this.typedCall = this.typedCall.bind(this);
     }
 
     async run(): Promise<SignedTx> {

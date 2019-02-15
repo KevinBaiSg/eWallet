@@ -13,12 +13,12 @@ import type {
     NEMMosaicCreation,
     NEMMosaicDefinition,
     NEMMosaicSupplyChange,
-} from '../../../types/trezor';
+} from 'utils/types/trezor';
 
 import type {
     Transaction as $NEMTransaction,
     Mosaic as $NEMMosaic,
-} from '../../../types/nem';
+} from 'utils/types/nem';
 
 export const NEM_MAINNET: number = 0x68;
 export const NEM_TESTNET: number = 0x98;

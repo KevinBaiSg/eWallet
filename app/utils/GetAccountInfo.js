@@ -18,7 +18,7 @@ import { create as createDeferred } from 'utils/deferred';
 
 import Account, { create as createAccount } from 'utils/account';
 import BlockBook, { create as createBackend } from 'utils/backend';
-import { getCoinInfoByCurrency, fixCoinInfoNetwork, getCoinInfoFromPath } from 'utils/data/CoinInfo';
+import { getBitcoinNetwork, fixCoinInfoNetwork } from 'utils/data/CoinInfo';
 import type {
   CoinInfo,
 } from 'flowtype';
@@ -64,13 +64,13 @@ export default class GetAccountInfo {
         let path: Array<number>;
         let coinInfo: ?CoinInfo;
         if (options.coin) {
-            coinInfo = getCoinInfoByCurrency(options.coin);
+            coinInfo = getBitcoinNetwork(options.coin);
         }
 
         if (options.path) {
             path = validatePath(options.path, 3, true);
             if (!coinInfo) {
-                coinInfo = getCoinInfoFromPath(path);
+                coinInfo = getBitcoinNetwork(path);
             } else if (!options.crossChain) {
                 validateCoinPath(coinInfo, path);
             }
@@ -94,8 +94,8 @@ export default class GetAccountInfo {
             coinInfo,
         };
 
-        this._getHDNode = this._getHDNode.bind(this);
-        this.getBitcoinHDNode = this.getBitcoinHDNode.bind(this);
+        // this._getHDNode = this._getHDNode.bind(this);
+        // this.getBitcoinHDNode = this.getBitcoinHDNode.bind(this);
     }
 
     async confirmation(): Promise<boolean> {

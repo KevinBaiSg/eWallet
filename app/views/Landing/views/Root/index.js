@@ -36,7 +36,7 @@ class Root extends React.Component {
     if (!canUseDOM) { return null }
     const { appState } = this.props;
     // appState.test();
-    // appState.test4();
+    appState.test4();
 
     // window.ipcRenderer.send('synchronous-message', 'ping');
 

@@ -1,8 +1,9 @@
 /* @flow */
 'use strict';
 
-import type { DefaultMessageResponse } from '../../../device/DeviceCommands';
-import type { CoinInfo } from 'flowtype';
+import type { DefaultMessageResponse } from './MessageResponse';
+
+import type { BitcoinNetworkInfo } from 'utils/types';
 import type {
     TxRequest,
     RefTransaction,
@@ -11,7 +12,7 @@ import type {
     SignTxInfoToTrezor,
     TxRequestSerialized,
     SignedTx,
-} from '../../../types/trezor';
+} from 'utils/types/trezor';
 
 const requestPrevTxInfo = (reqTx: RefTransaction,
     requestType: string,
@@ -171,7 +172,7 @@ export const signTx = async (typedCall: (type: string, resType: string, msg: Obj
     inputs: Array<TransactionInput>,
     outputs: Array<TransactionOutput>,
     refTxs: Array<RefTransaction>,
-    coinInfo: CoinInfo,
+    coinInfo: BitcoinNetworkInfo,
     locktime: ?number,
 ): Promise<SignedTx> => {
     // TODO rbf

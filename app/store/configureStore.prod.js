@@ -1,4 +1,5 @@
 // @flow
+
 import { createHashHistory } from 'history';
 // import type { counterStateType } from '../reducers/types';
 import { AppState } from './index';

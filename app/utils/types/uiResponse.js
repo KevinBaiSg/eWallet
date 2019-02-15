@@ -1,6 +1,6 @@
 /* @flow */
 import type { Device, CoreMessage } from './index';
-import * as UI from '../constants/ui';
+import * as UI from 'constants/ui';
 
 /*
 * Messages from UI

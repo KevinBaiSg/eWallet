@@ -1,19 +1,28 @@
 /* @flow */
 import type { Device, CoreMessage } from './index';
 
-import * as POPUP from '../constants/popup';
-import * as UI from '../constants/ui';
+import * as POPUP from 'constants/popup';
+import * as UI from 'constants/ui';
 
-import type { CoinInfo, BrowserState, SimpleAccount } from 'flowtype';
-import type { SelectFeeLevel } from 'flowtype/fee';
+import type { BitcoinAccount } from './account';
+import type { BitcoinNetworkInfo } from './coinInfo';
+import type { SelectFeeLevel } from './fee';
 
-import type { UiResponseFactory } from './ui-response';
+import type { UiResponseFactory } from './uiResponse';
 import type { ConnectSettings } from '../data/ConnectSettings';
 
 export type TransportInfo = {
     type: string,
     version: string,
     outdated: boolean,
+}
+
+export type BrowserState = {
+    name: string,
+    osname: string,
+    supported: boolean,
+    outdated: boolean,
+    mobile: boolean,
 }
 
 /*
@@ -37,8 +46,7 @@ export type MessageWithoutPayload = {
 */
 
 export type DeviceMessage = {
-    +type: typeof UI.REQUEST_BUTTON |
-        typeof UI.REQUEST_PIN |
+    +type: typeof UI.REQUEST_PIN |
         typeof UI.INVALID_PIN |
         typeof UI.REQUEST_PASSPHRASE_ON_DEVICE |
         typeof UI.REQUEST_PASSPHRASE |
@@ -46,6 +54,28 @@ export type DeviceMessage = {
     payload: {
         device: Device,
     },
+};
+
+export type ButtonRequestAddressData = {|
+    type: 'address',
+    serializedPath: string,
+    address: string,
+|};
+
+export type ButtonRequestData = ButtonRequestAddressData;
+
+export type ButtonRequestMessage = {
+    +type: typeof UI.REQUEST_BUTTON,
+    payload: {
+        device: Device,
+        code: string,
+        data: ?ButtonRequestData,
+    },
+}
+
+export type AddressValidationMessage = {
+    +type: typeof UI.ADDRESS_VALIDATION,
+    payload: ?ButtonRequestData,
 }
 
 /*
@@ -109,8 +139,8 @@ export type UnexpectedDeviceMode = {
 export type SelectAccount = {
     +type: typeof UI.SELECT_ACCOUNT,
     payload: {
-        accounts: Array<SimpleAccount>,
-        coinInfo: CoinInfo,
+        accounts: Array<BitcoinAccount>,
+        coinInfo: BitcoinNetworkInfo,
         complete?: boolean,
         start?: boolean,
         checkBalance?: boolean,
@@ -120,7 +150,7 @@ export type SelectAccount = {
 export type SelectFee = {
     +type: typeof UI.SELECT_FEE,
     payload: {
-        coinInfo: CoinInfo,
+        coinInfo: BitcoinNetworkInfo,
         feeLevels: Array<SelectFeeLevel>,
     },
 }
@@ -128,7 +158,7 @@ export type SelectFee = {
 export type UpdateCustomFee = {
     +type: typeof UI.UPDATE_CUSTOM_FEE,
     payload: {
-        coinInfo: CoinInfo,
+        coinInfo: BitcoinNetworkInfo,
         level: SelectFeeLevel,
     },
 }
@@ -159,6 +189,8 @@ export type UiRequest =
 /* eslint-disable no-redeclare */
 declare function MessageFactory(type: $PropertyType<MessageWithoutPayload, 'type'>): CoreMessage;
 declare function MessageFactory(type: $PropertyType<DeviceMessage, 'type'>, payload: $PropertyType<DeviceMessage, 'payload'>): CoreMessage;
+declare function MessageFactory(type: $PropertyType<ButtonRequestMessage, 'type'>, payload: $PropertyType<ButtonRequestMessage, 'payload'>): CoreMessage;
+declare function MessageFactory(type: $PropertyType<AddressValidationMessage, 'type'>, payload: $PropertyType<AddressValidationMessage, 'payload'>): CoreMessage;
 declare function MessageFactory(type: $PropertyType<IFrameHandshake, 'type'>, payload: $PropertyType<IFrameHandshake, 'payload'>): CoreMessage;
 declare function MessageFactory(type: $PropertyType<PopupHandshake, 'type'>, payload: $PropertyType<PopupHandshake, 'payload'>): CoreMessage;
 declare function MessageFactory(type: $PropertyType<RequestPermission, 'type'>, payload: $PropertyType<RequestPermission, 'payload'>): CoreMessage;

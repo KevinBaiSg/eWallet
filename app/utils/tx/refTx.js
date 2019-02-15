@@ -22,11 +22,7 @@ export const getReferencedTransactions = (inputs: Array<BuildTxInput>): Array<st
     if (legacyInputs.length < 1) {
         return [];
     }
-    return uniq(legacyInputs, utxo =>
-      reverseBuffer(utxo.hash).toString('hex')
-    ).map(tx =>
-      reverseBuffer(tx.hash).toString('hex')
-    );
+    return uniq(legacyInputs, utxo => reverseBuffer(utxo.hash).toString('hex')).map(tx => reverseBuffer(tx.hash).toString('hex'));
 };
 
 // Transform referenced transactions from Bitcore to Trezor format

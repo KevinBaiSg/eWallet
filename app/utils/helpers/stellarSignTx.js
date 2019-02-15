@@ -3,17 +3,17 @@
 
 import { validateParams } from './paramsValidator';
 
-import type { MessageResponse, DefaultMessageResponse } from '../../../device/DeviceCommands';
+import type { MessageResponse, DefaultMessageResponse } from './MessageResponse';
 import type {
     Transaction as $StellarTransaction,
     Operation as $StellarOperation,
-} from '../../../types/stellar';
+} from 'utils/types/stellar';
 
 import type {
     StellarSignedTx,
     StellarSignTxMessage,
     StellarOperationMessage,
-} from '../../../types/trezor';
+} from 'utils/types/trezor';
 
 const processTxRequest = async (typedCall: (type: string, resType: string, msg: Object) => Promise<DefaultMessageResponse>,
     operations: Array<StellarOperationMessage>,

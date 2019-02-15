@@ -1,8 +1,8 @@
 /* @flow */
 'use strict';
 
-import type { EthereumTxRequest, EthereumSignedTx } from '../../../types/trezor';
-import type { DefaultMessageResponse } from '../../../device/DeviceCommands';
+import type { EthereumTxRequest, EthereumSignedTx } from 'utils/types/trezor';
+import type { DefaultMessageResponse } from './MessageResponse';
 
 const splitString = (str: ?string, len: number): [string, string] => {
     if (str == null) {

@@ -4,10 +4,12 @@
 <PROJECT_ROOT>/app/dist/.*
 <PROJECT_ROOT>/resources/.*
 <PROJECT_ROOT>/node_modules/webpack-cli
+<PROJECT_ROOT>/node_modules/protobufjs-old-fixed-webpack
 <PROJECT_ROOT>/release/.*
 <PROJECT_ROOT>/dll/.*
 <PROJECT_ROOT>/release/.*
 <PROJECT_ROOT>/git/.*
+<PROJECT_ROOT>/flowtype/.*
 
 [include]
 
@@ -29,3 +31,4 @@ module.name_mapper='^components' ->'<PROJECT_ROOT>/app/components'
 module.name_mapper='^config' ->'<PROJECT_ROOT>/app/config'
 module.name_mapper='^constants' ->'<PROJECT_ROOT>/app/constants'
 module.name_mapper='^utils' ->'<PROJECT_ROOT>/app/utils'
+module.name_mapper='^flowtype' ->'<PROJECT_ROOT>/flowtype'
