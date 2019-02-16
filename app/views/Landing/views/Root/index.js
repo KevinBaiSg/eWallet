@@ -41,8 +41,7 @@ class Root extends Component<Props> {
   render() {
     if (!canUseDOM) { return null }
     const { appState } = this.props;
-    // appState.test();
-    appState.test4();
+    appState.start();
 
     // window.ipcRenderer.send('synchronous-message', 'ping');
 

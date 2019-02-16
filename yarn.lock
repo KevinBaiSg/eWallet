@@ -3137,6 +3137,29 @@ bitcoinjs-lib-zcash@^3.4.1, bitcoinjs-lib-zcash@^3.5.2:
     varuint-bitcoin "^1.0.4"
     wif "^2.0.1"
 
+bitcoinjs-lib-zcash@latest:
+  version "3.6.0"
+  resolved "http://registry.npm.taobao.org/bitcoinjs-lib-zcash/download/bitcoinjs-lib-zcash-3.6.0.tgz#73f657c033352b680ec05e9ad876d044e2b7f341"
+  integrity sha1-c/ZXwDM1K2gOwF6a2HbQROK380E=
+  dependencies:
+    bech32 "^1.1.2"
+    bigi "^1.4.0"
+    bip66 "^1.1.0"
+    bitcoin-ops "^1.3.0"
+    bitcoin-script "^0.1.1"
+    blake2b "^2.1.2"
+    bs58check "^2.0.0"
+    create-hash "^1.1.0"
+    create-hmac "^1.1.3"
+    ecurve "^1.0.0"
+    merkle-lib "^2.0.10"
+    pushdata-bitcoin "^1.0.1"
+    randombytes "^2.0.1"
+    safe-buffer "^5.0.1"
+    typeforce "^1.11.3"
+    varuint-bitcoin "^1.0.4"
+    wif "^2.0.1"
+
 bl@^1.0.0:
   version "1.2.2"
   resolved "http://registry.npmjs.org/bl/-/bl-1.2.2.tgz#a160911717103c07410cef63ef51b397c025af9c"
@@ -8767,6 +8790,11 @@ js-levenshtein@^1.1.3:
   version "1.1.4"
   resolved "https://registry.npmjs.org/js-levenshtein/-/js-levenshtein-1.1.4.tgz#3a56e3cbf589ca0081eb22cd9ba0b1290a16d26e"
   integrity sha512-PxfGzSs0ztShKrUYPIn5r0MtyAhYcCwmndozzpz8YObbPnD1jFxzlBGbRnX2mIu6Z13xN6+PTu05TQFnZFlzow==
+
+js-logger@^1.6.0:
+  version "1.6.0"
+  resolved "http://registry.npm.taobao.org/js-logger/download/js-logger-1.6.0.tgz#7abae5cfaf208c965f3ef20754533bb9e79c7aef"
+  integrity sha1-errlz68gjJZfPvIHVFM7ueeceu8=
 
 js-message@1.0.5:
   version "1.0.5"
