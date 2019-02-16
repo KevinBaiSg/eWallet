@@ -1,6 +1,7 @@
 import React from 'react';
 import { render } from 'react-dom';
 import { AppContainer } from 'react-hot-loader';
+import { Normalize } from 'styled-normalize';
 import Root from './containers/Root';
 import { configureStore, history } from './store/configureStore';
 // import { configureStore, history } from './store/configureStore';
@@ -15,9 +16,12 @@ const store = {
 };
 
 render(
-  <AppContainer>
-    <Root {...store} history={history} />
-  </AppContainer>,
+  <React.Fragment>
+    <Normalize />
+    <AppContainer>
+      <Root {...store} history={history} />
+    </AppContainer>
+  </React.Fragment>,
   document.getElementById('root')
 );
 
@@ -26,9 +30,12 @@ if (module.hot) {
     // eslint-disable-next-line global-require
     const NextRoot = require('./views').default;
     render(
-      <AppContainer>
-        <NextRoot {...store} history={history} />
-      </AppContainer>,
+      <React.Fragment>
+        <Normalize />
+        <AppContainer>
+          <Root {...store} history={history} />
+        </AppContainer>
+      </React.Fragment>,
       document.getElementById('root')
     );
   });
