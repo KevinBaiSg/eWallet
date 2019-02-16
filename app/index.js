@@ -33,8 +33,8 @@ if (module.hot) {
       <React.Fragment>
         <Normalize />
         <AppContainer>
-          <Root {...store} history={history} />
-        </AppContainer>
+          <NextRoot {...store} history={history} />
+        </AppContainer>,
       </React.Fragment>,
       document.getElementById('root')
     );
