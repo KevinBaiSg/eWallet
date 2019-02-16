@@ -74,7 +74,7 @@ export default merge.smart(baseConfig, {
    * https://github.com/webpack/webpack/issues/2010
    */
   node: {
-    __dirname: true,
-    __filename: true
+    __dirname: false,
+    __filename: false
   }
 });
