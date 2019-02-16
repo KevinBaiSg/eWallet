@@ -15,7 +15,6 @@ type Props = {
 export default class Root extends Component<Props> {
   render() {
     const { appState } = this.props;
-    console.log(appState);
     return (
       <Provider appState={appState}>
         <BrowserRouter>
