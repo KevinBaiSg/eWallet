@@ -1,12 +1,16 @@
 import { observable, action } from 'mobx';
 import Logger from 'js-logger';
-import type { Session as TrezorSession } from 'trezor.js';
+// import type { Session as TrezorSession } from 'trezor.js';
+import { BridgeV2 as Transport } from 'trezor-link';
+
 import configLocal from '../static/config_signed.bin';
 import { DeviceList } from 'trezor.js';
 import { httpRequest } from 'utils/networkUtils';
 
 import { parseCoinsJson } from 'utils/data/CoinInfo';
 import { CoinsJson } from 'utils/data/coins'
+
+const EWALLETD_URL = `http://127.0.0.1:58567`;
 
 Logger.useDefaults();
 
@@ -32,8 +36,8 @@ export default class AppState {
   @observable
   deviceConnected: boolean = false;
 
-  @observable
-  session: TrezorSession = null;
+  // @observable
+  // session: TrezorSession = null;
 
   @action
   async start() {
@@ -45,7 +49,13 @@ export default class AppState {
     Logger.info('Loaded device configuration');
     Logger.debug('configuration: ', config);
 
-    const list = new DeviceList({ debug: deviceDebug, config });
+    const transport = new Transport(EWALLETD_URL);
+
+    const list = new DeviceList({
+      debug: deviceDebug,
+      debugInfo: deviceDebug,
+      transport,
+      config });
 
     list.on('connect', (device) => {
       const self: AppState = this;
@@ -61,10 +71,6 @@ export default class AppState {
         self.firmwareVersion = '';
         Logger.info('Disconnected an opened device');
       });
-      // device.waitForSessionAndRun(async (session) => {
-      // }).catch(function(error) {
-      //   console.error('Call rejected:', error);
-      // })
     })
   }
 }
