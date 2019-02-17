@@ -50,6 +50,7 @@ export default class AppState {
     Logger.info('Loaded device configuration');
     Logger.debug('configuration: ', config);
 
+    Logger.debug(`set transport; url: ${EWALLETD_URL}; newVersion: ${EWALLETD_NEWVERSION}`);
     const transport = new Transport(EWALLETD_URL, null, EWALLETD_NEWVERSION);
 
     const list = new DeviceList({
