@@ -14272,6 +14272,20 @@ trezor-link@1.6.0:
     semver-compare "^1.0.0"
     whatwg-fetch "0.11.0"
 
+trezor-link@^1.6.1:
+  version "1.6.1"
+  resolved "http://registry.npm.taobao.org/trezor-link/download/trezor-link-1.6.1.tgz#917899a25edb817e4b26e8c0be661186a1695924"
+  integrity sha1-kXiZol7bgX5LJujAvmYRhqFpWSQ=
+  dependencies:
+    bigi "^1.4.1"
+    ecurve "^1.0.3"
+    json-stable-stringify "^1.0.1"
+    node-fetch "^1.6.0"
+    object.values "^1.0.3"
+    protobufjs-old-fixed-webpack "3.8.5"
+    semver-compare "^1.0.0"
+    whatwg-fetch "0.11.0"
+
 trezor.js@^6.19.4:
   version "6.19.4"
   resolved "http://registry.npm.taobao.org/trezor.js/download/trezor.js-6.19.4.tgz#d9a0a79afddccca6758173c38e6983cf0be2fbd7"

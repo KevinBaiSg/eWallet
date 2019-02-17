@@ -11,6 +11,7 @@ import { parseCoinsJson } from 'utils/data/CoinInfo';
 import { CoinsJson } from 'utils/data/coins'
 
 const EWALLETD_URL = `http://127.0.0.1:58567`;
+const EWALLETD_NEWVERSION = '2.0.25';
 
 Logger.useDefaults();
 
@@ -49,7 +50,7 @@ export default class AppState {
     Logger.info('Loaded device configuration');
     Logger.debug('configuration: ', config);
 
-    const transport = new Transport(EWALLETD_URL);
+    const transport = new Transport(EWALLETD_URL, null, EWALLETD_NEWVERSION);
 
     const list = new DeviceList({
       debug: deviceDebug,
