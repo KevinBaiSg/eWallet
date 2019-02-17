@@ -73,6 +73,26 @@ export default class AppState {
         self.firmwareVersion = '';
         Logger.info('Disconnected an opened device');
       });
-    })
+    });
+
+    // list.on('connectUnacquired', u => {
+    //   console.log(`DeviceList connectUnacquired; UnacquiredDevice: ${u}`);
+    // });
+    //
+    // list.on('transport', t => {
+    //   console.log(`DeviceList  transport is successfully initialized; Transport: ${t}`);
+    // });
+    //
+    // list.on('disconnect', d => {
+    //   console.log(`DeviceList device is disconnected; Device: ${d}`);
+    // });
+    //
+    // list.on('disconnectUnacquired', u => {
+    //   console.log(`DeviceList unacquired device is disconnected; UnacquiredDevice: ${u}`);
+    // });
+
+    list.on('error', e => {
+      console.log(`DeviceList initialization error: ${e}`);
+    });
   }
 }
