@@ -8,7 +8,7 @@ import {
 import PropTypes from 'prop-types'
 import { canUseDOM } from 'exenv'
 import { AppState } from 'store';
-
+import { Redirect } from 'react-router-dom'
 // import { stringToHex } from 'utils/bufferUtils'
 // import * as bitcoin from "bitcoinjs-lib-zcash";
 // import {
@@ -36,15 +36,22 @@ class Root extends Component<Props> {
   }
 
   componentDidMount() {
+    const { appState } = this.props;
+    appState.start();
   }
 
   render() {
     if (!canUseDOM) { return null }
+
     const { appState } = this.props;
-    appState.start();
+
+    if (appState.deviceConnected === true) {
+      console.log('appState.deviceConnected === true');
+      this.props.history.replace('/bridge');
+      return null
+    }
 
     // window.ipcRenderer.send('synchronous-message', 'ping');
-
     return (
       <LandingWrapper loading />
     );

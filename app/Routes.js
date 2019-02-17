@@ -1,15 +1,16 @@
 import React from 'react';
 import { Switch, Route } from 'react-router';
 import RootView from 'views/Landing/views/Root';
-import routes from './constants/routes';
+import RootView2 from 'views/Landing/views/Root2';
 import App from './containers/App';
-// import HomePage from './containers/HomePage';
-// import CounterPage from './containers/CounterPage';
+import { getPattern } from 'support/routes';
 
 export default () => (
   <App>
     <Switch>
-      <Route path={routes.HOME} component={RootView} />
+      <Route exact path={getPattern('landing-bridge')} component={RootView2} />
+      <Route exact path={getPattern('landing-home')} component={RootView} />
+      {/*<Route exact path={getPattern('landing-home2')} component={RootView} />*/}
     </Switch>
   </App>
 );
