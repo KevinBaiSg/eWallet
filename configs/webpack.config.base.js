@@ -42,6 +42,7 @@ export default {
       config: path.resolve(__dirname, '../app/config'),
       constants: path.resolve(__dirname, '../app/constants'),
       support: path.resolve(__dirname, '../app/support'),
+      images: path.resolve(__dirname, '../app/images'),
       flowtype: path.resolve(__dirname, '../flowtype')
     },
     extensions: ['.js', '.jsx', '.json']
