@@ -76,24 +76,24 @@ export default class AppState {
       });
     });
 
-    // list.on('connectUnacquired', u => {
-    //   console.log(`DeviceList connectUnacquired; UnacquiredDevice: ${u}`);
-    // });
-    //
-    // list.on('transport', t => {
-    //   console.log(`DeviceList  transport is successfully initialized; Transport: ${t}`);
-    // });
-    //
-    // list.on('disconnect', d => {
-    //   console.log(`DeviceList device is disconnected; Device: ${d}`);
-    // });
-    //
-    // list.on('disconnectUnacquired', u => {
-    //   console.log(`DeviceList unacquired device is disconnected; UnacquiredDevice: ${u}`);
-    // });
+    list.on('connectUnacquired', u => {
+      Logger.info(`DeviceList connectUnacquired; UnacquiredDevice: ${u}`);
+    });
+
+    list.on('transport', t => {
+      Logger.info(`DeviceList  transport is successfully initialized; Transport: ${t}`);
+    });
+
+    list.on('disconnect', d => {
+      Logger.info(`DeviceList device is disconnected; Device: ${d}`);
+    });
+
+    list.on('disconnectUnacquired', u => {
+      Logger.info(`DeviceList unacquired device is disconnected; UnacquiredDevice: ${u}`);
+    });
 
     list.on('error', e => {
-      console.log(`DeviceList initialization error: ${e}`);
+      Logger.info(`DeviceList initialization error: ${e}`);
     });
   }
 }
