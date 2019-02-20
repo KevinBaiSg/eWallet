@@ -18,7 +18,7 @@ export default () => (
         <ErrorBoundary>
           <ImagesPreloader />
           <WalletContainer>
-            <Route path={getPattern('wallet-dashboard')} component={WalletDashboard} />
+            <Route exact path={getPattern('wallet-dashboard')} component={WalletDashboard} />
           </WalletContainer>
         </ErrorBoundary>
       </Route>
