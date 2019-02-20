@@ -1,9 +1,8 @@
 // @flow
 import React, { Component } from 'react';
 import { Provider } from 'mobx-react';
-// import { ConnectedRouter } from 'connected-react-router';
-import { BrowserRouter } from 'react-router-dom';
-// import type { Store } from '../reducers/types';
+import { MemoryRouter } from 'react-router-dom';
+import { getPattern } from 'support/routes';
 import { AppState } from '../store';
 import Routes from '../Routes';
 
@@ -17,9 +16,9 @@ export default class Root extends Component<Props> {
     const { appState } = this.props;
     return (
       <Provider appState={appState}>
-        <BrowserRouter>
+        <MemoryRouter initialEntries={[getPattern('landing-home')]}>
           <Routes />
-        </BrowserRouter>
+        </MemoryRouter>
       </Provider>
     );
   }

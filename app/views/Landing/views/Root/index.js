@@ -31,10 +31,10 @@ class Root extends Component<Props> {
   render() {
     const { appState } = this.props;
 
-    // if (appState.deviceConnected === true) {
-    //   this.props.history.replace('/bridge');
-    //   return null
-    // }
+    if (appState.deviceConnected === true) {
+      this.props.history.replace('/device/dals');
+      return null
+    }
 
     return (
       <LandingWrapper loading />

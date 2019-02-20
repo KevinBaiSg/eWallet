@@ -9,7 +9,7 @@ export type Route = {
 export const routes: Array<Route> = [
     {
         name: 'landing-home',
-        pattern: '',
+        pattern: '/',
         fields: [],
     },
     {
