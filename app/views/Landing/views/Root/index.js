@@ -44,7 +44,7 @@ class Root extends Component<Props> {
 
 Root.propTypes = {
   appState: PropTypes.object.isRequired,
-}
+};
 
 export default (inject((stores) => {
   return {
