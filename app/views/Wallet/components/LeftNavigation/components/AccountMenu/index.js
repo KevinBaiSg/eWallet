@@ -5,12 +5,12 @@ import Icon from 'components/Icon';
 import colors from 'config/colors';
 import Loader from 'components/Loader';
 import styled, { css } from 'styled-components';
-import * as stateUtils from 'reducers/utils';
+// import * as stateUtils from 'reducers/utils';
 import Tooltip from 'components/Tooltip';
 import ICONS from 'config/icons';
 
 import { NavLink } from 'react-router-dom';
-import { findDeviceAccounts } from 'reducers/AccountsReducer';
+// import { findDeviceAccounts } from 'reducers/AccountsReducer';
 import {
     FONT_SIZE, BORDER_WIDTH, LEFT_NAVIGATION_ROW,
 } from 'config/variables';

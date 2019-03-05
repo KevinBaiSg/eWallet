@@ -31,7 +31,7 @@ import { SCREEN_SIZE } from 'config/variables';
 // import Log from 'components/Log';
 import Backdrop from 'components/Backdrop';
 
-// import LeftNavigation from './components/LeftNavigation/Container';
+import LeftNavigation from './components/LeftNavigation';
 // import TopNavigationAccount from './components/TopNavigationAccount';
 // import TopNavigationDeviceSettings from './components/TopNavigationDeviceSettings';
 
@@ -120,10 +120,12 @@ const StyledBackdrop = styled(Backdrop)`
 const Wallet = (props: Props) => (
     <AppWrapper>
         {/*<Header sidebarEnabled={!!props.wallet.selectedDevice} sidebarOpened={props.wallet.showSidebar} toggleSidebar={props.toggleSidebar} />*/}
-      <Header sidebarEnabled sidebarOpened toggleSidebar />
+      <Header sidebarEnabled sidebarOpened />
         {/*<AppNotifications />*/}
-        {/*<WalletWrapper>*/}
-            {/*<StyledBackdrop show={props.wallet.showSidebar} onClick={props.toggleSidebar} animated />*/}
+        <WalletWrapper>
+          <StyledBackdrop show onClick={props.toggleSidebar} animated />
+          <LeftNavigation />
+          占位
             {/*{props.wallet.selectedDevice && <LeftNavigation />}*/}
             {/*<MainContent preventBgScroll={props.wallet.showSidebar}>*/}
                 {/*<Navigation>*/}
@@ -137,13 +139,12 @@ const Wallet = (props: Props) => (
                 {/*</Body>*/}
                 {/*/!*<Footer />*!/*/}
             {/*</MainContent>*/}
-        {/*</WalletWrapper>*/}
+        </WalletWrapper>
         {/*<ModalContainer />*/}
     </AppWrapper>
 );
 
 Wallet.propTypes = {
-  classes: PropTypes.object.isRequired,
   appState: PropTypes.object.isRequired,
 };
 

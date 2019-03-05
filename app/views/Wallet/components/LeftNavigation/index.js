@@ -1,7 +1,13 @@
 /* @flow */
 
 import * as React from 'react';
-import PropTypes from 'prop-types';
+import {
+  inject,
+  observer,
+} from 'mobx-react'
+
+import PropTypes from 'prop-types'
+
 import colors from 'config/colors';
 import { FONT_SIZE } from 'config/variables';
 import Icon from 'components/Icon';
@@ -17,7 +23,7 @@ import CoinMenu from './components/CoinMenu';
 import DeviceMenu from './components/DeviceMenu';
 import Sidebar from './components/Sidebar';
 
-import type { Props } from './components/common';
+// import type { Props } from './components/common';
 
 const Header = styled(DeviceHeader)`
     border-right: 1px solid ${colors.BACKGROUND};
@@ -117,14 +123,19 @@ type State = {
     bodyMinHeight: number;
 }
 
+type Props = {
+  appState: AppState,
+};
+
 class LeftNavigation extends React.PureComponent<Props, State> {
     constructor(props: Props) {
         super(props);
         this.deviceMenuRef = React.createRef();
-        const { location } = this.props.router;
-        const hasNetwork = location && location.state && location.state.network;
+        // const { location } = this.props.router;
+        // const hasNetwork = location && location.state && location.state.network;
         this.state = {
-            animationType: hasNetwork ? 'slide-left' : null,
+            // animationType: hasNetwork ? 'slide-left' : null,
+          animationType: 'slide-left',
             clicked: false,
             bodyMinHeight: 0,
         };
@@ -135,20 +146,24 @@ class LeftNavigation extends React.PureComponent<Props, State> {
     }
 
     componentWillReceiveProps(nextProps: Props) {
-        const { selectedDevice } = nextProps.wallet;
-        const { location } = nextProps.router;
-        const hasNetwork = location && location.state.network;
-        const deviceReady = selectedDevice && selectedDevice.features && selectedDevice.mode === 'normal';
+        // const { selectedDevice } = nextProps.wallet;
+        // const { location } = nextProps.router;
+        // const hasNetwork = location && location.state.network;
+        // const deviceReady = selectedDevice && selectedDevice.features && selectedDevice.mode === 'normal';
 
-        if (hasNetwork) {
-            this.setState({
-                animationType: 'slide-left',
-            });
-        } else {
-            this.setState({
-                animationType: deviceReady ? 'slide-right' : null,
-            });
-        }
+        // if (hasNetwork) {
+        //     this.setState({
+        //         animationType: 'slide-left',
+        //     });
+        // } else {
+        //     this.setState({
+        //         animationType: deviceReady ? 'slide-right' : null,
+        //     });
+        // }
+
+      this.setState({
+        animationType: 'slide-left',
+      });
     }
 
     componentDidUpdate() {
@@ -156,13 +171,14 @@ class LeftNavigation extends React.PureComponent<Props, State> {
     }
 
     shouldRenderAccounts() {
-        const { selectedDevice } = this.props.wallet;
-        const { location } = this.props.router;
-        return selectedDevice
-            && location
-            && location.state
-            && location.state.network
-            && this.state.animationType === 'slide-left';
+        // const { selectedDevice } = this.props.wallet;
+        // const { location } = this.props.router;
+        // return selectedDevice
+        //     && location
+        //     && location.state
+        //     && location.state.network
+        //     && this.state.animationType === 'slide-left';
+        return true;
     }
 
     handleOpen() {
@@ -201,10 +217,10 @@ class LeftNavigation extends React.PureComponent<Props, State> {
             );
         }
 
-        const { selectedDevice, dropdownOpened } = props.wallet;
-        const isDeviceAccessible = deviceUtils.isDeviceAccessible(selectedDevice);
+        // const { selectedDevice, dropdownOpened } = props.wallet;
+        // const isDeviceAccessible = deviceUtils.isDeviceAccessible(selectedDevice);
         return (
-            <Sidebar isOpen={props.wallet.showSidebar}>
+            <Sidebar isOpen>
                 <Header
                     isSelected
                     isHoverable={false}
@@ -215,7 +231,7 @@ class LeftNavigation extends React.PureComponent<Props, State> {
                     }}
                     device={selectedDevice}
                     disabled={!isDeviceAccessible && this.props.devices.length === 1}
-                    isOpen={this.props.wallet.dropdownOpened}
+                    isOpen
                     icon={(
                         <React.Fragment>
                             <WalletTypeIcon type={selectedDevice && !selectedDevice.useEmptyPassphrase ? 'hidden' : 'standard'} size={25} color={colors.TEXT_SECONDARY} />
@@ -235,41 +251,20 @@ class LeftNavigation extends React.PureComponent<Props, State> {
                 />
                 <Body minHeight={this.state.bodyMinHeight}>
                     {dropdownOpened && <DeviceMenu ref={this.deviceMenuRef} {...this.props} />}
-                    {isDeviceAccessible && menu}
+                    {/*{isDeviceAccessible && menu}*/}
+                    {menu}
                 </Body>
-                <Footer key="sticky-footer">
-                    <Help>
-                        <A
-                            href="https://trezor.io/support/"
-                            target="_blank"
-                            rel="noreferrer noopener"
-                        >
-                            <Icon size={26} icon={icons.CHAT} color={colors.TEXT_SECONDARY} />Need help?
-                        </A>
-                    </Help>
-                </Footer>
             </Sidebar>
         );
     }
 }
 
 LeftNavigation.propTypes = {
-    connect: PropTypes.object,
-    accounts: PropTypes.array,
-    router: PropTypes.object,
-    fiat: PropTypes.array,
-    localStorage: PropTypes.object,
-    discovery: PropTypes.array,
-    wallet: PropTypes.object,
-    devices: PropTypes.array,
-    pending: PropTypes.array,
-    toggleDeviceDropdown: PropTypes.func,
-    addAccount: PropTypes.func,
-    acquireDevice: PropTypes.func,
-    forgetDevice: PropTypes.func,
-    duplicateDevice: PropTypes.func,
-    gotoDeviceSettings: PropTypes.func,
-    onSelectDevice: PropTypes.func,
+  appState: PropTypes.object.isRequired,
 };
 
-export default LeftNavigation;
+export default inject((stores) => {
+  return {
+    appState: stores.appState,
+  }
+})(observer(LeftNavigation))

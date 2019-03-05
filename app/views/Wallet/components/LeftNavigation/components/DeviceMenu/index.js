@@ -1,7 +1,7 @@
 /* @flow */
 import React, { PureComponent } from 'react';
 import styled from 'styled-components';
-import TrezorConnect from 'trezor-connect';
+// import TrezorConnect from 'trezor-connect';
 import type { TrezorDevice } from 'flowtype';
 
 import COLORS from 'config/colors';
@@ -62,12 +62,14 @@ class DeviceMenu extends PureComponent<Props> {
         window.addEventListener('mousedown', this.mouseDownHandler, false);
         // window.addEventListener('blur', this.blurHandler, false);
         const { transport } = this.props.connect;
-        if (transport.type && transport.version.indexOf('webusb') >= 0) TrezorConnect.renderWebUSBButton();
+        // fix by kevin
+        // if (transport.type && transport.version.indexOf('webusb') >= 0) TrezorConnect.renderWebUSBButton();
     }
 
     componentDidUpdate() {
         const { transport } = this.props.connect;
-        if (deviceUtils.isWebUSB(transport)) TrezorConnect.renderWebUSBButton();
+        // fix by kevin
+        // if (deviceUtils.isWebUSB(transport)) TrezorConnect.renderWebUSBButton();
     }
 
     componentWillUnmount(): void {

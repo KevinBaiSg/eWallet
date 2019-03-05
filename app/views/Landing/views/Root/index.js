@@ -13,7 +13,6 @@ import LandingWrapper from 'views/Landing/components/LandingWrapper'
 // import ConnectDevice from 'views/Landing/components/ConnectDevice';
 
 type Props = {
-  className?: string,
   appState: AppState,
 };
 
