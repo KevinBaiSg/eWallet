@@ -26,19 +26,31 @@ if (process.env.NODE_ENV === 'development') {
   Logger.setLevel(Logger.WARN);
 }
 
+export type EWalletDevice = {
+  label: string,
+  features: string,
+  firmware: string,
+  connected: boolean; // device is connected
+};
+
+export type Wallet = {
+  dropdownOpened: boolean;
+};
+
 export default class AppState {
 
   @observable
-  firmwareVersion: string = '';
+  eWalletDevice: EWalletDevice = {
+    label: '',
+    features: '',
+    firmware: '',
+    connected: false,
+  };
 
   @observable
-  deviceLabel: string = '';
-
-  @observable
-  deviceConnected: boolean = false;
-
-  // @observable
-  // session: TrezorSession = null;
+  wallet: Wallet = {
+    dropdownOpened: false,
+  };
 
   @action
   async start() {
@@ -63,15 +75,16 @@ export default class AppState {
     list.on('connect', (device) => {
       const self: AppState = this;
 
-      self.deviceLabel = device.features.label;
-      self.deviceConnected = true;
-      self.firmwareVersion = device.getVersion();
-      Logger.info(`Connected device: ${self.deviceLabel}; firmware Version: ${self.firmwareVersion}`);
+      self.eWalletDevice.label = device.features.label;
+      self.eWalletDevice.connected = true;
+      self.eWalletDevice.firmware = device.getVersion();
+      Logger.info(`Connected device: ${self.eWalletDevice.label}; 
+                    firmware Version: ${self.eWalletDevice.firmware}`);
 
       device.on('disconnect', function() {
-        self.deviceConnected = false;
-        self.deviceLabel = '';
-        self.firmwareVersion = '';
+        self.eWalletDevice.connected = false;
+        self.eWalletDevice.label = '';
+        self.eWalletDevice.firmware = '';
         Logger.info('Disconnected an opened device');
       });
     });
