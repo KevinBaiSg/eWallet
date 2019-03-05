@@ -6,7 +6,7 @@ import { BridgeV2 as Transport } from 'trezor-link';
 import configLocal from '../static/config_signed.bin';
 import { DeviceList } from 'trezor.js';
 import { httpRequest } from 'utils/networkUtils';
-
+import type {Features} from 'trezor.js';
 import { parseCoinsJson } from 'utils/data/CoinInfo';
 import { CoinsJson } from 'utils/data/coins'
 
@@ -28,8 +28,12 @@ if (process.env.NODE_ENV === 'development') {
 
 export type EWalletDevice = {
   label: string,
-  features: string,
+  // features
+  // pin_protection: boolean,
+  // passphrase_protection: boolean,
+  // device_id: string,
   firmware: string,
+  features: Features,
   connected: boolean; // device is connected
 };
 
@@ -41,9 +45,8 @@ export default class AppState {
 
   @observable
   eWalletDevice: EWalletDevice = {
-    label: '',
-    features: '',
     firmware: '',
+    features: null,
     connected: false,
   };
 
@@ -51,6 +54,16 @@ export default class AppState {
   wallet: Wallet = {
     dropdownOpened: false,
   };
+
+  cleanDevice() {
+    this.eWalletDevice.firmware = '';
+    this.eWalletDevice.features = null;
+    this.eWalletDevice.connected = false;
+  }
+
+  cleanWallet() {
+    this.wallet.dropdownOpened = false;
+  }
 
   @action
   async start() {
@@ -74,17 +87,15 @@ export default class AppState {
 
     list.on('connect', (device) => {
       const self: AppState = this;
-
-      self.eWalletDevice.label = device.features.label;
+      self.eWalletDevice.features = device.features;
       self.eWalletDevice.connected = true;
       self.eWalletDevice.firmware = device.getVersion();
       Logger.info(`Connected device: ${self.eWalletDevice.label}; 
                     firmware Version: ${self.eWalletDevice.firmware}`);
 
       device.on('disconnect', function() {
-        self.eWalletDevice.connected = false;
-        self.eWalletDevice.label = '';
-        self.eWalletDevice.firmware = '';
+        self.cleanDevice();
+        self.cleanWallet();
         Logger.info('Disconnected an opened device');
       });
     });
