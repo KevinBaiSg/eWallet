@@ -3,10 +3,10 @@
 import * as React from 'react';
 import {
   inject,
-  observer,
-} from 'mobx-react'
+  observer
+} from 'mobx-react';
 
-import PropTypes from 'prop-types'
+import PropTypes from 'prop-types';
 
 import colors from 'config/colors';
 import { FONT_SIZE } from 'config/variables';
@@ -54,7 +54,7 @@ const TransitionContentWrapper = styled.div`
 `;
 
 const Footer = styled.div.attrs(props => ({
-    style: { position: props.position },
+  style: { position: props.position }
 }))`
     width: 320px;
     bottom: 0;
@@ -92,35 +92,37 @@ const A = styled.a`
 `;
 
 type TransitionMenuProps = {
-    animationType: ?string;
-    children?: React.Node;
+  animationType: ?string;
+  children?: React.Node;
 }
 
 // TransitionMenu needs to dispatch window.resize event
 // in order to StickyContainer be recalculated
 const TransitionMenu = (props: TransitionMenuProps): React$Element<TransitionGroup> => (
-    <TransitionGroupWrapper component="div" className="transition-container">
-        <CSSTransition
-            key={props.animationType}
-            onExit={() => { window.dispatchEvent(new Event('resize')); }}
-            onExited={() => window.dispatchEvent(new Event('resize'))}
-            in
-            out
-            classNames={props.animationType}
-            appear={false}
-            timeout={300}
-        >
-            <TransitionContentWrapper>
-                { props.children }
-            </TransitionContentWrapper>
-        </CSSTransition>
-    </TransitionGroupWrapper>
+  <TransitionGroupWrapper component="div" className="transition-container">
+    <CSSTransition
+      key={props.animationType}
+      onExit={() => {
+        window.dispatchEvent(new Event('resize'));
+      }}
+      onExited={() => window.dispatchEvent(new Event('resize'))}
+      in
+      out
+      classNames={props.animationType}
+      appear={false}
+      timeout={300}
+    >
+      <TransitionContentWrapper>
+        {props.children}
+      </TransitionContentWrapper>
+    </CSSTransition>
+  </TransitionGroupWrapper>
 );
 
 type State = {
-    animationType: ?string;
-    clicked: boolean;
-    bodyMinHeight: number;
+  animationType: ?string;
+  clicked: boolean;
+  bodyMinHeight: number;
 }
 
 type Props = {
@@ -128,143 +130,144 @@ type Props = {
 };
 
 class LeftNavigation extends React.PureComponent<Props, State> {
-    constructor(props: Props) {
-        super(props);
-        this.deviceMenuRef = React.createRef();
-        // const { location } = this.props.router;
-        // const hasNetwork = location && location.state && location.state.network;
-        this.state = {
-            // animationType: hasNetwork ? 'slide-left' : null,
-          animationType: 'slide-left',
-            clicked: false,
-            bodyMinHeight: 0,
-        };
-    }
+  constructor(props: Props) {
+    super(props);
+    this.deviceMenuRef = React.createRef();
+    // const { location } = this.props.router;
+    // const hasNetwork = location && location.state && location.state.network;
+    this.state = {
+      // animationType: hasNetwork ? 'slide-left' : null,
+      animationType: 'slide-left',
+      clicked: false,
+      bodyMinHeight: 0
+    };
+  }
 
-    componentDidMount() {
-        this.recalculateBodyMinHeight();
-    }
+  componentDidMount() {
+    this.recalculateBodyMinHeight();
+  }
 
-    componentWillReceiveProps(nextProps: Props) {
-        // const { selectedDevice } = nextProps.wallet;
-        // const { location } = nextProps.router;
-        // const hasNetwork = location && location.state.network;
-        // const deviceReady = selectedDevice && selectedDevice.features && selectedDevice.mode === 'normal';
+  componentWillReceiveProps(nextProps: Props) {
+    // const { selectedDevice } = nextProps.wallet;
+    // const { location } = nextProps.router;
+    // const hasNetwork = location && location.state.network;
+    // const deviceReady = selectedDevice && selectedDevice.features && selectedDevice.mode === 'normal';
 
-        // if (hasNetwork) {
-        //     this.setState({
-        //         animationType: 'slide-left',
-        //     });
-        // } else {
-        //     this.setState({
-        //         animationType: deviceReady ? 'slide-right' : null,
-        //     });
-        // }
+    // if (hasNetwork) {
+    //     this.setState({
+    //         animationType: 'slide-left',
+    //     });
+    // } else {
+    //     this.setState({
+    //         animationType: deviceReady ? 'slide-right' : null,
+    //     });
+    // }
 
+    this.setState({
+      animationType: 'slide-left'
+    });
+  }
+
+  componentDidUpdate() {
+    this.recalculateBodyMinHeight();
+  }
+
+  shouldRenderAccounts() {
+    // const { selectedDevice } = this.props.wallet;
+    // const { location } = this.props.router;
+    // return selectedDevice
+    //     && location
+    //     && location.state
+    //     && location.state.network
+    //     && this.state.animationType === 'slide-left';
+    return true;
+  }
+
+  handleOpen() {
+    this.setState({ clicked: true });
+    this.props.toggleDeviceDropdown(!this.props.wallet.dropdownOpened);
+  }
+
+  shouldRenderCoins() {
+    return this.state.animationType !== 'slide-left';
+  }
+
+  recalculateBodyMinHeight() {
+    if (this.deviceMenuRef.current) {
       this.setState({
-        animationType: 'slide-left',
+        bodyMinHeight: this.deviceMenuRef.current.getMenuHeight()
       });
     }
+  }
 
-    componentDidUpdate() {
-        this.recalculateBodyMinHeight();
+  deviceMenuRef: { current: any };
+
+  render() {
+    const { props } = this;
+    let menu;
+    if (this.shouldRenderAccounts()) {
+      menu = (
+        <TransitionMenu animationType="slide-left">
+          <AccountMenu {...props} />
+        </TransitionMenu>
+      );
+    } else if (this.shouldRenderCoins()) {
+      menu = (
+        <TransitionMenu animationType="slide-right">
+          <CoinMenu {...props} />
+        </TransitionMenu>
+      );
     }
 
-    shouldRenderAccounts() {
-        // const { selectedDevice } = this.props.wallet;
-        // const { location } = this.props.router;
-        // return selectedDevice
-        //     && location
-        //     && location.state
-        //     && location.state.network
-        //     && this.state.animationType === 'slide-left';
-        return true;
-    }
-
-    handleOpen() {
-        this.setState({ clicked: true });
-        this.props.toggleDeviceDropdown(!this.props.wallet.dropdownOpened);
-    }
-
-    shouldRenderCoins() {
-        return this.state.animationType !== 'slide-left';
-    }
-
-    recalculateBodyMinHeight() {
-        if (this.deviceMenuRef.current) {
-            this.setState({
-                bodyMinHeight: this.deviceMenuRef.current.getMenuHeight(),
-            });
-        }
-    }
-
-    deviceMenuRef: { current: any };
-
-    render() {
-        const { props } = this;
-        let menu;
-        if (this.shouldRenderAccounts()) {
-            menu = (
-                <TransitionMenu animationType="slide-left">
-                    <AccountMenu {...props} />
-                </TransitionMenu>
-            );
-        } else if (this.shouldRenderCoins()) {
-            menu = (
-                <TransitionMenu animationType="slide-right">
-                    <CoinMenu {...props} />
-                </TransitionMenu>
-            );
-        }
-
-        // const { selectedDevice, dropdownOpened } = props.wallet;
-        // const isDeviceAccessible = deviceUtils.isDeviceAccessible(selectedDevice);
-        return (
-            <Sidebar isOpen>
-                <Header
-                    isSelected
-                    isHoverable={false}
-                    onClickWrapper={() => {
-                        if (isDeviceAccessible || this.props.devices.length > 1) {
-                            this.handleOpen();
-                        }
-                    }}
-                    device={selectedDevice}
-                    disabled={!isDeviceAccessible && this.props.devices.length === 1}
-                    isOpen
-                    icon={(
-                        <React.Fragment>
-                            <WalletTypeIcon type={selectedDevice && !selectedDevice.useEmptyPassphrase ? 'hidden' : 'standard'} size={25} color={colors.TEXT_SECONDARY} />
-                            {this.props.devices.length > 1 && (
-                                <Counter>{this.props.devices.length}</Counter>
-                            )}
-                            <Icon
-                                canAnimate={this.state.clicked === true}
-                                isActive={this.props.wallet.dropdownOpened}
-                                size={25}
-                                color={colors.TEXT_SECONDARY}
-                                icon={icons.ARROW_DOWN}
-                            />
-                        </React.Fragment>
-                    )}
-                    {...this.props}
-                />
-                <Body minHeight={this.state.bodyMinHeight}>
-                    {dropdownOpened && <DeviceMenu ref={this.deviceMenuRef} {...this.props} />}
-                    {/*{isDeviceAccessible && menu}*/}
-                    {menu}
-                </Body>
-            </Sidebar>
-        );
-    }
+    // const { selectedDevice, dropdownOpened } = props.wallet;
+    // const isDeviceAccessible = deviceUtils.isDeviceAccessible(selectedDevice);
+    return (
+      <Sidebar isOpen>
+        <Header
+          isSelected
+          isHoverable={false}
+          onClickWrapper={() => {
+            if (isDeviceAccessible || this.props.devices.length > 1) {
+              this.handleOpen();
+            }
+          }}
+          device={selectedDevice}
+          disabled={!isDeviceAccessible && this.props.devices.length === 1}
+          isOpen
+          icon={(
+            <React.Fragment>
+              <WalletTypeIcon type={selectedDevice && !selectedDevice.useEmptyPassphrase ? 'hidden' : 'standard'}
+                              size={25} color={colors.TEXT_SECONDARY}/>
+              {this.props.devices.length > 1 && (
+                <Counter>{this.props.devices.length}</Counter>
+              )}
+              <Icon
+                canAnimate={this.state.clicked === true}
+                isActive={this.props.wallet.dropdownOpened}
+                size={25}
+                color={colors.TEXT_SECONDARY}
+                icon={icons.ARROW_DOWN}
+              />
+            </React.Fragment>
+          )}
+          {...this.props}
+        />
+        <Body minHeight={this.state.bodyMinHeight}>
+        {dropdownOpened && <DeviceMenu ref={this.deviceMenuRef} {...this.props} />}
+        {/*{isDeviceAccessible && menu}*/}
+        {menu}
+        </Body>
+      </Sidebar>
+    );
+  }
 }
 
 LeftNavigation.propTypes = {
-  appState: PropTypes.object.isRequired,
+  appState: PropTypes.object.isRequired
 };
 
 export default inject((stores) => {
   return {
-    appState: stores.appState,
-  }
-})(observer(LeftNavigation))
+    appState: stores.appState
+  };
+})(observer(LeftNavigation));
