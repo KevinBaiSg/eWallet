@@ -6,7 +6,7 @@ import { BridgeV2 as Transport } from 'trezor-link';
 import configLocal from '../static/config_signed.bin';
 import { DeviceList } from 'trezor.js';
 import { httpRequest } from 'utils/networkUtils';
-import type {Features} from 'trezor.js';
+import type { Features, Device, Session } from 'trezor.js';
 import { parseCoinsJson } from 'utils/data/CoinInfo';
 import { CoinsJson } from 'utils/data/coins'
 
@@ -34,7 +34,9 @@ export type EWalletDevice = {
   // device_id: string,
   firmware: string,
   features: Features,
-  connected: boolean; // device is connected
+  connected: boolean, // device is connected
+  device: Device,
+  session: Session,
 };
 
 export type Wallet = {
@@ -48,6 +50,8 @@ export default class AppState {
     firmware: '',
     features: null,
     connected: false,
+    device: null,
+    session: null,
   };
 
   @observable
@@ -59,6 +63,7 @@ export default class AppState {
     this.eWalletDevice.firmware = '';
     this.eWalletDevice.features = null;
     this.eWalletDevice.connected = false;
+    this.eWalletDevice.device = null;
   }
 
   cleanWallet() {
@@ -87,11 +92,11 @@ export default class AppState {
 
     list.on('connect', (device) => {
       const self: AppState = this;
+      self.eWalletDevice.device = device;
       self.eWalletDevice.features = device.features;
       self.eWalletDevice.connected = true;
       self.eWalletDevice.firmware = device.getVersion();
-      Logger.info(`Connected device: ${self.eWalletDevice.label}; 
-                    firmware Version: ${self.eWalletDevice.firmware}`);
+      Logger.info(`Connected device: ${self.eWalletDevice.features.label}; firmware Version: ${self.eWalletDevice.firmware}`);
 
       device.on('disconnect', function() {
         self.cleanDevice();
