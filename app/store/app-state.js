@@ -7,8 +7,9 @@ import configLocal from '../static/config_signed.bin';
 import { DeviceList } from 'trezor.js';
 import { httpRequest } from 'utils/networkUtils';
 import type { Features, Device, Session } from 'trezor.js';
-import { parseCoinsJson } from 'utils/data/CoinInfo';
+import { parseCoinsJson, getCoinInfo } from 'utils/data/CoinInfo';
 import { CoinsJson } from 'utils/data/coins'
+import type { BitcoinNetworkInfo } from '../utils/types';
 
 const EWALLETD_URL = `http://127.0.0.1:58567`;
 const EWALLETD_NEWVERSION = '2.0.25';
@@ -40,8 +41,13 @@ export type EWalletDevice = {
 };
 
 export type Wallet = {
-  dropdownOpened: boolean;
+  dropdownOpened: boolean,
 };
+
+export type LocalStorage = {
+  networks: Array<BitcoinNetworkInfo>,
+};
+
 
 export default class AppState {
 
@@ -57,6 +63,11 @@ export default class AppState {
   @observable
   wallet: Wallet = {
     dropdownOpened: false,
+  };
+
+  @observable
+  localStorage: LocalStorage = {
+    networks: [],
   };
 
   cleanDevice() {
@@ -75,6 +86,17 @@ export default class AppState {
     // load coin information
     parseCoinsJson(CoinsJson);
     Logger.info('Loaded coin information');
+    //
+    let coinInfo = getCoinInfo('bitcoin');
+    if (coinInfo) {
+      this.localStorage.networks.push(coinInfo);
+    }
+
+    coinInfo = getCoinInfo('ethereum');
+    if (coinInfo) {
+      this.localStorage.networks.push(coinInfo);
+    }
+
     // load configuration from local
     const config = await httpRequest(configLocal);
     Logger.info('Loaded device configuration');
