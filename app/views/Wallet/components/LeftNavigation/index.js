@@ -129,7 +129,7 @@ type Props = {
   appState: AppState,
 };
 
-class LeftNavigation extends React.PureComponent<Props, State> {
+class LeftNavigation extends React.Component<Props, State> {
   constructor(props: Props) {
     super(props);
     this.deviceMenuRef = React.createRef();
@@ -204,20 +204,29 @@ class LeftNavigation extends React.PureComponent<Props, State> {
 
   render() {
     const { props } = this;
+    const { appState } = props;
+    const { eWalletDevice, wallet } = appState;
     let menu;
-    if (this.shouldRenderAccounts()) {
-      menu = (
-        <TransitionMenu animationType="slide-left">
-          <AccountMenu {...props} />
-        </TransitionMenu>
-      );
-    } else if (this.shouldRenderCoins()) {
-      menu = (
-        <TransitionMenu animationType="slide-right">
-          <CoinMenu {...props} />
-        </TransitionMenu>
-      );
-    }
+    // if (this.shouldRenderAccounts()) {
+    //   menu = (
+    //     <TransitionMenu animationType="slide-left">
+    //       <AccountMenu {...props} />
+    //     </TransitionMenu>
+    //   );
+    // } else if (this.shouldRenderCoins()) {
+    //   menu = (
+    //     <TransitionMenu animationType="slide-right">
+    //       <CoinMenu {...props} />
+    //     </TransitionMenu>
+    //   );
+    // }
+
+    menu = (
+      <TransitionMenu animationType="slide-right">
+        <CoinMenu {...props} />
+      </TransitionMenu>
+    );
+
 
     // const { selectedDevice, dropdownOpened } = props.wallet;
     // const isDeviceAccessible = deviceUtils.isDeviceAccessible(selectedDevice);
@@ -227,23 +236,21 @@ class LeftNavigation extends React.PureComponent<Props, State> {
           isSelected
           isHoverable={false}
           onClickWrapper={() => {
-            if (isDeviceAccessible || this.props.devices.length > 1) {
-              this.handleOpen();
-            }
+            // if (isDeviceAccessible || this.props.devices.length > 1) {
+            //   this.handleOpen();
+            // }
+            console.log('onClickWrapper')
           }}
-          device={selectedDevice}
-          disabled={!isDeviceAccessible && this.props.devices.length === 1}
+          device={eWalletDevice}
+          disabled={false}
           isOpen
           icon={(
             <React.Fragment>
-              <WalletTypeIcon type={selectedDevice && !selectedDevice.useEmptyPassphrase ? 'hidden' : 'standard'}
+              <WalletTypeIcon type={'standard'}
                               size={25} color={colors.TEXT_SECONDARY}/>
-              {this.props.devices.length > 1 && (
-                <Counter>{this.props.devices.length}</Counter>
-              )}
               <Icon
                 canAnimate={this.state.clicked === true}
-                isActive={this.props.wallet.dropdownOpened}
+                isActive={wallet.dropdownOpened}
                 size={25}
                 color={colors.TEXT_SECONDARY}
                 icon={icons.ARROW_DOWN}
@@ -253,7 +260,7 @@ class LeftNavigation extends React.PureComponent<Props, State> {
           {...this.props}
         />
         <Body minHeight={this.state.bodyMinHeight}>
-        {dropdownOpened && <DeviceMenu ref={this.deviceMenuRef} {...this.props} />}
+        {wallet.dropdownOpened && <DeviceMenu ref={this.deviceMenuRef} {...this.props} />}
         {/*{isDeviceAccessible && menu}*/}
         {menu}
         </Body>
