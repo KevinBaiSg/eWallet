@@ -30,8 +30,8 @@ class Root extends Component<Props> {
   render() {
     const { appState } = this.props;
 
-    if (appState.deviceConnected === true) {
-      this.props.history.replace('/device/dals');
+    if (appState.eWalletDevice.connected === true) {
+      this.props.history.replace('/device');
       return null
     }
 
