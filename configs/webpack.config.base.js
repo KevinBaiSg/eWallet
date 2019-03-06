@@ -43,6 +43,7 @@ export default {
       constants: path.resolve(__dirname, '../app/constants'),
       support: path.resolve(__dirname, '../app/support'),
       images: path.resolve(__dirname, '../app/images'),
+      translations: path.resolve(__dirname, '../app/translations'),
       flowtype: path.resolve(__dirname, '../flowtype')
     },
     extensions: ['.js', '.jsx', '.json']
@@ -61,8 +62,8 @@ export default {
    * If you run the bundle in node.js it falls back to these values of node.js.
    * https://github.com/webpack/webpack/issues/2010
    */
-  // node: {
-  //   __dirname: true,
-  //   __filename: true
-  // }
+  node: {
+    __dirname: true,
+    // __filename: true
+  }
 };

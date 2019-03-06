@@ -11,6 +11,9 @@ import colors from 'config/colors';
 
 // import InitializationError from '../InitializationError';
 
+// import {i18n} from 'translations/i18n';
+const i18n = new (require('translations/i18n'));
+
 type Props = {
   loading?: boolean;
   error?: ?string;
@@ -40,7 +43,7 @@ const LandingLoader = styled(Loader)`
 
 const LandingWrapper = (props: Props) => (
   <Wrapper>
-    {props.loading && <LandingLoader text="Loading" size={100} />}
+    {props.loading && <LandingLoader text={i18n.__('Loading')} size={100} />}
     {!props.loading && <LandingLoader text="test" size={100} />}
     {/*{!props.loading && (*/}
       {/*<React.Fragment>*/}
