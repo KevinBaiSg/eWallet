@@ -74,6 +74,8 @@ app.on('ready', async () => {
     show: false,
     width: 1024,
     height: 728,
+    resizable: false,
+    fullscreen: false,
     webPreferences: {
       nodeIntegrationInWorker: true,
       // nodeIntegration: true,
