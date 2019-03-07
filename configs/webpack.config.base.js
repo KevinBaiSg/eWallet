@@ -4,7 +4,10 @@
 
 import path from 'path';
 import webpack from 'webpack';
+import GitRevisionPlugin from 'git-revision-webpack-plugin';
 import { dependencies } from '../package.json';
+
+const gitRevisionPlugin = new GitRevisionPlugin();
 
 export default {
   externals: [...Object.keys(dependencies || {})],
@@ -52,7 +55,9 @@ export default {
     new webpack.EnvironmentPlugin({
       NODE_ENV: 'production'
     }),
-
+    new webpack.DefinePlugin({
+      COMMITHASH: JSON.stringify(gitRevisionPlugin.commithash()),
+    }),
     new webpack.NamedModulesPlugin()
   ],
 
