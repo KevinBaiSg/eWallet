@@ -10,29 +10,17 @@ import PropTypes from 'prop-types';
 
 import colors from 'config/colors';
 import styled, { css } from 'styled-components';
-// import { connect } from 'react-redux';
 import { Route, withRouter } from 'react-router-dom';
-
-// import type { MapStateToProps, MapDispatchToProps } from 'react-redux';
 import type { State } from 'flowtype';
 
-// import type { WalletAction } from 'actions/WalletActions';
-// import { toggleSidebar } from 'actions/WalletActions';
-// import { bindActionCreators } from 'redux';
-
 import Header from 'components/Header';
-// import Footer from 'components/Footer';
-// import ModalContainer from 'components/modals/Container';
-// import AppNotifications from 'components/notifications/App';
-// import ContextNotifications from 'components/notifications/Context';
+import Footer from 'components/Footer';
 
 import { SCREEN_SIZE } from 'config/variables';
-
-// import Log from 'components/Log';
 import Backdrop from 'components/Backdrop';
-
 import LeftNavigation from './components/LeftNavigation';
 import AppState from 'store/app-state';
+import { getPattern } from '../../support/routes';
 
 // import TopNavigationAccount from './components/TopNavigationAccount';
 // import TopNavigationDeviceSettings from './components/TopNavigationDeviceSettings';
@@ -112,37 +100,49 @@ const StyledBackdrop = styled(Backdrop)`
     }
 `;
 
-const Wallet = (props: Props) => (
-  <AppWrapper>
-    {/*<Header sidebarEnabled={!!props.wallet.selectedDevice} sidebarOpened={props.wallet.showSidebar} toggleSidebar={props.toggleSidebar} />*/}
-    <Header sidebarEnabled sidebarOpened/>
-    {/*<AppNotifications />*/}
-    <WalletWrapper>
-      <StyledBackdrop show onClick={props.toggleSidebar} animated/>
-      {props.appState.eWalletDevice.device && <LeftNavigation/>}
-      <MainContent preventBgScroll={props.wallet.showSidebar}>
-        {/*<Navigation>*/}
-        {/*<Route path="/device/:device/network/:network/account/:account" component={TopNavigationAccount} />*/}
-        {/*<Route path="/device/:device/device-settings" component={TopNavigationDeviceSettings} />*/}
-        {/*</Navigation>*/}
-        {/*/!*<ContextNotifications />*!/*/}
-        {/*/!*<Log />*!/*/}
-        {/*<Body>*/}
-        {/*{ props.children }*/}
-        {/*</Body>*/}
-        {/*<Footer />*/}
-      </MainContent>
-    </WalletWrapper>
-    {/*<ModalContainer />*/}
-  </AppWrapper>
-);
+class Wallet extends React.Component<Props, State> {
+  render() {
+    const { props } = this;
+    const { eWalletDevice, wallet } = props.appState;
+
+    if (!eWalletDevice.connected) {
+      this.props.history.replace(getPattern('landing-home'));
+      return null
+    }
+
+    return (
+      <AppWrapper>
+        <Header sidebarEnabled={!!eWalletDevice.device}
+                sidebarOpened={!!wallet.showSidebar}
+          /*toggleSidebar={props.toggleSidebar}*//>
+        {/*<AppNotifications />*/}
+        <WalletWrapper>
+          <StyledBackdrop show onClick={props.toggleSidebar} animated/>
+          {eWalletDevice.device && <LeftNavigation/>}
+          <MainContent preventBgScroll={false}>
+            <Navigation>
+              {/*<Route path="/device/:device/network/:network/account/:account" component={TopNavigationAccount}/>*/}
+              {/*<Routeret path="/device/:device/device-settings" component={TopNavigationDeviceSettings}/>*/}
+            </Navigation>
+            {/*<ContextNotifications />*/}
+            {/*<Log />*/}
+            <Body>
+            {props.children}
+            </Body>
+            {/*<Footer opened/>*/}
+          </MainContent>
+        </WalletWrapper>
+        {/*<ModalContainer />*/}
+      </AppWrapper>)
+  }
+}
 
 Wallet.propTypes = {
   appState: PropTypes.object.isRequired
 };
 
-export default inject((stores) => {
+export default withRouter(inject((stores) => {
   return {
     appState: stores.appState
   };
-})(observer(Wallet));
+})(observer(Wallet)));
