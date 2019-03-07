@@ -32,19 +32,14 @@ import { SCREEN_SIZE } from 'config/variables';
 import Backdrop from 'components/Backdrop';
 
 import LeftNavigation from './components/LeftNavigation';
+import AppState from 'store/app-state';
+
 // import TopNavigationAccount from './components/TopNavigationAccount';
 // import TopNavigationDeviceSettings from './components/TopNavigationDeviceSettings';
 
-type StateProps = {
-  wallet: $ElementType<State, 'wallet'>,
-  children?: React.Node,
-}
-
-type DispatchProps = {
-  toggleSidebar: WalletAction,
+type Props = {
+  appState: AppState,
 };
-
-export type Props = StateProps & DispatchProps;
 
 const AppWrapper = styled.div`
     position: relative;
@@ -124,21 +119,19 @@ const Wallet = (props: Props) => (
     {/*<AppNotifications />*/}
     <WalletWrapper>
       <StyledBackdrop show onClick={props.toggleSidebar} animated/>
-      <LeftNavigation/>
-      占位
-      {props.wallet.selectedDevice && <LeftNavigation/>}
-      {/*<MainContent preventBgScroll={props.wallet.showSidebar}>*/}
-      {/*<Navigation>*/}
-      {/*<Route path="/device/:device/network/:network/account/:account" component={TopNavigationAccount} />*/}
-      {/*<Route path="/device/:device/device-settings" component={TopNavigationDeviceSettings} />*/}
-      {/*</Navigation>*/}
-      {/*/!*<ContextNotifications />*!/*/}
-      {/*/!*<Log />*!/*/}
-      {/*<Body>*/}
-      {/*{ props.children }*/}
-      {/*</Body>*/}
-      {/*/!*<Footer />*!/*/}
-      {/*</MainContent>*/}
+      {props.appState.eWalletDevice.device && <LeftNavigation/>}
+      <MainContent preventBgScroll={props.wallet.showSidebar}>
+        {/*<Navigation>*/}
+        {/*<Route path="/device/:device/network/:network/account/:account" component={TopNavigationAccount} />*/}
+        {/*<Route path="/device/:device/device-settings" component={TopNavigationDeviceSettings} />*/}
+        {/*</Navigation>*/}
+        {/*/!*<ContextNotifications />*!/*/}
+        {/*/!*<Log />*!/*/}
+        {/*<Body>*/}
+        {/*{ props.children }*/}
+        {/*</Body>*/}
+        {/*<Footer />*/}
+      </MainContent>
     </WalletWrapper>
     {/*<ModalContainer />*/}
   </AppWrapper>
