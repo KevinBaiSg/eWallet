@@ -126,7 +126,6 @@ type State = {
 }
 
 type Props = {
-  appState: AppState,
 };
 
 class LeftNavigation extends React.Component<Props, State> {
