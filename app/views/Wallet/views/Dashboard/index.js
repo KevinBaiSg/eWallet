@@ -70,7 +70,6 @@ const Dashboard = () => (
 );
 
 Dashboard.propTypes = {
-  appState: PropTypes.object.isRequired,
 };
 
 export default Dashboard
