@@ -3,10 +3,10 @@
 import * as React from 'react';
 import {
   inject,
-  observer,
-} from 'mobx-react'
+  observer
+} from 'mobx-react';
 
-import PropTypes from 'prop-types'
+import PropTypes from 'prop-types';
 
 import colors from 'config/colors';
 import styled, { css } from 'styled-components';
@@ -36,12 +36,12 @@ import LeftNavigation from './components/LeftNavigation';
 // import TopNavigationDeviceSettings from './components/TopNavigationDeviceSettings';
 
 type StateProps = {
-    wallet: $ElementType<State, 'wallet'>,
-    children?: React.Node,
+  wallet: $ElementType<State, 'wallet'>,
+  children?: React.Node,
 }
 
 type DispatchProps = {
-    toggleSidebar: WalletAction,
+  toggleSidebar: WalletAction,
 };
 
 export type Props = StateProps & DispatchProps;
@@ -118,38 +118,38 @@ const StyledBackdrop = styled(Backdrop)`
 `;
 
 const Wallet = (props: Props) => (
-    <AppWrapper>
-        {/*<Header sidebarEnabled={!!props.wallet.selectedDevice} sidebarOpened={props.wallet.showSidebar} toggleSidebar={props.toggleSidebar} />*/}
-      <Header sidebarEnabled sidebarOpened />
-        {/*<AppNotifications />*/}
-        <WalletWrapper>
-          <StyledBackdrop show onClick={props.toggleSidebar} animated />
-          <LeftNavigation />
-          占位
-            {/*{props.wallet.selectedDevice && <LeftNavigation />}*/}
-            {/*<MainContent preventBgScroll={props.wallet.showSidebar}>*/}
-                {/*<Navigation>*/}
-                    {/*<Route path="/device/:device/network/:network/account/:account" component={TopNavigationAccount} />*/}
-                    {/*<Route path="/device/:device/device-settings" component={TopNavigationDeviceSettings} />*/}
-                {/*</Navigation>*/}
-                {/*/!*<ContextNotifications />*!/*/}
-                {/*/!*<Log />*!/*/}
-                {/*<Body>*/}
-                    {/*{ props.children }*/}
-                {/*</Body>*/}
-                {/*/!*<Footer />*!/*/}
-            {/*</MainContent>*/}
-        </WalletWrapper>
-        {/*<ModalContainer />*/}
-    </AppWrapper>
+  <AppWrapper>
+    {/*<Header sidebarEnabled={!!props.wallet.selectedDevice} sidebarOpened={props.wallet.showSidebar} toggleSidebar={props.toggleSidebar} />*/}
+    <Header sidebarEnabled sidebarOpened/>
+    {/*<AppNotifications />*/}
+    <WalletWrapper>
+      <StyledBackdrop show onClick={props.toggleSidebar} animated/>
+      <LeftNavigation/>
+      占位
+      {props.wallet.selectedDevice && <LeftNavigation/>}
+      {/*<MainContent preventBgScroll={props.wallet.showSidebar}>*/}
+      {/*<Navigation>*/}
+      {/*<Route path="/device/:device/network/:network/account/:account" component={TopNavigationAccount} />*/}
+      {/*<Route path="/device/:device/device-settings" component={TopNavigationDeviceSettings} />*/}
+      {/*</Navigation>*/}
+      {/*/!*<ContextNotifications />*!/*/}
+      {/*/!*<Log />*!/*/}
+      {/*<Body>*/}
+      {/*{ props.children }*/}
+      {/*</Body>*/}
+      {/*/!*<Footer />*!/*/}
+      {/*</MainContent>*/}
+    </WalletWrapper>
+    {/*<ModalContainer />*/}
+  </AppWrapper>
 );
 
 Wallet.propTypes = {
-  appState: PropTypes.object.isRequired,
+  appState: PropTypes.object.isRequired
 };
 
 export default inject((stores) => {
   return {
-    appState: stores.appState,
-  }
-})(observer(Wallet))
+    appState: stores.appState
+  };
+})(observer(Wallet));
