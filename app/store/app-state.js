@@ -42,6 +42,7 @@ export type EWalletDevice = {
 
 export type Wallet = {
   dropdownOpened: boolean,
+  showSidebar: boolean,
 };
 
 export type LocalStorage = {
@@ -63,6 +64,7 @@ export default class AppState {
   @observable
   wallet: Wallet = {
     dropdownOpened: false,
+    showSidebar: false,
   };
 
   @observable
@@ -79,6 +81,7 @@ export default class AppState {
 
   cleanWallet() {
     this.wallet.dropdownOpened = false;
+    this.wallet.showSidebar = false;
   }
 
   @action
