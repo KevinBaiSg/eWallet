@@ -10,6 +10,7 @@ import './app.global.css';
 // const history = createHashHistory();
 // const store = configureStore();
 const appState = configureStore();
+appState.start();
 
 const store = {
   appState
