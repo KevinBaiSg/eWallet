@@ -13,11 +13,6 @@ export const routes: Array<Route> = [
         fields: [],
     },
     {
-      name: 'landing-home2',
-      pattern: '/',
-      fields: [],
-    },
-    {
         name: 'landing-bridge',
         pattern: '/bridge',
         fields: ['bridge'],
