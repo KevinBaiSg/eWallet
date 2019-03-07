@@ -5,19 +5,15 @@ import PropTypes from 'prop-types';
 import React from 'react';
 import Link from 'components/Link';
 import { getYear } from 'date-fns';
-import { bindActionCreators } from 'redux';
-import { connect } from 'react-redux';
-
 import colors from 'config/colors';
 import { FONT_SIZE } from 'config/variables';
-import * as LogActions from 'actions/LogActions';
+import { inject, observer } from 'mobx-react';
 
 declare var COMMITHASH: string;
 
 type Props = {
     opened: boolean,
     isLanding: boolean,
-    toggle: () => any,
 }
 
 const Wrapper = styled.div`
@@ -57,13 +53,11 @@ const Right = styled.div`
     margin: 0 10px;
 `;
 
-const Footer = ({ opened, toggle, isLanding }: Props) => (
+const Footer = ({ opened, isLanding }: Props) => (
     <Wrapper>
         <Left>
             <Copy title={COMMITHASH}>&copy; {getYear(new Date())}</Copy>
-            <StyledLink href="http://satoshilabs.com" isGreen>SatoshiLabs</StyledLink>
-            <StyledLink href="./assets/tos.pdf" isGreen>Terms</StyledLink>
-            <StyledLink onClick={toggle} isGreen>{ opened ? 'Hide Log' : 'Show Log' }</StyledLink>
+            <StyledLink href="http://satoshilabs.com" isGreen>eWallet</StyledLink>
         </Left>
         {!isLanding && (
             <Right>
@@ -74,17 +68,10 @@ const Footer = ({ opened, toggle, isLanding }: Props) => (
 );
 
 Footer.propTypes = {
-    opened: PropTypes.bool.isRequired,
-    isLanding: PropTypes.bool,
-    toggle: PropTypes.func.isRequired,
+  opened: PropTypes.bool.isRequired,
+  isLanding: PropTypes.bool,
 };
 
-const mapStateToProps = state => ({
-    opened: state.log.opened,
-});
-
-const mapDispatchToProps = dispatch => ({
-    toggle: bindActionCreators(LogActions.toggle, dispatch),
-});
-
-export default connect(mapStateToProps, mapDispatchToProps)(Footer);
+export default inject((stores) => {
+  return {};
+})(observer(Footer));
