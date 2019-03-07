@@ -1,10 +1,10 @@
 import React from 'react';
 import styled from 'styled-components';
 
-// import {
-//   inject,
-//   observer,
-// } from 'mobx-react'
+import {
+  inject,
+  observer,
+} from 'mobx-react'
 
 import PropTypes from 'prop-types'
 import { AppState } from 'store';
@@ -16,7 +16,6 @@ import EthIcon from 'images/coins/eth.png';
 
 import { H1 } from 'components/Heading';
 import Paragraph from 'components/Paragraph';
-import { inject, observer } from 'mobx-react';
 
 const Wrapper = styled.div`
     display: flex;
