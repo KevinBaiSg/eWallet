@@ -263,6 +263,7 @@
     "electron-updater": "^4.0.0",
     "env": "^0.0.2",
     "exenv": "^1.2.2",
+    "git-revision-webpack-plugin": "^3.0.3",
     "hd-wallet": "7.14.3",
     "history": "^4.7.2",
     "js-logger": "^1.6.0",
