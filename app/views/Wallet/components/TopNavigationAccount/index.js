@@ -4,16 +4,15 @@ import styled from 'styled-components';
 import React from 'react';
 import { FONT_SIZE, FONT_WEIGHT, SCREEN_SIZE } from 'config/variables';
 import { NavLink } from 'react-router-dom';
-import { connect } from 'react-redux';
+// import { connect } from 'react-redux';
 import colors from 'config/colors';
-import type { State } from 'flowtype';
+// import type { State } from 'flowtype';
 
 import Indicator from './components/Indicator';
-
-type Props = {
-    router: $ElementType<State, 'router'>,
-    selectedAccount: $ElementType<State, 'selectedAccount'>,
-};
+import {
+  inject,
+  observer
+} from 'mobx-react';
 
 const Wrapper = styled.div`
     position: relative;
@@ -66,10 +65,15 @@ const StyledNavLink = styled(NavLink)`
     }
 `;
 
+type Props = {
+  router: $ElementType<State, 'router'>,
+  selectedAccount: $ElementType<State, 'selectedAccount'>,
+};
+
 class TopNavigationAccount extends React.PureComponent<Props> {
     wrapperRefCallback = (element: ?HTMLElement) => {
         this.wrapper = element;
-    }
+    };
 
     wrapper: ?HTMLElement;
 
@@ -95,7 +99,12 @@ class TopNavigationAccount extends React.PureComponent<Props> {
     }
 }
 
-export default connect((state: State): Props => ({
-    router: state.router,
-    selectedAccount: state.selectedAccount,
-}), null)(TopNavigationAccount);
+TopNavigationAccount.propTypes = {
+  // appState: PropTypes.object.isRequired
+};
+
+export default inject((stores) => {
+  return {
+    appState: stores.appState
+  };
+})(observer(TopNavigationAccount));

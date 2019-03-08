@@ -14,7 +14,7 @@ import { Route, withRouter } from 'react-router-dom';
 import type { State } from 'flowtype';
 
 import Header from 'components/Header';
-import Footer from 'components/Footer';
+// import Footer from 'components/Footer';
 
 import { SCREEN_SIZE } from 'config/variables';
 import Backdrop from 'components/Backdrop';
@@ -22,7 +22,7 @@ import LeftNavigation from './components/LeftNavigation';
 import AppState from 'store/app-state';
 import { getPattern } from '../../support/routes';
 
-// import TopNavigationAccount from './components/TopNavigationAccount';
+import TopNavigationAccount from './components/TopNavigationAccount';
 // import TopNavigationDeviceSettings from './components/TopNavigationDeviceSettings';
 
 type Props = {
@@ -121,7 +121,7 @@ class Wallet extends React.Component<Props, State> {
           {eWalletDevice.device && <LeftNavigation/>}
           <MainContent preventBgScroll={false}>
             <Navigation>
-              {/*<Route path="/device/:device/network/:network/account/:account" component={TopNavigationAccount}/>*/}
+              <Route path="/device/:device/network/:network/account/:account" component={TopNavigationAccount}/>
               {/*<Routeret path="/device/:device/device-settings" component={TopNavigationDeviceSettings}/>*/}
             </Navigation>
             {/*<ContextNotifications />*/}
