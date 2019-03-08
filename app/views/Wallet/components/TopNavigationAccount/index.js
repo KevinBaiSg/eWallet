@@ -5,7 +5,6 @@ import React from 'react';
 import { FONT_SIZE, FONT_WEIGHT, SCREEN_SIZE } from 'config/variables';
 import { NavLink } from 'react-router-dom';
 import colors from 'config/colors';
-// import type { State } from 'flowtype';
 
 import Indicator from './components/Indicator';
 import {
@@ -69,7 +68,7 @@ type Props = {
   selectedAccount: $ElementType<State, 'selectedAccount'>,
 };
 
-class TopNavigationAccount extends React.PureComponent<Props> {
+class TopNavigationAccount extends React.Component<Props> {
   wrapperRefCallback = (element: ?HTMLElement) => {
     this.wrapper = element;
   };
@@ -77,21 +76,17 @@ class TopNavigationAccount extends React.PureComponent<Props> {
   wrapper: ?HTMLElement;
 
   render() {
-    const { state, pathname } = this.props.router.location;
-    if (!state) return null;
-    const { network } = this.props.selectedAccount;
-    if (!network) return null;
-
-    const basePath = `/device/${state.device}/network/${state.network}/account/${state.account}`;
+    const { eWalletDevice, wallet } = this.props.appState;
+    const { pathname } = this.props.history.location;
+    // const { network } = this.props.selectedAccount;
+    const network = 'btc';
+    const basePath = `/device/${eWalletDevice.features.device_id}/network/${network}/account/0`;
 
     return (
       <Wrapper className="account-tabs" ref={this.wrapperRefCallback}>
         <StyledNavLink exact to={`${basePath}`}>Summary</StyledNavLink>
         <StyledNavLink to={`${basePath}/receive`}>Receive</StyledNavLink>
         <StyledNavLink to={`${basePath}/send`}>Send</StyledNavLink>
-        {network.type === 'ethereum'
-        && <StyledNavLink to={`${basePath}/signverify`}>Sign &amp; Verify</StyledNavLink>
-        }
         <Indicator pathname={pathname} wrapper={() => this.wrapper}/>
       </Wrapper>
     );
@@ -99,7 +94,6 @@ class TopNavigationAccount extends React.PureComponent<Props> {
 }
 
 TopNavigationAccount.propTypes = {
-  // appState: PropTypes.object.isRequired
 };
 
 export default inject((stores) => {
