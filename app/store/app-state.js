@@ -68,8 +68,8 @@ export default class AppState {
   wallet: Wallet = {
     dropdownOpened: false,
     showSidebar: false,
-    networkType: {
-      type: '',
+    network: {
+      type: 'bitcoin',
     },
   };
 
