@@ -67,9 +67,7 @@ class Indicator extends PureComponent<Props, State> {
     handleResize() {
         this.reposition();
     }
-
-    handleResize: () => void;
-
+    
     reposition(resetAnimation: boolean = true) {
         const wrapper = this.props.wrapper();
         if (!wrapper) return;
