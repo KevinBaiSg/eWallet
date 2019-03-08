@@ -1,6 +1,8 @@
 /* @flow */
 import React from 'react';
-import EthereumTypeSendForm from './ethereum';
+// import EthereumTypeSendForm from './ethereum';
+import BitcoinTypeSendForm from './bitcoin';
+
 import {
   inject,
   observer,
@@ -13,8 +15,10 @@ class AccountSend extends React.Component<Props> {
   render() {
     const { wallet } = this.props.appState;
     switch (wallet.network.type) {
-      case 'ethereum':
-        return <EthereumTypeSendForm />;
+      // case 'ethereum':
+      //   return <EthereumTypeSendForm/>;
+      case 'bitcoin':
+        return <BitcoinTypeSendForm/>;
       default:
         return null;
     }
