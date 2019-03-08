@@ -269,7 +269,7 @@ class LeftNavigation extends React.Component<Props, State> {
 }
 
 LeftNavigation.propTypes = {
-  appState: PropTypes.object.isRequired
+  // appState: PropTypes.object.isRequired
 };
 
 export default inject((stores) => {
