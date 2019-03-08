@@ -4,7 +4,6 @@ import styled from 'styled-components';
 import React from 'react';
 import { FONT_SIZE, FONT_WEIGHT, SCREEN_SIZE } from 'config/variables';
 import { NavLink } from 'react-router-dom';
-// import { connect } from 'react-redux';
 import colors from 'config/colors';
 // import type { State } from 'flowtype';
 
@@ -71,32 +70,32 @@ type Props = {
 };
 
 class TopNavigationAccount extends React.PureComponent<Props> {
-    wrapperRefCallback = (element: ?HTMLElement) => {
-        this.wrapper = element;
-    };
+  wrapperRefCallback = (element: ?HTMLElement) => {
+    this.wrapper = element;
+  };
 
-    wrapper: ?HTMLElement;
+  wrapper: ?HTMLElement;
 
-    render() {
-        const { state, pathname } = this.props.router.location;
-        if (!state) return null;
-        const { network } = this.props.selectedAccount;
-        if (!network) return null;
+  render() {
+    const { state, pathname } = this.props.router.location;
+    if (!state) return null;
+    const { network } = this.props.selectedAccount;
+    if (!network) return null;
 
-        const basePath = `/device/${state.device}/network/${state.network}/account/${state.account}`;
+    const basePath = `/device/${state.device}/network/${state.network}/account/${state.account}`;
 
-        return (
-            <Wrapper className="account-tabs" ref={this.wrapperRefCallback}>
-                <StyledNavLink exact to={`${basePath}`}>Summary</StyledNavLink>
-                <StyledNavLink to={`${basePath}/receive`}>Receive</StyledNavLink>
-                <StyledNavLink to={`${basePath}/send`}>Send</StyledNavLink>
-                {network.type === 'ethereum'
-                    && <StyledNavLink to={`${basePath}/signverify`}>Sign &amp; Verify</StyledNavLink>
-                }
-                <Indicator pathname={pathname} wrapper={() => this.wrapper} />
-            </Wrapper>
-        );
-    }
+    return (
+      <Wrapper className="account-tabs" ref={this.wrapperRefCallback}>
+        <StyledNavLink exact to={`${basePath}`}>Summary</StyledNavLink>
+        <StyledNavLink to={`${basePath}/receive`}>Receive</StyledNavLink>
+        <StyledNavLink to={`${basePath}/send`}>Send</StyledNavLink>
+        {network.type === 'ethereum'
+        && <StyledNavLink to={`${basePath}/signverify`}>Sign &amp; Verify</StyledNavLink>
+        }
+        <Indicator pathname={pathname} wrapper={() => this.wrapper}/>
+      </Wrapper>
+    );
+  }
 }
 
 TopNavigationAccount.propTypes = {
