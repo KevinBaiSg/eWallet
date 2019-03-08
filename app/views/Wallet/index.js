@@ -26,7 +26,6 @@ import TopNavigationAccount from './components/TopNavigationAccount';
 // import TopNavigationDeviceSettings from './components/TopNavigationDeviceSettings';
 
 type Props = {
-  appState: AppState,
 };
 
 const AppWrapper = styled.div`
@@ -122,12 +121,11 @@ class Wallet extends React.Component<Props, State> {
           <MainContent preventBgScroll={false}>
             <Navigation>
               <Route path="/device/:device/network/:network/account/:account" component={TopNavigationAccount}/>
-              {/*<Routeret path="/device/:device/device-settings" component={TopNavigationDeviceSettings}/>*/}
             </Navigation>
             {/*<ContextNotifications />*/}
             {/*<Log />*/}
             <Body>
-            {props.children}
+              {props.children}
             </Body>
             {/*<Footer opened/>*/}
           </MainContent>
