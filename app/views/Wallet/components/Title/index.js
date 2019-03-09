@@ -7,7 +7,7 @@ import { FONT_SIZE, FONT_WEIGHT } from 'config/variables';
 const Wrapper = styled.div`
     font-size: ${FONT_SIZE.WALLET_TITLE};
     font-weight: ${FONT_WEIGHT.MEDIUM};
-    color: ${colors.WALLET_VIEW_TITLE};
+    color: ${colors.HEADER};
     padding-bottom: 35px;
 `;
 
