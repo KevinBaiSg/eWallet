@@ -2,6 +2,7 @@ import React from 'react';
 import { render } from 'react-dom';
 import { AppContainer } from 'react-hot-loader';
 import { Normalize } from 'styled-normalize';
+import BaseStyles from 'support/styles';
 import Root from './containers/Root';
 import { configureStore, history } from './store/configureStore';
 // import { configureStore, history } from './store/configureStore';
@@ -19,6 +20,7 @@ const store = {
 render(
   <React.Fragment>
     <Normalize />
+    <BaseStyles />
     <AppContainer>
       <Root {...store} history={history} />
     </AppContainer>
@@ -33,6 +35,7 @@ if (module.hot) {
     render(
       <React.Fragment>
         <Normalize />
+        <BaseStyles />
         <AppContainer>
           <NextRoot {...store} history={history} />
         </AppContainer>,
