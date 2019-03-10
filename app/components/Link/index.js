@@ -48,42 +48,43 @@ const StyledNavLink = styled(NavLink)`
 `;
 
 class Link extends PureComponent {
-    render() {
-        const shouldRenderRouterLink = this.props.to;
-        let LinkComponent;
-        if (shouldRenderRouterLink) {
-            LinkComponent = (
-                <StyledNavLink {...this.props}>{this.props.children}</StyledNavLink>);
-        } else {
-            LinkComponent = (
-                <A
-                    href={this.props.href}
-                    target={this.props.target || '_blank'}
-                    rel="noreferrer noopener"
-                    {...this.props}
-                >{this.props.children}
-                </A>
-            );
-        }
-
-        return LinkComponent;
+  render() {
+    const shouldRenderRouterLink = this.props.to;
+    let LinkComponent;
+    if (shouldRenderRouterLink) {
+      LinkComponent = (
+        <StyledNavLink {...this.props}>{this.props.children}</StyledNavLink>);
+    } else {
+      LinkComponent = (
+        <A
+          href={this.props.href}
+          target={this.props.target || '_blank'}
+          rel="noreferrer noopener"
+          {...this.props}
+        >{this.props.children}
+        </A>
+      );
     }
+
+    return LinkComponent;
+  }
 }
 
 Link.propTypes = {
-    children: PropTypes.oneOfType([
-        PropTypes.string,
-        PropTypes.object,
-        PropTypes.array,
-        PropTypes.node,
-    ]).isRequired,
-    className: PropTypes.string,
-    href: PropTypes.string,
-    target: PropTypes.string,
-    to: PropTypes.string,
-    onClick: PropTypes.func,
-    isGreen: PropTypes.bool,
-    isGray: PropTypes.bool,
+  children: PropTypes.oneOfType([
+    PropTypes.string,
+    PropTypes.object,
+    PropTypes.array,
+    PropTypes.node
+  ]).isRequired,
+  className: PropTypes.string,
+  href: PropTypes.string,
+  target: PropTypes.string,
+  to: PropTypes.string,
+  onClick: PropTypes.func,
+  isGreen: PropTypes.bool,
+  isGray: PropTypes.bool
+
 };
 
 export default Link;
