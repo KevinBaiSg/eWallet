@@ -1,5 +1,6 @@
 /* @flow */
 import React from 'react';
+import PropTypes from 'prop-types'
 // import EthereumTypeSummary from './ethereum';
 import BitcoinTypeSummary from './bitcoin';
 
@@ -25,7 +26,7 @@ class WrapperProps extends React.Component<Props> {
 }
 
 WrapperProps.propTypes = {
-  // appState: PropTypes.object.isRequired
+  appState: PropTypes.object.isRequired
 };
 
 export default inject((stores) => {

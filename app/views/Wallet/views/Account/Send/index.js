@@ -1,5 +1,6 @@
 /* @flow */
 import React from 'react';
+import PropTypes from 'prop-types'
 // import EthereumTypeSendForm from './ethereum';
 import BitcoinTypeSendForm from './bitcoin';
 
@@ -26,7 +27,7 @@ class AccountSend extends React.Component<Props> {
 }
 
 AccountSend.propTypes = {
-  // appState: PropTypes.object.isRequired
+  appState: PropTypes.object.isRequired
 };
 
 export default inject((stores) => {
