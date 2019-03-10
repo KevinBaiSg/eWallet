@@ -9,6 +9,7 @@ import ErrorBoundary from 'support/ErrorBoundary';
 import ImagesPreloader from 'support/ImagesPreloader';
 
 import WalletDashboard from 'views/Wallet/views/Dashboard';
+import AccountSummary from 'views/Wallet/views/Account/Summary';
 import AccountSend from 'views/Wallet/views/Account/Send';
 
 export default () => (
@@ -20,6 +21,7 @@ export default () => (
           <ImagesPreloader />
           <WalletContainer>
             <Route exact path={getPattern('wallet-dashboard')} component={WalletDashboard} />
+            <Route exact path={getPattern('wallet-account-summary')} component={AccountSummary} />
             <Route path={getPattern('wallet-account-send')} component={AccountSend} />
           </WalletContainer>
         </ErrorBoundary>
