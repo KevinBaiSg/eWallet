@@ -50,8 +50,19 @@ const StyledNavLink = styled(NavLink)`
 class Link extends PureComponent {
   render() {
     const shouldRenderRouterLink = this.props.to;
+    const openExternal = this.props.openExternal;
     let LinkComponent;
-    if (shouldRenderRouterLink) {
+    if (openExternal) {
+      LinkComponent = (
+        <A onClick={() => {
+          const { shell } = require('electron');
+          shell.openExternal(openExternal);
+        }}
+          {...this.props}
+        >{this.props.children}
+        </A>
+      );
+    } else if (shouldRenderRouterLink) {
       LinkComponent = (
         <StyledNavLink {...this.props}>{this.props.children}</StyledNavLink>);
     } else {
@@ -83,8 +94,8 @@ Link.propTypes = {
   to: PropTypes.string,
   onClick: PropTypes.func,
   isGreen: PropTypes.bool,
-  isGray: PropTypes.bool
-
+  isGray: PropTypes.bool,
+  openExternal: PropTypes.string,
 };
 
 export default Link;
