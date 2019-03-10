@@ -15,8 +15,6 @@ import colors from 'config/colors';
 import Title from 'views/Wallet/components/Title';
 import P from 'components/Paragraph';
 import Content from 'views/Wallet/components/Content';
-// import * as stateUtils from 'reducers/utils';
-import type { Token } from 'flowtype';
 // import AdvancedForm from './components/AdvancedForm';
 // import PendingTransactions from '../components/PendingTransactions';
 import { inject, observer } from 'mobx-react';
@@ -162,9 +160,9 @@ const FormButtons = styled.div`
 `;
 
 const SendButton = styled(Button)`
-    word-break: break-all;
-    flex: 1;
-
+  flex: 1;
+  margin-right: 5px;
+  width: 100px;
 `;
 
 const ClearButton = styled(Button)`
@@ -191,8 +189,10 @@ class AccountSend extends React.Component<Props> {
     addressWarnings: null,
     addressInfos: null,
     // for amount
+    amount: '',
     amountErrors: null,
     amountWarnings: null,
+    amountInfos: null
   };
 
   constructor(props) {
@@ -204,14 +204,17 @@ class AccountSend extends React.Component<Props> {
       addressWarnings: null,
       addressInfos: null,
       // for amount
+      amount: '',
       amountErrors: null,
       amountWarnings: null,
+      amountInfos: null,
+      isSetMax: false
     };
 
-    // this.intervalId = false
     this.getAddressInputState = this.getAddressInputState.bind(this);
     this.getAmountInputState = this.getAmountInputState.bind(this);
     this.onAddressChange = this.onAddressChange.bind(this);
+    this.onSetMax = this.onSetMax.bind(this);
   }
 
   getAddressInputState(): string {
@@ -243,7 +246,33 @@ class AccountSend extends React.Component<Props> {
     this.setState({ address: address });
   }
 
+  onSetMax() {
+
+  }
+
   render() {
+    const feeLevels = [
+      {
+        name: 'test1',
+        value: "100",
+      },
+      {
+        name: 'test2',
+        value: "200",
+      }
+    ];
+
+    // export type FeeLevel = {
+    //   label: string;
+    //   gasPrice: string;
+    //   value: string;
+    // }
+    const selectedFeeLevel = {
+      label: "test1",
+      gasPrice: "0.0001",
+      value: "200"
+    };
+
     return (
       <Content>
         <Title>Send Bitcoin(BTC)</Title>
@@ -273,6 +302,94 @@ class AccountSend extends React.Component<Props> {
             )]}
           />
         </InputRow>
+        <InputRow>
+          <Input
+            state={this.getAmountInputState()}
+            autoComplete="off"
+            autoCorrect="off"
+            autoCapitalize="off"
+            spellCheck="false"
+            topLabel={(
+              <AmountInputLabelWrapper>
+                <AmountInputLabel>Amount</AmountInputLabel>
+              </AmountInputLabelWrapper>
+            )}
+            value={'amount'}
+            // onChange={event => onAmountChange(event.target.value)}
+            bottomText="{errors.amount || warnings.amount || infos.amount}"
+            sideAddons={[
+              (
+                <SetMaxAmountButton
+                  key="icon"
+                  onClick={() => this.onSetMax()}
+                  isActive={this.state.isSetMax}
+                >
+                  {!this.state.isSetMax && (
+                    <Icon
+                      icon={ICONS.TOP}
+                      size={25}
+                      color={colors.TEXT_SECONDARY}
+                    />
+                  )}
+                  {this.state.isSetMax && (
+                    <Icon
+                      icon={ICONS.CHECKED}
+                      size={25}
+                      color={colors.WHITE}
+                    />
+                  )}
+                  Set max
+                </SetMaxAmountButton>
+              ),
+              (
+                <CurrencySelect
+                  key="currency"
+                  isSearchable={false}
+                  isClearable={false}
+                  value="ETH"
+                  isDisabled={true}
+                  // onChange={onCurrencyChange}
+                  // options={tokensSelectData}
+                />
+              )
+            ]}
+          />
+        </InputRow>
+        <InputRow>
+          <FeeLabelWrapper>
+            <FeeLabel>Fee</FeeLabel>
+          </FeeLabelWrapper>
+          <Select
+            isSearchable={false}
+            isClearable={false}
+            value={selectedFeeLevel}
+            // onChange={onFeeLevelChange}
+            options={feeLevels}
+            formatOptionLabel={option => (
+              <FeeOptionWrapper>
+                <OptionValue>{option.value}</OptionValue>
+                <OptionLabel>{option.label}</OptionLabel>
+              </FeeOptionWrapper>
+            )}
+          />
+        </InputRow>
+
+        <ToggleAdvancedSettingsWrapper isAdvancedSettingsHidden>
+          <FormButtons isAdvancedSettingsHidden>
+            <ClearButton
+              isWhite
+              // onClick={() => onClear()}
+            >
+              Clear
+            </ClearButton>
+            <SendButton
+              isDisabled={false}
+              // onClick={() => onSend()}
+            >
+              send
+            </SendButton>
+          </FormButtons>
+        </ToggleAdvancedSettingsWrapper>
       </Content>
     );
   }
