@@ -85,12 +85,14 @@ class AccountSummary extends React.Component<Props> {
       };
       return <Content loader={loader} isLoading />;
     }
+    console.log(account);
     const network = getCoinInfo('bitcoin');
     const fiat = [{
       network: network.shortcut,
       value: rates.bitcoin['usd'],//cny usd
     }];
     const balance = BigNumber(account.balance).dividedBy(1e8, 10).toString();
+    const externalAddress = `https://www.blockchain.com/btc/address/${account.address}`;
     return (
       <Content>
         <React.Fragment>
@@ -99,11 +101,11 @@ class AccountSummary extends React.Component<Props> {
               <CoinLogo network="btc"/>
               <AccountTitle>Account #{parseInt("0", 10) + 1}</AccountTitle>
             </AccountName>
-            <Link openExternal={"https://github.com"} isGray>See full transaction history</Link>
+            <Link openExternal={externalAddress} isGray>See full transaction history</Link>
           </AccountHeading>
           <AccountBalance
             network={network}
-            balance={BigNumber(account.balance).dividedBy(1e8, 10).toString()}
+            balance={balance}
             fiat={fiat}
           />
         </React.Fragment>
