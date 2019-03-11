@@ -4173,6 +4173,11 @@ code-point-at@^1.0.0:
   resolved "https://registry.npmjs.org/code-point-at/-/code-point-at-1.1.0.tgz#0d070b4d043a5bea33a2f1a40e2edb3d9a4ccf77"
   integrity sha1-DQcLTQQ6W+ozovGkDi7bPZpMz3c=
 
+coingecko-api@^1.0.3:
+  version "1.0.3"
+  resolved "http://registry.npm.taobao.org/coingecko-api/download/coingecko-api-1.0.3.tgz#f12521b88c35827faabb1767fef575385b351623"
+  integrity sha1-8SUhuIw1gn+quxdn/vV1OFs1FiM=
+
 coinkey@^0.1.0:
   version "0.1.0"
   resolved "http://registry.npm.taobao.org/coinkey/download/coinkey-0.1.0.tgz#bdf2a953dcfe4fd70fdba3000c787ff369d8294c"

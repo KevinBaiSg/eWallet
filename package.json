@@ -257,6 +257,7 @@
     "bchaddrjs": "^0.3.0",
     "bignumber.js": "^8.0.2",
     "bitcoinjs-lib-zcash": "latest",
+    "coingecko-api": "^1.0.3",
     "devtron": "^1.4.0",
     "electron-debug": "^2.1.0",
     "electron-log": "^2.2.17",
