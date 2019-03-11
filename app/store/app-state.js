@@ -3,6 +3,9 @@ import Logger from 'js-logger';
 // import type { Session as TrezorSession } from 'trezor.js';
 import { BridgeV2 as Transport } from 'trezor-link';
 
+import GetAccountInfo from 'utils/GetAccountInfo'
+import Account from 'utils/account'
+
 import configLocal from '../static/config_signed.bin';
 import { DeviceList } from 'trezor.js';
 import { httpRequest } from 'utils/networkUtils';
@@ -10,6 +13,9 @@ import type { Features, Device, Session } from 'trezor.js';
 import { parseCoinsJson, getCoinInfo } from 'utils/data/CoinInfo';
 import { CoinsJson } from 'utils/data/coins'
 import type { BitcoinNetworkInfo } from '../utils/types';
+
+const CoinGecko = require('coingecko-api');
+const CoinGeckoClient = new CoinGecko();
 
 const EWALLETD_URL = `http://127.0.0.1:58567`;
 const EWALLETD_NEWVERSION = '2.0.25';
@@ -46,6 +52,8 @@ export type Wallet = {
   network: {
     type: string,
   },
+  account: Account,
+  rates: any,
 };
 
 export type LocalStorage = {
@@ -61,7 +69,6 @@ export default class AppState {
     features: null,
     connected: false,
     device: null,
-    session: null,
   };
 
   @observable
@@ -71,6 +78,8 @@ export default class AppState {
     network: {
       type: 'bitcoin',
     },
+    account: null,
+    rates: null,
   };
 
   @observable
@@ -91,6 +100,7 @@ export default class AppState {
     this.wallet.network = {
       type: '',
     };
+    this.wallet.account = null;
   }
 
   @action
@@ -158,5 +168,38 @@ export default class AppState {
     list.on('error', e => {
       Logger.info(`DeviceList initialization error: ${e}`);
     });
+  }
+
+  @action
+  async updateRate() {
+    let rates = await CoinGeckoClient.simple.price({
+      ids: ['bitcoin', 'ethereum'],
+      vs_currencies: ['usd', 'cny'],
+    });
+    if (rates && rates.success === true && rates.message === 'OK') {
+      this.wallet.rates = rates.data;
+    }
+  };
+
+  @action
+  async getAccountInfo() {
+    const device = this.eWalletDevice.device;
+
+    if (!!device) {
+      device.waitForSessionAndRun(async (session) => {
+        try {
+          const compose = new GetAccountInfo({
+            path: "m/49'/0'/0'",
+            coin: "btc",
+            session: session
+          });
+          this.wallet.account = await compose.run();
+        } catch (e) {
+          console.error('Call rejected:', e);
+        }
+      }).catch(function(error) {
+        console.error('Call rejected:', error);
+      })
+    }
   }
 }
