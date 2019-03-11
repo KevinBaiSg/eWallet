@@ -135,13 +135,13 @@ class AccountBalance extends PureComponent<Props, State> {
                             {fiatRate && (
                                 <FiatValue>${fiat}</FiatValue>
                             )}
-                            <CoinBalance>{this.props.balance} {network.symbol}</CoinBalance>
+                            <CoinBalance>{this.props.balance} {network.shortcut}</CoinBalance>
                         </BalanceWrapper>
                         {fiatRate && (
                             <BalanceRateWrapper>
                                 <Label>Rate</Label>
                                 <FiatValueRate>${fiatRateValue}</FiatValueRate>
-                                <CoinBalance>1.00 {network.symbol}</CoinBalance>
+                                <CoinBalance>1.00 {network.shortcut}</CoinBalance>
                             </BalanceRateWrapper>
                         )}
                     </React.Fragment>
