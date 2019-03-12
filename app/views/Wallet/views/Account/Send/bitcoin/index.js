@@ -259,7 +259,15 @@ class AccountSend extends React.Component<Props> {
 
   render() {
     const { wallet } = this.props.appState;
-    const {network} = wallet;
+    const {account, rates, network} = wallet;
+    if (!account || !rates) {
+      const loader = {
+        type: 'progress',
+        title: 'Loading account',
+      };
+      return <Content loader={loader} isLoading />;
+    }
+
     const feeLevels = [
       {
         name: 'test1',
