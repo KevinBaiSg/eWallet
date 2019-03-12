@@ -85,7 +85,6 @@ class AccountSummary extends React.Component<Props> {
       };
       return <Content loader={loader} isLoading />;
     }
-    console.log(account);
     const network = getCoinInfo('bitcoin');
     const fiat = [{
       network: network.shortcut,
