@@ -248,6 +248,7 @@ class AccountSend extends React.Component<Props> {
     this.onAmountChange = this.onAmountChange.bind(this);
     this.onSetMax = this.onSetMax.bind(this);
     this.onFeeLevelChange = this.onFeeLevelChange.bind(this);
+    this.onClear = this.onClear.bind(this);
   }
 
   getAddressInputState(): string {
@@ -290,6 +291,14 @@ class AccountSend extends React.Component<Props> {
 
   onFeeLevelChange(selectedFee) {
     this.setState({selectedFeeLevel: selectedFee})
+  }
+
+  onClear() {
+    this.setState({
+      isSetMax: false,
+      address: '',
+      amount: '',
+    })
   }
 
   render() {
@@ -412,7 +421,7 @@ class AccountSend extends React.Component<Props> {
           <FormButtons isAdvancedSettingsHidden>
             <ClearButton
               isWhite
-              // onClick={() => onClear()}
+              onClick={() => this.onClear()}
             >
               Clear
             </ClearButton>
