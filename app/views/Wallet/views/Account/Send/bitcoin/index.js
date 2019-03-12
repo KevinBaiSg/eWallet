@@ -18,6 +18,7 @@ import Content from 'views/Wallet/components/Content';
 // import AdvancedForm from './components/AdvancedForm';
 // import PendingTransactions from '../components/PendingTransactions';
 import { inject, observer } from 'mobx-react';
+import { isValidAddress } from 'utils/addressUtils';
 
 // TODO: Decide on a small screen width for the whole app
 // and put it inside config/variables.js
@@ -277,7 +278,27 @@ class AccountSend extends React.Component<Props> {
   };
 
   onAddressChange(address: string) {
+    const { network } = this.props.appState.wallet;
+
     this.setState({ address: address });
+    if (address.length < 1) {
+      this.setState({
+        address: address,
+        addressErrors: 'Address is not set',
+      });
+    } else if (!isValidAddress(address, network)) {
+      this.setState({
+        address: address,
+        addressErrors: 'Address is not valid',
+      });
+    } else {
+      this.setState({
+        address: address,
+        addressErrors: null,
+        addressWarnings: null,
+        addressInfos: null,
+      });
+    }
   }
 
   onAmountChange(amount: string) {
@@ -295,9 +316,16 @@ class AccountSend extends React.Component<Props> {
 
   onClear() {
     this.setState({
-      isSetMax: false,
       address: '',
+      addressErrors: null,
+      addressWarnings: null,
+      addressInfos: null,
+      // for amount
       amount: '',
+      amountErrors: null,
+      amountWarnings: null,
+      amountInfos: null,
+      isSetMax: false,
     })
   }
 
