@@ -10,7 +10,7 @@ import configLocal from '../static/config_signed.bin';
 import { DeviceList } from 'trezor.js';
 import { httpRequest } from 'utils/networkUtils';
 import type { Features, Device, Session } from 'trezor.js';
-import { parseCoinsJson, getCoinInfo } from 'utils/data/CoinInfo';
+import { parseCoinsJson, getCoinInfo, CoinInfo } from 'utils/data/CoinInfo';
 import { CoinsJson } from 'utils/data/coins'
 import type { BitcoinNetworkInfo } from '../utils/types';
 
@@ -49,9 +49,7 @@ export type EWalletDevice = {
 export type Wallet = {
   dropdownOpened: boolean,
   showSidebar: boolean,
-  network: {
-    type: string,
-  },
+  network: CoinInfo,
   account: Account,
   rates: any,
 };
@@ -75,9 +73,7 @@ export default class AppState {
   wallet: Wallet = {
     dropdownOpened: false,
     showSidebar: false,
-    network: {
-      type: 'bitcoin',
-    },
+    network: null,
     account: null,
     rates: null,
   };
@@ -97,9 +93,7 @@ export default class AppState {
   cleanWallet() {
     this.wallet.dropdownOpened = false;
     this.wallet.showSidebar = false;
-    this.wallet.network = {
-      type: '',
-    };
+    this.wallet.network = null;
     this.wallet.account = null;
   }
 
@@ -112,6 +106,8 @@ export default class AppState {
     let coinInfo = getCoinInfo('bitcoin');
     if (coinInfo) {
       this.localStorage.networks.push(coinInfo);
+      // TODO: 之后修改为选择设置
+      this.wallet.network = coinInfo;
     }
 
     coinInfo = getCoinInfo('ethereum');
