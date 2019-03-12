@@ -193,11 +193,18 @@ class AccountSend extends React.Component<Props> {
     amountErrors: null,
     amountWarnings: null,
     amountInfos: null,
-    isSetMax: false
+    isSetMax: false,
+
+    //
+    selectedFeeLevel: null,
+    feeLevels: null,
   };
 
   constructor(props) {
     super(props);
+
+    const { network } = this.props.appState.wallet;
+
     this.state = {
       // for address
       address: '',
@@ -209,7 +216,30 @@ class AccountSend extends React.Component<Props> {
       amountErrors: null,
       amountWarnings: null,
       amountInfos: null,
-      isSetMax: false
+      isSetMax: false,
+      //
+      feeLevels: [
+        {
+          value: 'Economy',
+          label: network.defaultFees.Economy,
+        },
+        {
+          value: 'High',
+          label: network.defaultFees.High,
+        },
+        {
+          value: 'Normal',
+          label: network.defaultFees.Normal,
+        },
+        {
+          value: 'Low',
+          label: network.defaultFees.Low,
+        }
+      ],
+      selectedFeeLevel: {
+        value: 'Economy',
+        label: network.defaultFees.Economy,
+      },
     };
 
     this.getAddressInputState = this.getAddressInputState.bind(this);
@@ -217,6 +247,7 @@ class AccountSend extends React.Component<Props> {
     this.onAddressChange = this.onAddressChange.bind(this);
     this.onAmountChange = this.onAmountChange.bind(this);
     this.onSetMax = this.onSetMax.bind(this);
+    this.onFeeLevelChange = this.onFeeLevelChange.bind(this);
   }
 
   getAddressInputState(): string {
@@ -257,6 +288,10 @@ class AccountSend extends React.Component<Props> {
     this.setState({isSetMax: !this.state.isSetMax})
   }
 
+  onFeeLevelChange(selectedFee) {
+    this.setState({selectedFeeLevel: selectedFee})
+  }
+
   render() {
     const { wallet } = this.props.appState;
     const {account, rates, network} = wallet;
@@ -267,25 +302,6 @@ class AccountSend extends React.Component<Props> {
       };
       return <Content loader={loader} isLoading />;
     }
-
-    const feeLevels = [
-      {
-        value: 'Economy',
-        label: network.defaultFees.Economy,
-      },
-      {
-        value: 'High',
-        label: network.defaultFees.High,
-      },
-      {
-        value: 'Normal',
-        label: network.defaultFees.Normal,
-      },
-      {
-        value: 'Low',
-        label: network.defaultFees.Low,
-      }
-    ];
 
     const currencySelectOption = [
       { value: network.shortcut, label: network.shortcut },
@@ -380,9 +396,9 @@ class AccountSend extends React.Component<Props> {
           <Select
             isSearchable={false}
             isClearable={false}
-            value={feeLevels[0]}
-            // onChange={onFeeLevelChange}
-            options={feeLevels}
+            value={this.state.selectedFeeLevel}
+            onChange={this.onFeeLevelChange}
+            options={this.state.feeLevels}
             formatOptionLabel={option => (
               <FeeOptionWrapper>
                 <OptionValue>{option.value}</OptionValue>
