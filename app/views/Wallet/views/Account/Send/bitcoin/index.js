@@ -270,25 +270,22 @@ class AccountSend extends React.Component<Props> {
 
     const feeLevels = [
       {
-        name: 'test1',
-        value: "100",
+        value: 'Economy',
+        label: network.defaultFees.Economy,
       },
       {
-        name: 'test2',
-        value: "200",
+        value: 'High',
+        label: network.defaultFees.High,
+      },
+      {
+        value: 'Normal',
+        label: network.defaultFees.Normal,
+      },
+      {
+        value: 'Low',
+        label: network.defaultFees.Low,
       }
     ];
-
-    // export type FeeLevel = {
-    //   label: string;
-    //   gasPrice: string;
-    //   value: string;
-    // }
-    const selectedFeeLevel = {
-      label: "test1",
-      gasPrice: "0.0001",
-      value: "200"
-    };
 
     const currencySelectOption = [
       { value: network.shortcut, label: network.shortcut },
@@ -383,7 +380,7 @@ class AccountSend extends React.Component<Props> {
           <Select
             isSearchable={false}
             isClearable={false}
-            value={selectedFeeLevel}
+            value={feeLevels[0]}
             // onChange={onFeeLevelChange}
             options={feeLevels}
             formatOptionLabel={option => (
