@@ -192,7 +192,8 @@ class AccountSend extends React.Component<Props> {
     amount: '',
     amountErrors: null,
     amountWarnings: null,
-    amountInfos: null
+    amountInfos: null,
+    isSetMax: false
   };
 
   constructor(props) {
@@ -214,6 +215,7 @@ class AccountSend extends React.Component<Props> {
     this.getAddressInputState = this.getAddressInputState.bind(this);
     this.getAmountInputState = this.getAmountInputState.bind(this);
     this.onAddressChange = this.onAddressChange.bind(this);
+    this.onAmountChange = this.onAmountChange.bind(this);
     this.onSetMax = this.onSetMax.bind(this);
   }
 
@@ -246,11 +248,18 @@ class AccountSend extends React.Component<Props> {
     this.setState({ address: address });
   }
 
-  onSetMax() {
+  onAmountChange(amount: string) {
+    this.setState({ amount: amount });
+  }
 
+  onSetMax() {
+    // TODO: 计算 max 并设置 this.state.amount
+    this.setState({isSetMax: !this.state.isSetMax})
   }
 
   render() {
+    const { wallet } = this.props.appState;
+    const {network} = wallet;
     const feeLevels = [
       {
         name: 'test1',
@@ -272,6 +281,10 @@ class AccountSend extends React.Component<Props> {
       gasPrice: "0.0001",
       value: "200"
     };
+
+    const currencySelectOption = [
+      { value: network.shortcut, label: network.shortcut },
+    ];
 
     return (
       <Content>
@@ -314,9 +327,9 @@ class AccountSend extends React.Component<Props> {
                 <AmountInputLabel>Amount</AmountInputLabel>
               </AmountInputLabelWrapper>
             )}
-            value={'amount'}
-            // onChange={event => onAmountChange(event.target.value)}
-            bottomText="{errors.amount || warnings.amount || infos.amount}"
+            value={this.state.amount}
+            onChange={event => this.onAmountChange(event.target.value)}
+            bottomText={this.state.amountErrors || this.state.amountWarnings || this.state.amountInfos}
             sideAddons={[
               (
                 <SetMaxAmountButton
@@ -346,10 +359,10 @@ class AccountSend extends React.Component<Props> {
                   key="currency"
                   isSearchable={false}
                   isClearable={false}
-                  value="ETH"
+                  value={currencySelectOption}
                   isDisabled={true}
                   // onChange={onCurrencyChange}
-                  // options={tokensSelectData}
+                  options={[currencySelectOption]}
                 />
               )
             ]}

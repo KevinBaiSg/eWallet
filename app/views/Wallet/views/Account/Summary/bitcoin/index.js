@@ -77,7 +77,7 @@ class AccountSummary extends React.Component<Props> {
 
   render() {
     const { wallet } = this.props.appState;
-    const {account, rates} = wallet;
+    const {account, rates, network} = wallet;
     if (!account || !rates) {
       const loader = {
         type: 'progress',
@@ -85,7 +85,6 @@ class AccountSummary extends React.Component<Props> {
       };
       return <Content loader={loader} isLoading />;
     }
-    const network = getCoinInfo('bitcoin');
     const fiat = [{
       network: network.shortcut,
       value: rates.bitcoin['usd'],//cny usd
