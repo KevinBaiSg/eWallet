@@ -15,11 +15,11 @@ import BlockBook, { create as createBackend } from 'utils/backend';
 import Account from 'utils/account';
 import TransactionComposer from 'utils/tx/TransactionComposer';
 import {
-    validateHDOutput,
-    inputToTrezor,
-    outputToTrezor,
-    getReferencedTransactions,
-    transformReferencedTransactions,
+  validateHDOutput,
+  inputToTrezor,
+  outputToTrezor,
+  getReferencedTransactions,
+  transformReferencedTransactions
 } from 'utils/tx';
 import * as helper from 'utils/helpers/signtx';
 import { getSegwitNetwork, getBech32Network } from 'utils/data/CoinInfo';
@@ -42,15 +42,15 @@ import type { Deferred } from 'utils/types';
 import type { TransactionOutput } from 'utils/types/trezor';
 
 import type {
-    BuildTxOutputRequest,
-    BuildTxResult,
+  BuildTxOutputRequest,
+  BuildTxResult
 } from 'hd-wallet';
 
 type Params = {
-    outputs: Array<BuildTxOutputRequest>,
-    coinInfo: CoinInfo,
-    push: boolean,
-    session: TrezorSession,
+  outputs: Array<BuildTxOutputRequest>,
+  coinInfo: CoinInfo,
+  push: boolean,
+  session: TrezorSession,
 };
 
 export type ComposeTransactionOptions = {
@@ -60,93 +60,93 @@ export type ComposeTransactionOptions = {
   session: TrezorSession,
 };
 
-export default class ComposeTransaction  {
-    params: Params;
+export default class ComposeTransaction {
+  params: Params;
 
-    backend: BlockBook;
+  backend: BlockBook;
 
-    discovery: ?Discovery;
+  discovery: ?Discovery;
 
-    composer: TransactionComposer;
+  composer: TransactionComposer;
 
-    // _getHDNode: (path: Array<number>,
-    //   coinInfo: ?CoinInfo) => Promise<trezor.HDNodeResponse>;
-    //
-    // _typedCall: (type: string,
-    //   resType: string, msg: Object) => Promise<DefaultMessageResponse>;
+  // _getHDNode: (path: Array<number>,
+  //   coinInfo: ?CoinInfo) => Promise<trezor.HDNodeResponse>;
+  //
+  // _typedCall: (type: string,
+  //   resType: string, msg: Object) => Promise<DefaultMessageResponse>;
 
-    constructor(options: ComposeTransactionOptions) {
-        // validate incoming parameters
-        validateParams(options, [
-            { name: 'outputs', type: 'array', obligatory: true },
-            { name: 'coin', type: 'string', obligatory: true },
-            { name: 'push', type: 'boolean' },
-        ]);
+  constructor(options: ComposeTransactionOptions) {
+    // validate incoming parameters
+    validateParams(options, [
+      { name: 'outputs', type: 'array', obligatory: true },
+      { name: 'coin', type: 'string', obligatory: true },
+      { name: 'push', type: 'boolean' }
+    ]);
 
-        const coinInfo: ?CoinInfo = getBitcoinNetwork(options.coin);
-        if (!coinInfo) {
-            throw NO_COIN_INFO;
-        }
-
-        // validate each output and transform into hd-wallet format
-        const outputs: Array<BuildTxOutputRequest> = [];
-        let total: number = 0;
-        options.outputs.forEach(out => {
-          const output = validateHDOutput(out.valueOf(), coinInfo);
-          if (typeof output.amount === 'number') {
-              total += output.amount;
-          }
-          outputs.push(output);
-        });
-
-        // TODO: 处理 sendMax
-        const sendMax: boolean = outputs.find(o => o.type === 'send-max') !== undefined;
-
-        // there should be only one output when using send-max option
-        if (sendMax && outputs.length > 1) {
-            throw new Error('Only one output allowed when using "send-max" option.');
-        }
-
-        // if outputs contains regular items
-        // check if total amount is not lower than dust limit
-        if (outputs.find(o => o.type === 'complete') !== undefined && total <= coinInfo.dustLimit) {
-            throw new Error('Total amount is too low.');
-        }
-        let push: boolean;
-        if (options.push) {
-          push = options.push
-        } else {
-          push = false
-        }
-        this.params = {
-            outputs,
-            coinInfo,
-            push,
-            session: options.session
-        };
-        this._getHDNode = this._getHDNode.bind(this);
-        this._typedCall = this._typedCall.bind(this);
+    const coinInfo: ?CoinInfo = getBitcoinNetwork(options.coin);
+    if (!coinInfo) {
+      throw NO_COIN_INFO;
     }
 
-    async run(): Promise<SignedTx> {
-        // initialize backend
-        this.backend = await createBackend(this.params.coinInfo);
+    // validate each output and transform into hd-wallet format
+    const outputs: Array<BuildTxOutputRequest> = [];
+    let total: number = 0;
+    options.outputs.forEach(out => {
+      const output = validateHDOutput(out.valueOf(), coinInfo);
+      if (typeof output.amount === 'number') {
+        total += output.amount;
+      }
+      outputs.push(output);
+    });
 
-        // discover accounts and run
-        const account = await this._getAccount();
-        if (account instanceof Account) {
-            // wait for fee selection
-            const response: string | SignedTx = await this._getFee(account);
-            if (typeof response === 'string') {
-                // back to account selection
-                return await this.run();
-            } else {
-                return response;
-            }
-        } else {
-            throw new Error(account.error);
-        }
+    // TODO: 处理 sendMax
+    const sendMax: boolean = outputs.find(o => o.type === 'send-max') !== undefined;
+
+    // there should be only one output when using send-max option
+    if (sendMax && outputs.length > 1) {
+      throw new Error('Only one output allowed when using "send-max" option.');
     }
+
+    // if outputs contains regular items
+    // check if total amount is not lower than dust limit
+    if (outputs.find(o => o.type === 'complete') !== undefined && total <= coinInfo.dustLimit) {
+      throw new Error('Total amount is too low.');
+    }
+    let push: boolean;
+    if (options.push) {
+      push = options.push;
+    } else {
+      push = false;
+    }
+    this.params = {
+      outputs,
+      coinInfo,
+      push,
+      session: options.session
+    };
+    this._getHDNode = this._getHDNode.bind(this);
+    this._typedCall = this._typedCall.bind(this);
+  }
+
+  async run(): Promise<SignedTx> {
+    // initialize backend
+    this.backend = await createBackend(this.params.coinInfo);
+
+    // discover accounts and run
+    const account = await this._getAccount();
+    if (account instanceof Account) {
+      // wait for fee selection
+      const response: string | SignedTx = await this._getFee(account);
+      if (typeof response === 'string') {
+        // back to account selection
+        return await this.run();
+      } else {
+        return response;
+      }
+    } else {
+      throw new Error(account.error);
+    }
+  }
 
   async getBitcoinHDNode(
     path: Array<number>,
@@ -158,7 +158,7 @@ export default class ComposeTransaction  {
 
     const resKey: trezor.PublicKey =
       await this.getPublicKey(path, 'Bitcoin');
-    const childKey: trezor.PublicKey=
+    const childKey: trezor.PublicKey =
       await this.getPublicKey(childPath, 'Bitcoin');
     const publicKey: trezor.PublicKey =
       hdnodeUtils.xpubDerive(resKey, childKey, suffix);
@@ -171,7 +171,7 @@ export default class ComposeTransaction  {
       chainCode: publicKey.node.chain_code,
       publicKey: publicKey.node.public_key,
       fingerprint: publicKey.node.fingerprint,
-      depth: publicKey.node.depth,
+      depth: publicKey.node.depth
     };
 
     // if requested path is a segwit
@@ -188,19 +188,19 @@ export default class ComposeTransaction  {
   async getPublicKey(
     address_n: Array<number>,
     coin_name: string,
-    script_type?: ?string,
+    script_type?: ?string
   ): Promise<trezor.PublicKey> {
     const response: MessageResponse<trezor.PublicKey> =
       await this.params.session.typedCall('GetPublicKey', 'PublicKey', {
         address_n,
         coin_name,
-        script_type,
+        script_type
       });
     return response.message;
   }
 
   async _getHDNode(path: Array<number>,
-    coinInfo: ?CoinInfo): Promise<trezor.HDNodeResponse> {
+                   coinInfo: ?CoinInfo): Promise<trezor.HDNodeResponse> {
     // return this._getBitcoinHDNode(path, coinInfo);
     // if (!this.device.atLeast(['1.7.2', '2.0.10']))
     const isOld = true;
@@ -232,7 +232,7 @@ export default class ComposeTransaction  {
 
     const resKey: trezor.PublicKey =
       await this.getPublicKey(path, coinInfo.name, scriptType);
-    const childKey: trezor.PublicKey=
+    const childKey: trezor.PublicKey =
       await this.getPublicKey(childPath, coinInfo.name, scriptType);
     const publicKey: trezor.PublicKey =
       hdnodeUtils.xpubDerive(resKey, childKey, suffix, network, coinInfo.network);
@@ -246,7 +246,7 @@ export default class ComposeTransaction  {
       chainCode: publicKey.node.chain_code,
       publicKey: publicKey.node.public_key,
       fingerprint: publicKey.node.fingerprint,
-      depth: publicKey.node.depth,
+      depth: publicKey.node.depth
     };
 
     // if requested path is a segwit
@@ -265,102 +265,104 @@ export default class ComposeTransaction  {
     return response;
   }
 
-    async _getAccount(): Promise<Account | { error: string }> {
-      // 替换自己的实现
-      const discovery: Discovery = this.discovery || new Discovery({
-          getHDNode: this._getHDNode,
-          coinInfo: this.params.coinInfo,
-          backend: this.backend,
-      });
+  async _getAccount(): Promise<Account | { error: string }> {
+    // 替换自己的实现
+    const discovery: Discovery = this.discovery || new Discovery({
+      getHDNode: this._getHDNode,
+      coinInfo: this.params.coinInfo,
+      backend: this.backend
+    });
 
-      const discoveryPromise: Deferred<void> = createDeferred();
+    const discoveryPromise: Deferred<void> = createDeferred();
 
-      discovery.on('update', (accounts: Array<Account>) => {
-        console.log('discovery.on update')
-      });
+    discovery.on('update', (accounts: Array<Account>) => {
+      console.log('discovery.on update');
+    });
 
-      discovery.on('complete', (accounts: Array<Account>) => {
-        console.log('discovery.on complete');
-        discoveryPromise.resolve();
-      });
+    discovery.on('complete', (accounts: Array<Account>) => {
+      console.log('discovery.on complete');
+      discoveryPromise.resolve();
+    });
 
-      if (!this.discovery) {
-          this.discovery = discovery;
-      }
-      discovery.start();
+    if (!this.discovery) {
+      this.discovery = discovery;
+    }
+    discovery.start();
 
-      // 增加 permise， 在 utils event complate 中完成
-      await discoveryPromise.promise;
-      discovery.removeAllListeners();
-      discovery.stop();
+    // 增加 permise， 在 utils event complate 中完成
+    await discoveryPromise.promise;
+    discovery.removeAllListeners();
+    discovery.stop();
 
-      if (discovery.accounts.length === 0) {
-        throw new Error('not found account');
-      }
-
-      return discovery.accounts[0];
+    if (discovery.accounts.length === 0) {
+      throw new Error('not found account');
     }
 
-    async _getFee(account: Account): Promise<string | SignedTx> {
-        if (this.composer) { this.composer.dispose(); }
+    return discovery.accounts[0];
+  }
 
-        const composer: TransactionComposer = new TransactionComposer(account, this.params.outputs);
-        await composer.init(this.backend);
-        this.composer = composer;
-
-        const hasFunds: boolean = await composer.composeAllFeeLevels();
-        if (!hasFunds) {
-            return 'Not has Funds';
-        }
-
-        // 外部传入
-        const feeLevel = this.composer.feeLevels[0];
-        return await this._send(feeLevel.name);
+  async _getFee(account: Account): Promise<string | SignedTx> {
+    if (this.composer) {
+      this.composer.dispose();
     }
 
-    async _typedCall(type: string,
-      resType: string, msg: Object): Promise<DefaultMessageResponse> {
-      return this.params.session.typedCall(type, resType, msg);
+    const composer: TransactionComposer = new TransactionComposer(account, this.params.outputs);
+    await composer.init(this.backend);
+    this.composer = composer;
+
+    const hasFunds: boolean = await composer.composeAllFeeLevels();
+    if (!hasFunds) {
+      return 'Not has Funds';
     }
 
-    async _send(feeLevel: string): Promise<SignedTx> {
-        const tx: BuildTxResult = this.composer.composed[feeLevel];
+    // 外部传入
+    const feeLevel = this.composer.feeLevels[0];
+    return await this._send(feeLevel.name);
+  }
 
-        if (tx.type !== 'final') throw new Error('Trying to sign unfinished tx');
+  async _typedCall(type: string,
+                   resType: string, msg: Object): Promise<DefaultMessageResponse> {
+    return this.params.session.typedCall(type, resType, msg);
+  }
 
-        const bjsRefTxs = await this.backend.loadTransactions(getReferencedTransactions(tx.transaction.inputs));
-        const refTxs = transformReferencedTransactions(bjsRefTxs);
+  async _send(feeLevel: string): Promise<SignedTx> {
+    const tx: BuildTxResult = this.composer.composed[feeLevel];
 
-        const coinInfo: CoinInfo = this.composer.account.coinInfo;
+    if (tx.type !== 'final') throw new Error('Trying to sign unfinished tx');
 
-        const response = await helper.signTx(
-            this._typedCall,
-            tx.transaction.inputs.map(inp => inputToTrezor(inp, 0)),
-            tx.transaction.outputs.sorted.map(out => outputToTrezor(out, coinInfo)),
-            refTxs,
-            coinInfo,
-        );
+    const bjsRefTxs = await this.backend.loadTransactions(getReferencedTransactions(tx.transaction.inputs));
+    const refTxs = transformReferencedTransactions(bjsRefTxs);
 
-        if (this.params.push) {
-            const txid: string = await this.backend.sendTransactionHex(response.serializedTx);
-            return {
-                ...response,
-                txid,
-            };
-        }
+    const coinInfo: CoinInfo = this.composer.account.coinInfo;
 
-        return response;
+    const response = await helper.signTx(
+      this._typedCall,
+      tx.transaction.inputs.map(inp => inputToTrezor(inp, 0)),
+      tx.transaction.outputs.sorted.map(out => outputToTrezor(out, coinInfo)),
+      refTxs,
+      coinInfo
+    );
+
+    if (this.params.push) {
+      const txid: string = await this.backend.sendTransactionHex(response.serializedTx);
+      return {
+        ...response,
+        txid
+      };
     }
 
-    dispose() {
-        if (this.discovery) {
-            const d = this.discovery;
-            d.stop();
-            d.removeAllListeners();
-        }
+    return response;
+  }
 
-        if (this.composer) {
-            this.composer.dispose();
-        }
+  dispose() {
+    if (this.discovery) {
+      const d = this.discovery;
+      d.stop();
+      d.removeAllListeners();
     }
+
+    if (this.composer) {
+      this.composer.dispose();
+    }
+  }
 }
