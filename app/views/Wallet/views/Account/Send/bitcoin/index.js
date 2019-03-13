@@ -19,6 +19,9 @@ import Content from 'views/Wallet/components/Content';
 // import PendingTransactions from '../components/PendingTransactions';
 import { inject, observer } from 'mobx-react';
 import { isValidAddress } from 'utils/addressUtils';
+import QrModal from 'components/modals/QrModal';
+import type { parsedURI } from 'utils/cryptoUriParser';
+import { FADE_IN } from 'config/animations';
 
 const NUMBER_RE: RegExp = new RegExp('^(0|0\\.([0-9]+)?|[1-9][0-9]*\\.?([0-9]+)?|\\.[0-9]+)$');
 const UPPERCASE_RE = new RegExp('^(.*[A-Z].*)$');
@@ -193,6 +196,30 @@ const QrButton = styled(Button)`
     padding: 0 10px;
 `;
 
+const ModalContainer = styled.div`
+    position: fixed;
+    z-index: 10000;
+    width: 100%;
+    height: 100%;
+    top: 0px;
+    left: 0px;
+    background: rgba(0, 0, 0, 0.35);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    overflow: auto;
+    padding: 20px;
+    animation: ${FADE_IN} 0.3s;
+`;
+
+const ModalWindow = styled.div`
+    margin: auto;
+    position: relative;
+    border-radius: 4px;
+    background-color: ${colors.WHITE};
+    text-align: center;
+`;
+
 class AccountSend extends React.Component<Props> {
   state = {
     // for address
@@ -210,6 +237,8 @@ class AccountSend extends React.Component<Props> {
     //
     selectedFeeLevel: null,
     feeLevels: null,
+    // for qr scan
+    isQrScanning: false,
   };
 
   constructor(props) {
@@ -252,6 +281,8 @@ class AccountSend extends React.Component<Props> {
         value: 'Economy',
         label: network.defaultFees.Economy,
       },
+      //
+      isQrScanning: false,
     };
 
     this.getAddressInputState = this.getAddressInputState.bind(this);
@@ -261,6 +292,9 @@ class AccountSend extends React.Component<Props> {
     this.onSetMax = this.onSetMax.bind(this);
     this.onFeeLevelChange = this.onFeeLevelChange.bind(this);
     this.onClear = this.onClear.bind(this);
+    this.onQrScan = this.onQrScan.bind(this);
+    this.onQrScanCancel = this.onQrScanCancel.bind(this);
+    this.openQrModal = this.openQrModal.bind(this);
   }
 
   getAddressInputState(): string {
@@ -357,6 +391,32 @@ class AccountSend extends React.Component<Props> {
     })
   }
 
+  openQrModal() {
+    this.setState({
+      isQrScanning: true,
+    })
+  }
+
+  onQrScanCancel() {
+    this.setState({
+      isQrScanning: false,
+    })
+  }
+
+  onQrScan(parsedUri: parsedURI) {
+    const { address = '', amount } = parsedUri;
+    if (amount) {
+      this.setState({
+        address: address,
+        amount: amount,
+      })
+    } else {
+      this.setState({
+        address: address,
+      })
+    }
+  }
+
   render() {
     const { wallet } = this.props.appState;
     const {account, rates, network} = wallet;
@@ -368,6 +428,19 @@ class AccountSend extends React.Component<Props> {
       return <Content loader={loader} isLoading />;
     }
 
+    if (this.state.isQrScanning) {
+      // return null
+      return (
+        <ModalContainer>
+          <ModalWindow>
+            <QrModal
+              onCancel={this.onQrScanCancel}
+              onScan={parsedUri => this.onQrScan(parsedUri)}
+            />
+          </ModalWindow>
+        </ModalContainer>
+      )
+    }
     const currencySelectOption = [
       { value: network.shortcut, label: network.shortcut },
     ];
@@ -390,7 +463,7 @@ class AccountSend extends React.Component<Props> {
               <QrButton
                 key="qrButton"
                 isWhite
-                // onClick={props.openQrModal}
+                onClick={this.openQrModal}
               >
                 <Icon
                   size={25}
