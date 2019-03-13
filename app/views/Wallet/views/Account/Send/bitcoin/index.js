@@ -20,6 +20,17 @@ import Content from 'views/Wallet/components/Content';
 import { inject, observer } from 'mobx-react';
 import { isValidAddress } from 'utils/addressUtils';
 
+const NUMBER_RE: RegExp = new RegExp('^(0|0\\.([0-9]+)?|[1-9][0-9]*\\.?([0-9]+)?|\\.[0-9]+)$');
+const UPPERCASE_RE = new RegExp('^(.*[A-Z].*)$');
+const ABS_RE = new RegExp('^[0-9]+$');
+const ETH_18_RE = new RegExp('^(0|0\\.([0-9]{0,18})?|[1-9][0-9]*\\.?([0-9]{0,18})?|\\.[0-9]{0,18})$');
+const dynamicRegexp = (decimals: number): RegExp => {
+  if (decimals > 0) {
+    return new RegExp(`^(0|0\\.([0-9]{0,${decimals}})?|[1-9][0-9]*\\.?([0-9]{0,${decimals}})?|\\.[0-9]{1,${decimals}})$`);
+  }
+  return ABS_RE;
+};
+
 // TODO: Decide on a small screen width for the whole app
 // and put it inside config/variables.js
 const SmallScreenWidth = '850px';
@@ -302,7 +313,24 @@ class AccountSend extends React.Component<Props> {
   }
 
   onAmountChange(amount: string) {
-    this.setState({ amount: amount });
+    if (amount.length < 1) {
+      this.setState({
+        amount: amount,
+        amountErrors: 'Amount is not set'
+      });
+    } else if (amount.length > 0 && !amount.match(NUMBER_RE)) {
+      this.setState({
+        amount: amount,
+        amountErrors: 'Amount is not a number'
+      });
+    } else {
+      this.setState({
+        amount: amount,
+        amountErrors: null,
+        amountWarnings: null,
+        amountInfos: null,
+      });
+    }
   }
 
   onSetMax() {
@@ -457,7 +485,7 @@ class AccountSend extends React.Component<Props> {
               isDisabled={false}
               // onClick={() => onSend()}
             >
-              send
+              Send
             </SendButton>
           </FormButtons>
         </ToggleAdvancedSettingsWrapper>
