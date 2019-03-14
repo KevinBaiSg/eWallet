@@ -29,7 +29,9 @@ class Root extends Component<Props> {
     const { appState } = this.props;
 
     if (appState.eWalletDevice.connected === true) {
-      this.props.history.replace(`/device/${appState.eWalletDevice.features.device_id}`);
+      // this.props.history.replace(`/device/${appState.eWalletDevice.features.device_id}`);
+      this.props.history.replace(
+        `/device/${appState.eWalletDevice.features.device_id}/network/btc/account/0`);
       return null
     }
 

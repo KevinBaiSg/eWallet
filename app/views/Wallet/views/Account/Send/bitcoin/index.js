@@ -295,6 +295,7 @@ class AccountSend extends React.Component<Props> {
     this.onQrScan = this.onQrScan.bind(this);
     this.onQrScanCancel = this.onQrScanCancel.bind(this);
     this.openQrModal = this.openQrModal.bind(this);
+    this.onSend = this.onSend.bind(this);
   }
 
   getAddressInputState(): string {
@@ -417,6 +418,14 @@ class AccountSend extends React.Component<Props> {
     }
   }
 
+  onSend() {
+    const { appState } = this.props;
+    const address = this.state.address;
+    const amount = this.state.amount;
+
+    appState.btcComposeTransaction(address, amount, false);
+  }
+
   render() {
     const { wallet } = this.props.appState;
     const {account, rates, network} = wallet;
@@ -429,7 +438,6 @@ class AccountSend extends React.Component<Props> {
     }
 
     if (this.state.isQrScanning) {
-      // return null
       return (
         <ModalContainer>
           <ModalWindow>
@@ -556,7 +564,7 @@ class AccountSend extends React.Component<Props> {
             </ClearButton>
             <SendButton
               isDisabled={false}
-              // onClick={() => onSend()}
+              onClick={() => this.onSend()}
             >
               Send
             </SendButton>

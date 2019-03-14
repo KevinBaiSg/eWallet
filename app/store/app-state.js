@@ -12,6 +12,7 @@ import { httpRequest } from 'utils/networkUtils';
 import type { Features, Device, Session } from 'trezor.js';
 import { parseCoinsJson, getCoinInfo, CoinInfo } from 'utils/data/CoinInfo';
 import { CoinsJson } from 'utils/data/coins'
+import ComposeTransaction from 'utils/ComposeTransaction';
 import type { BitcoinNetworkInfo } from '../utils/types';
 
 const CoinGecko = require('coingecko-api');
@@ -185,11 +186,38 @@ export default class AppState {
       device.waitForSessionAndRun(async (session) => {
         try {
           const compose = new GetAccountInfo({
-            path: "m/49'/0'/0'",
+            // path: "m/49'/0'/0'",
             coin: "btc",
             session: session
           });
           this.wallet.account = await compose.run();
+        } catch (e) {
+          console.error('Call rejected:', e);
+        }
+      }).catch(function(error) {
+        console.error('Call rejected:', error);
+      })
+    }
+  }
+
+  @action
+  async btcComposeTransaction(toAddress: string, amount: string, push: boolean) {
+    const device = this.eWalletDevice.device;
+
+    if (!!device) {
+      device.waitForSessionAndRun(async (session) => {
+        try {
+          const compose = new ComposeTransaction({
+            outputs: [{
+              amount: amount,
+              address: toAddress
+            }],
+            coin: "btc",
+            push: push,
+            session: session,
+            account: this.wallet.account,
+          });
+          await compose.run();
         } catch (e) {
           console.error('Call rejected:', e);
         }

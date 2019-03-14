@@ -35,7 +35,7 @@ import {
   getSerializedPath,
   getScriptType
 } from 'utils/pathUtils';
-
+import { toDecimalAmount } from 'utils/formatUtils';
 import type { CoinInfo } from 'flowtype';
 import type { SignedTx } from 'utils/types/trezor';
 import type { Deferred } from 'utils/types';
@@ -289,9 +289,8 @@ export default class ComposeTransaction {
     }
     discovery.start();
 
-    // 增加 permise， 在 utils event complate 中完成
     await discoveryPromise.promise;
-    discovery.removeAllListeners();
+    // discovery.removeAllListeners();
     discovery.stop();
 
     if (discovery.accounts.length === 0) {
@@ -317,6 +316,13 @@ export default class ComposeTransaction {
 
     // 外部传入
     const feeLevel = this.composer.feeLevels[0];
+    const feeLevels = this.composer.getFeeLevelList();
+    console.log(feeLevels);
+    // const levels = feeLevels.map(level => ({
+    //   value: level.name,
+    //   fee: level.value,
+    //   label: `${toDecimalAmount(level.value, network.decimals)} BTC`,
+    // }));
     return await this._send(feeLevel.name);
   }
 
