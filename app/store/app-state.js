@@ -2,7 +2,7 @@ import { observable, action } from 'mobx';
 import Logger from 'js-logger';
 // import type { Session as TrezorSession } from 'trezor.js';
 import { BridgeV2 as Transport } from 'trezor-link';
-
+import BigNumber from 'bignumber.js';
 import GetAccountInfo from 'utils/GetAccountInfo'
 import Account from 'utils/account'
 
@@ -14,6 +14,7 @@ import { parseCoinsJson, getCoinInfo, CoinInfo } from 'utils/data/CoinInfo';
 import { CoinsJson } from 'utils/data/coins'
 import ComposeTransaction from 'utils/ComposeTransaction';
 import type { BitcoinNetworkInfo } from '../utils/types';
+import { parseAmount } from 'utils/btcParse';
 
 const CoinGecko = require('coingecko-api');
 const CoinGeckoClient = new CoinGecko();
@@ -186,7 +187,7 @@ export default class AppState {
       device.waitForSessionAndRun(async (session) => {
         try {
           const compose = new GetAccountInfo({
-            // path: "m/49'/0'/0'",
+            path: "m/49'/0'/0'",
             coin: "btc",
             session: session
           });
@@ -203,15 +204,18 @@ export default class AppState {
   @action
   async btcComposeTransaction(toAddress: string, amount: string, push: boolean) {
     const device = this.eWalletDevice.device;
-
+    // const satAmount = btckb2satoshib(BigNumber(amount)).toString();
+    const satAmount = parseAmount(`${amount} btc`).toString();
+    console.log(`satAmount=${satAmount}`);
     if (!!device) {
       device.waitForSessionAndRun(async (session) => {
         try {
           const compose = new ComposeTransaction({
             outputs: [{
-              amount: amount,
+              amount: satAmount,
               address: toAddress
             }],
+            path: "m/49'/0'/0'",
             coin: "btc",
             push: push,
             session: session,

@@ -6,13 +6,16 @@ import * as trezor from 'utils/types/trezor';
 import * as hdnodeUtils from 'utils/hdnode';
 import { create as createDeferred } from 'utils/deferred';
 import Discovery from 'utils/helpers/Discovery';
-import { getBitcoinNetwork } from 'utils/data/CoinInfo';
+import {
+  getBitcoinNetwork,
+  fixCoinInfoNetwork
+} from 'utils/data/CoinInfo';
 import { validateParams } from 'utils/helpers/paramsValidator';
 import { formatAmount } from 'utils/formatUtils';
 import { NO_COIN_INFO } from 'constants/errors';
 
 import BlockBook, { create as createBackend } from 'utils/backend';
-import Account from 'utils/account';
+import Account, { create as createAccount } from 'utils/account';
 import TransactionComposer from 'utils/tx/TransactionComposer';
 import {
   validateHDOutput,
@@ -27,6 +30,10 @@ import type {
   MessageResponse,
   DefaultMessageResponse
 } from './helpers/MessageResponse';
+
+import type {
+  HDNodeResponse
+} from 'utils/types/trezor';
 
 import {
   isMultisigPath,
@@ -45,11 +52,15 @@ import type {
   BuildTxOutputRequest,
   BuildTxResult
 } from 'hd-wallet';
-
+import { validateCoinPath } from './helpers/paramsValidator';
+import {
+  validatePath,
+} from 'utils/pathUtils';
 type Params = {
   outputs: Array<BuildTxOutputRequest>,
   coinInfo: CoinInfo,
   push: boolean,
+  path: ?Array<number>,
   session: TrezorSession,
 };
 
@@ -57,6 +68,8 @@ export type ComposeTransactionOptions = {
   outputs: Array<TransactionOutput>,
   coin: string,
   push?: boolean,
+  path?: string,
+  crossChain?: boolean,
   session: TrezorSession,
 };
 
@@ -83,9 +96,19 @@ export default class ComposeTransaction {
       { name: 'push', type: 'boolean' }
     ]);
 
-    const coinInfo: ?CoinInfo = getBitcoinNetwork(options.coin);
+    let coinInfo: ?CoinInfo = getBitcoinNetwork(options.coin);
     if (!coinInfo) {
       throw NO_COIN_INFO;
+    }
+
+    let path: Array<number>;
+    if (options.path) {
+      path = validatePath(options.path, 3, true);
+      if (!coinInfo) {
+        coinInfo = getBitcoinNetwork(path);
+      } else if (!options.crossChain) {
+        validateCoinPath(coinInfo, path);
+      }
     }
 
     // validate each output and transform into hd-wallet format
@@ -118,31 +141,29 @@ export default class ComposeTransaction {
     } else {
       push = false;
     }
+
     this.params = {
       outputs,
       coinInfo,
       push,
-      session: options.session
+      path: path,
+      session: options.session,
     };
     this._getHDNode = this._getHDNode.bind(this);
     this._typedCall = this._typedCall.bind(this);
   }
 
   async run(): Promise<SignedTx> {
-    // initialize backend
     this.backend = await createBackend(this.params.coinInfo);
 
-    // discover accounts and run
-    const account = await this._getAccount();
+    let account;
+    if (this.params.path) {
+      account = await this._getAccountFromPath(this.params.path);
+    } else {
+      account = await this._getAccount();
+    }
     if (account instanceof Account) {
-      // wait for fee selection
-      const response: string | SignedTx = await this._getFee(account);
-      if (typeof response === 'string') {
-        // back to account selection
-        return await this.run();
-      } else {
-        return response;
-      }
+      return this._getFee(account);
     } else {
       throw new Error(account.error);
     }
@@ -298,6 +319,23 @@ export default class ComposeTransaction {
     }
 
     return discovery.accounts[0];
+  }
+
+  async _getAccountFromPath(path: Array<number>): Promise<Response> {
+    const coinInfo: CoinInfo = fixCoinInfoNetwork(this.params.coinInfo, path);
+    const node: HDNodeResponse = await this._getHDNode(path, coinInfo);
+    const account = createAccount(path, node.xpub, coinInfo);
+
+    const discovery: Discovery = this.discovery = new Discovery({
+      // getHDNode: this.device.getCommands().getHDNode.bind(this.device.getCommands()),
+      getHDNode: this._getHDNode,
+      coinInfo: this.params.coinInfo,
+      backend: this.backend,
+      loadInfo: false
+    });
+
+    await discovery.getAccountInfo(account);
+    return account;
   }
 
   async _getFee(account: Account): Promise<string | SignedTx> {
