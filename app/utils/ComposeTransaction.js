@@ -26,6 +26,7 @@ import {
 } from 'utils/tx';
 import * as helper from 'utils/helpers/signtx';
 import { getSegwitNetwork, getBech32Network } from 'utils/data/CoinInfo';
+import BigNumber from 'bignumber.js';
 import type {
   MessageResponse,
   DefaultMessageResponse
@@ -61,6 +62,7 @@ type Params = {
   coinInfo: CoinInfo,
   push: boolean,
   path: ?Array<number>,
+  fee: number,
   session: TrezorSession,
 };
 
@@ -69,6 +71,7 @@ export type ComposeTransactionOptions = {
   coin: string,
   push?: boolean,
   path?: string,
+  fee: string,
   crossChain?: boolean,
   session: TrezorSession,
 };
@@ -146,6 +149,7 @@ export default class ComposeTransaction {
       outputs,
       coinInfo,
       push,
+      fee: parseInt(options.fee),
       path: path,
       session: options.session,
     };
@@ -163,7 +167,7 @@ export default class ComposeTransaction {
       account = await this._getAccount();
     }
     if (account instanceof Account) {
-      return this._getFee(account);
+      return this._composeAndsend(account, this.params.fee);
     } else {
       throw new Error(account.error);
     }
@@ -347,15 +351,15 @@ export default class ComposeTransaction {
     await composer.init(this.backend);
     this.composer = composer;
 
-    const hasFunds: boolean = await composer.composeAllFeeLevels();
-    if (!hasFunds) {
-      return 'Not has Funds';
-    }
-
-    // 外部传入
-    const feeLevel = this.composer.feeLevels[0];
-    const feeLevels = this.composer.getFeeLevelList();
-    console.log(feeLevels);
+    // const hasFunds: boolean = await composer.composeAllFeeLevels();
+    // if (!hasFunds) {
+    //   return 'Not has Funds';
+    // }
+    //
+    // // 外部传入
+    // const feeLevel = this.composer.feeLevels[0];
+    // const feeLevels = this.composer.getFeeLevelList();
+    // console.log(feeLevels);
     // const levels = feeLevels.map(level => ({
     //   value: level.name,
     //   fee: level.value,
@@ -371,6 +375,43 @@ export default class ComposeTransaction {
 
   async _send(feeLevel: string): Promise<SignedTx> {
     const tx: BuildTxResult = this.composer.composed[feeLevel];
+
+    if (tx.type !== 'final') throw new Error('Trying to sign unfinished tx');
+
+    const bjsRefTxs = await this.backend.loadTransactions(getReferencedTransactions(tx.transaction.inputs));
+    const refTxs = transformReferencedTransactions(bjsRefTxs);
+
+    const coinInfo: CoinInfo = this.composer.account.coinInfo;
+
+    const response = await helper.signTx(
+      this._typedCall,
+      tx.transaction.inputs.map(inp => inputToTrezor(inp, 0)),
+      tx.transaction.outputs.sorted.map(out => outputToTrezor(out, coinInfo)),
+      refTxs,
+      coinInfo
+    );
+
+    if (this.params.push) {
+      const txid: string = await this.backend.sendTransactionHex(response.serializedTx);
+      return {
+        ...response,
+        txid
+      };
+    }
+
+    return response;
+  }
+
+  async _composeAndsend(account: Account, fee: number): Promise<SignedTx> {
+    if (this.composer) {
+      this.composer.dispose();
+    }
+
+    const composer: TransactionComposer = new TransactionComposer(account, this.params.outputs);
+    await composer.init(this.backend);
+    this.composer = composer;
+
+    const tx: BuildTxResult = this.composer.compose(fee);
 
     if (tx.type !== 'final') throw new Error('Trying to sign unfinished tx');
 

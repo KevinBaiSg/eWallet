@@ -202,7 +202,7 @@ export default class AppState {
   }
 
   @action
-  async btcComposeTransaction(toAddress: string, amount: string, push: boolean) {
+  async btcComposeTransaction(toAddress: string, amount: string, fee: string, push: boolean) {
     const device = this.eWalletDevice.device;
     // const satAmount = btckb2satoshib(BigNumber(amount)).toString();
     const satAmount = parseAmount(`${amount} btc`).toString();
@@ -217,6 +217,7 @@ export default class AppState {
             }],
             path: "m/49'/0'/0'",
             coin: "btc",
+            fee: fee,
             push: push,
             session: session,
             account: this.wallet.account,

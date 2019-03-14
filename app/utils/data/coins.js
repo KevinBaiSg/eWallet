@@ -22,10 +22,10 @@ export const CoinsJson =
         'curve_name': 'secp256k1',
         'decred': false,
         'default_fee_b': {
-          'Economy': 70,
-          'High': 200,
-          'Low': 10,
-          'Normal': 140
+          'Economy': 3,
+          'High': 26,
+          'Low': 1,
+          'Normal': 23
         },
         'dust_limit': 546,
         'force_bip143': false,

@@ -261,10 +261,6 @@ class AccountSend extends React.Component<Props> {
       //
       feeLevels: [
         {
-          value: 'Economy',
-          label: network.defaultFees.Economy,
-        },
-        {
           value: 'High',
           label: network.defaultFees.High,
         },
@@ -273,13 +269,17 @@ class AccountSend extends React.Component<Props> {
           label: network.defaultFees.Normal,
         },
         {
+          value: 'Economy',
+          label: network.defaultFees.Economy,
+        },
+        {
           value: 'Low',
           label: network.defaultFees.Low,
         }
       ],
       selectedFeeLevel: {
-        value: 'Economy',
-        label: network.defaultFees.Economy,
+        value: 'High',
+        label: network.defaultFees.High,
       },
       //
       isQrScanning: false,
@@ -422,8 +422,9 @@ class AccountSend extends React.Component<Props> {
     const { appState } = this.props;
     const address = this.state.address;
     const amount = this.state.amount;
+    const fee = this.state.selectedFeeLevel.label;
 
-    appState.btcComposeTransaction(address, amount, false);
+    appState.btcComposeTransaction(address, amount, fee, true);
   }
 
   render() {
@@ -498,29 +499,29 @@ class AccountSend extends React.Component<Props> {
             onChange={event => this.onAmountChange(event.target.value)}
             bottomText={this.state.amountErrors || this.state.amountWarnings || this.state.amountInfos}
             sideAddons={[
-              (
-                <SetMaxAmountButton
-                  key="icon"
-                  onClick={() => this.onSetMax()}
-                  isActive={this.state.isSetMax}
-                >
-                  {!this.state.isSetMax && (
-                    <Icon
-                      icon={ICONS.TOP}
-                      size={25}
-                      color={colors.TEXT_SECONDARY}
-                    />
-                  )}
-                  {this.state.isSetMax && (
-                    <Icon
-                      icon={ICONS.CHECKED}
-                      size={25}
-                      color={colors.WHITE}
-                    />
-                  )}
-                  Set max
-                </SetMaxAmountButton>
-              ),
+              // (
+              //   <SetMaxAmountButton
+              //     key="icon"
+              //     onClick={() => this.onSetMax()}
+              //     isActive={this.state.isSetMax}
+              //   >
+              //     {!this.state.isSetMax && (
+              //       <Icon
+              //         icon={ICONS.TOP}
+              //         size={25}
+              //         color={colors.TEXT_SECONDARY}
+              //       />
+              //     )}
+              //     {this.state.isSetMax && (
+              //       <Icon
+              //         icon={ICONS.CHECKED}
+              //         size={25}
+              //         color={colors.WHITE}
+              //       />
+              //     )}
+              //     Set max
+              //   </SetMaxAmountButton>
+              // ),
               (
                 <CurrencySelect
                   key="currency"
