@@ -20,20 +20,11 @@ import Content from 'views/Wallet/components/Content';
 import { inject, observer } from 'mobx-react';
 import { isValidAddress } from 'utils/addressUtils';
 import QrModal from 'components/modals/QrModal';
+import ConfirmAction from 'components/modals/confirm/Action';
 import type { parsedURI } from 'utils/cryptoUriParser';
 import { FADE_IN } from 'config/animations';
 
 const NUMBER_RE: RegExp = new RegExp('^(0|0\\.([0-9]+)?|[1-9][0-9]*\\.?([0-9]+)?|\\.[0-9]+)$');
-const UPPERCASE_RE = new RegExp('^(.*[A-Z].*)$');
-const ABS_RE = new RegExp('^[0-9]+$');
-const ETH_18_RE = new RegExp('^(0|0\\.([0-9]{0,18})?|[1-9][0-9]*\\.?([0-9]{0,18})?|\\.[0-9]{0,18})$');
-const dynamicRegexp = (decimals: number): RegExp => {
-  if (decimals > 0) {
-    return new RegExp(`^(0|0\\.([0-9]{0,${decimals}})?|[1-9][0-9]*\\.?([0-9]{0,${decimals}})?|\\.[0-9]{1,${decimals}})$`);
-  }
-  return ABS_RE;
-};
-
 // TODO: Decide on a small screen width for the whole app
 // and put it inside config/variables.js
 const SmallScreenWidth = '850px';
@@ -428,7 +419,9 @@ class AccountSend extends React.Component<Props> {
   }
 
   render() {
-    const { wallet } = this.props.appState;
+    const { appState } = this.props;
+    const { wallet, eWalletDevice } = this.props.appState;
+
     const {account, rates, network} = wallet;
     if (!account || !rates) {
       const loader = {
@@ -436,6 +429,30 @@ class AccountSend extends React.Component<Props> {
         title: 'Loading account',
       };
       return <Content loader={loader} isLoading />;
+    }
+
+    if (!!appState.wallet.buttonRequest_SignTx) {
+      return (
+        <ModalContainer>
+          <ModalWindow>
+            <ModalContainer>
+              <ModalWindow>
+                <ConfirmAction device={eWalletDevice.device} />
+              </ModalWindow>
+            </ModalContainer>
+          </ModalWindow>
+        </ModalContainer>
+      )
+    }
+
+    if (appState.wallet.buttonRequest_ConfirmOutput) {
+      return (
+        <ModalContainer>
+          <ModalWindow>
+            <ConfirmAction device={eWalletDevice.device} />
+          </ModalWindow>
+        </ModalContainer>
+      )
     }
 
     if (this.state.isQrScanning) {

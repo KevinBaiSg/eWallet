@@ -2,7 +2,7 @@ import { observable, action } from 'mobx';
 import Logger from 'js-logger';
 // import type { Session as TrezorSession } from 'trezor.js';
 import { BridgeV2 as Transport } from 'trezor-link';
-import BigNumber from 'bignumber.js';
+import Link from 'components/Link';
 import GetAccountInfo from 'utils/GetAccountInfo'
 import Account from 'utils/account'
 
@@ -15,6 +15,7 @@ import { CoinsJson } from 'utils/data/coins'
 import ComposeTransaction from 'utils/ComposeTransaction';
 import type { BitcoinNetworkInfo } from '../utils/types';
 import { parseAmount } from 'utils/btcParse';
+import React from 'react';
 
 const CoinGecko = require('coingecko-api');
 const CoinGeckoClient = new CoinGecko();
@@ -54,6 +55,11 @@ export type Wallet = {
   network: CoinInfo,
   account: Account,
   rates: any,
+  //
+  buttonRequest_ConfirmOutput: boolean,
+  buttonRequest_SignTx: boolean,
+  // notification
+  notification: any,
 };
 
 export type LocalStorage = {
@@ -78,6 +84,11 @@ export default class AppState {
     network: null,
     account: null,
     rates: null,
+    //
+    buttonRequest_ConfirmOutput: false,
+    buttonRequest_SignTx: false,
+    //
+    notification: null,
   };
 
   @observable
@@ -204,11 +215,36 @@ export default class AppState {
   @action
   async btcComposeTransaction(toAddress: string, amount: string, fee: string, push: boolean) {
     const device = this.eWalletDevice.device;
-    // const satAmount = btckb2satoshib(BigNumber(amount)).toString();
     const satAmount = parseAmount(`${amount} btc`).toString();
-    console.log(`satAmount=${satAmount}`);
     if (!!device) {
+      const self = this;
       device.waitForSessionAndRun(async (session) => {
+        session.on('button', type => {
+          Logger.info(`session.on button ${type}`);
+          switch (type) {
+            case 'ButtonRequest_ConfirmOutput':
+              this.wallet.buttonRequest_ConfirmOutput = true;
+              break;
+            case 'ButtonRequest_SignTx':
+              this.wallet.buttonRequest_SignTx = true;
+              break;
+          }
+          this.wallet.buttonRequest = true;
+        });
+
+        session.on('error', e => {
+          Logger.info(`session.on error ${e}`);
+          this.wallet.buttonRequest_ConfirmOutput = false;
+          this.wallet.buttonRequest_SignTx = false;
+          this.wallet.notification = {
+            type: 'error',
+            title: 'Session error',
+            message: e.message || e,
+            cancelable: true,
+            actions: [],
+          };
+        });
+
         try {
           const compose = new ComposeTransaction({
             outputs: [{
@@ -222,12 +258,52 @@ export default class AppState {
             session: session,
             account: this.wallet.account,
           });
-          await compose.run();
+          const response = await compose.run();
+          console.log(response);
+          this.wallet.buttonRequest_ConfirmOutput = false;
+          this.wallet.buttonRequest_SignTx = false;
+          if (response && response.txid) {
+            const externalAddress = `https://www.blockchain.com/btc/tx/${response.txid}`;
+            this.wallet.notification = {
+              type: 'success',
+              title: 'Transaction success',
+              message: <Link openExternal={externalAddress} isGray>See transaction detail</Link>,
+              cancelable: true,
+              actions: [],
+            };
+          } else {
+            this.wallet.notification = {
+              type: 'error',
+              title: 'Transaction error',
+              // message: error.message || error,
+              cancelable: true,
+              actions: [],
+            };
+          }
         } catch (e) {
           console.error('Call rejected:', e);
+          this.wallet.buttonRequest_ConfirmOutput = false;
+          this.wallet.buttonRequest_SignTx = false;
+          this.wallet.notification = {
+            type: 'error',
+            title: 'Transaction error',
+            message: e.message || e,
+            cancelable: true,
+            actions: [],
+          };
+          console.log(this.wallet.notification);
         }
       }).catch(function(error) {
         console.error('Call rejected:', error);
+        self.wallet.buttonRequest_ConfirmOutput = false;
+        self.wallet.buttonRequest_SignTx = false;
+        self.wallet.notification = {
+          type: 'error',
+          title: 'Transaction error',
+          message: error.message || error,
+          cancelable: true,
+          actions: [],
+        };
       })
     }
   }

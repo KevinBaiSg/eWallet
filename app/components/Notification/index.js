@@ -6,9 +6,13 @@ import Icon from 'components/Icon';
 import icons from 'config/icons';
 import { FONT_WEIGHT, FONT_SIZE } from 'config/variables';
 
-import * as NotificationActions from 'actions/NotificationActions';
+// import * as NotificationActions from 'actions/NotificationActions';
 import Loader from 'components/Loader';
-import type { CallbackAction } from 'reducers/NotificationReducer';
+// import type { CallbackAction } from 'reducers/NotificationReducer';
+export type CallbackAction = {
+  label: string;
+  callback: Function;
+}
 
 import NotificationButton from './components/NotificationButton';
 
@@ -20,7 +24,7 @@ type Props = {
     message?: ?string;
     actions?: Array<CallbackAction>;
     isActionInProgress?: boolean;
-    close?: typeof NotificationActions.close,
+    close?: Function,
     loading?: boolean
 };
 

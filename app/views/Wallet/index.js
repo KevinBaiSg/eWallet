@@ -12,7 +12,7 @@ import colors from 'config/colors';
 import styled, { css } from 'styled-components';
 import { Route, withRouter } from 'react-router-dom';
 import type { State } from 'flowtype';
-
+import ContextNotifications from 'components/notifications/Context';
 import Header from 'components/Header';
 // import Footer from 'components/Footer';
 
@@ -122,7 +122,7 @@ class Wallet extends React.Component<Props, State> {
             <Navigation>
               <Route path="/device/:device/network/:network/account/:account" component={TopNavigationAccount}/>
             </Navigation>
-            {/*<ContextNotifications />*/}
+            <ContextNotifications />
             {/*<Log />*/}
             <Body>
               {props.children}
