@@ -76,11 +76,15 @@ class TopNavigationAccount extends React.Component<Props> {
   wrapper: ?HTMLElement;
 
   render() {
-    const { eWalletDevice, wallet } = this.props.appState;
+    const { eWalletDevice } = this.props.appState;
     const { pathname } = this.props.history.location;
     // const { network } = this.props.selectedAccount;
     const network = 'btc';
-    const basePath = `/device/${eWalletDevice.features.device_id}/network/${network}/account/0`;
+    let device_id = 'device_id';
+    if (eWalletDevice.features && eWalletDevice.features.device_id) {
+      device_id = eWalletDevice.features.device_id;
+    }
+    const basePath = `/device/${device_id}/network/${network}/account/0`;
 
     return (
       <Wrapper className="account-tabs" ref={this.wrapperRefCallback}>
