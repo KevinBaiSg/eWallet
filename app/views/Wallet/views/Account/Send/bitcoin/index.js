@@ -223,7 +223,8 @@ class AccountSend extends React.Component<Props> {
     amountWarnings: null,
     amountInfos: null,
     isSetMax: false,
-
+    //
+    isSending: false,
     //
     selectedFeeLevel: null,
     feeLevels: null,
@@ -248,6 +249,8 @@ class AccountSend extends React.Component<Props> {
       amountWarnings: null,
       amountInfos: null,
       isSetMax: false,
+      //
+      isSending: false,
       //
       feeLevels: [
         {
@@ -379,6 +382,8 @@ class AccountSend extends React.Component<Props> {
       amountWarnings: null,
       amountInfos: null,
       isSetMax: false,
+      //
+      isSending: false,
     })
   }
 
@@ -413,7 +418,7 @@ class AccountSend extends React.Component<Props> {
     const address = this.state.address;
     const amount = this.state.amount;
     const fee = this.state.selectedFeeLevel.label;
-
+    this.setState({isSending: true});
     appState.btcComposeTransaction(address, amount, fee, true, this.onClear);
   }
 
@@ -581,7 +586,7 @@ class AccountSend extends React.Component<Props> {
               Clear
             </ClearButton>
             <SendButton
-              isDisabled={false}
+              isDisabled={this.state.isSending}
               onClick={() => this.onSend()}
             >
               Send
