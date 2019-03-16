@@ -2,7 +2,6 @@
 
 import React from 'react';
 import PropTypes from 'prop-types';
-import BigNumber from 'bignumber.js';
 import styled, { css } from 'styled-components';
 import { Select } from 'components/Select';
 import Button from 'components/Button';
@@ -415,7 +414,7 @@ class AccountSend extends React.Component<Props> {
     const amount = this.state.amount;
     const fee = this.state.selectedFeeLevel.label;
 
-    appState.btcComposeTransaction(address, amount, fee, true);
+    appState.btcComposeTransaction(address, amount, fee, true, this.onClear);
   }
 
   render() {
@@ -467,6 +466,7 @@ class AccountSend extends React.Component<Props> {
         </ModalContainer>
       )
     }
+
     const currencySelectOption = [
       { value: network.shortcut, label: network.shortcut },
     ];

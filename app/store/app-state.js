@@ -106,7 +106,7 @@ export default class AppState {
   cleanWallet() {
     this.wallet.dropdownOpened = false;
     this.wallet.showSidebar = false;
-    this.wallet.network = null;
+    // this.wallet.network = null;
     this.wallet.account = null;
   }
 
@@ -213,7 +213,8 @@ export default class AppState {
   }
 
   @action
-  async btcComposeTransaction(toAddress: string, amount: string, fee: string, push: boolean) {
+  async btcComposeTransaction(toAddress: string, amount: string,
+                              fee: string, push: boolean, clear: Function) {
     const device = this.eWalletDevice.device;
     const satAmount = parseAmount(`${amount} btc`).toString();
     if (!!device) {
@@ -259,7 +260,6 @@ export default class AppState {
             account: this.wallet.account,
           });
           const response = await compose.run();
-          console.log(response);
           this.wallet.buttonRequest_ConfirmOutput = false;
           this.wallet.buttonRequest_SignTx = false;
           if (response && response.txid) {
@@ -271,6 +271,7 @@ export default class AppState {
               cancelable: true,
               actions: [],
             };
+            clear();
           } else {
             this.wallet.notification = {
               type: 'error',
@@ -291,7 +292,6 @@ export default class AppState {
             cancelable: true,
             actions: [],
           };
-          console.log(this.wallet.notification);
         }
       }).catch(function(error) {
         console.error('Call rejected:', error);
