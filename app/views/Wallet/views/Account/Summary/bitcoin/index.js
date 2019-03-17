@@ -90,7 +90,7 @@ class AccountSummary extends React.Component<Props> {
       value: rates.bitcoin['usd'],//cny usd
     }];
     const balance = BigNumber(account.balance).dividedBy(1e8, 10).toString();
-    const externalAddress = `https://www.blockchain.com/btc/address/${account.address}`;
+    // const externalAddress = `https://www.blockchain.com/btc/address/${account.address}`;
     return (
       <Content>
         <React.Fragment>
@@ -99,7 +99,7 @@ class AccountSummary extends React.Component<Props> {
               <CoinLogo network="btc"/>
               <AccountTitle>Account #{parseInt("0", 10) + 1}</AccountTitle>
             </AccountName>
-            <Link openExternal={externalAddress} isGray>See full transaction history</Link>
+            {/*<Link openExternal={externalAddress} isGray>See full transaction history</Link>*/}
           </AccountHeading>
           <AccountBalance
             network={network}
