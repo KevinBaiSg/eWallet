@@ -411,6 +411,7 @@ class AccountSend extends React.Component<Props> {
         address: address,
       })
     }
+    this.onAddressChange(address);
   }
 
   onSend() {
