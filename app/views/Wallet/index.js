@@ -123,11 +123,9 @@ class Wallet extends React.Component<Props, State> {
               <Route path="/device/:device/network/:network/account/:account" component={TopNavigationAccount}/>
             </Navigation>
             <ContextNotifications />
-            {/*<Log />*/}
             <Body>
               {props.children}
             </Body>
-            {/*<Footer opened/>*/}
           </MainContent>
         </WalletWrapper>
         {/*<ModalContainer />*/}

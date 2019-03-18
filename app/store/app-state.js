@@ -45,6 +45,7 @@ export type EWalletDevice = {
   firmware: string,
   features: Features,
   connected: boolean, // device is connected
+  available: boolean,
   device: Device,
   session: Session,
 };
@@ -74,6 +75,7 @@ export default class AppState {
     firmware: '',
     features: null,
     connected: false,
+    available: false,
     device: null,
   };
 
@@ -100,6 +102,7 @@ export default class AppState {
     this.eWalletDevice.firmware = '';
     this.eWalletDevice.features = null;
     this.eWalletDevice.connected = false;
+    this.eWalletDevice.available = false;
     this.eWalletDevice.device = null;
   }
 
@@ -148,6 +151,7 @@ export default class AppState {
       self.eWalletDevice.device = device;
       self.eWalletDevice.features = device.features;
       self.eWalletDevice.connected = true;
+      self.eWalletDevice.available = true;
       self.eWalletDevice.firmware = device.getVersion();
       Logger.info(`Connected device: ${self.eWalletDevice.features.label}; firmware Version: ${self.eWalletDevice.firmware}`);
 
