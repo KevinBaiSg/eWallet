@@ -12017,6 +12017,11 @@ q@^1.1.2, q@~1.5.0:
   resolved "https://registry.npmjs.org/q/-/q-1.5.1.tgz#7e32f75b41381291d04611f1bf14109ac00651d7"
   integrity sha1-fjL3W0E4EpHQRhHxvxQQmsAGUdc=
 
+qr.js@0.0.0:
+  version "0.0.0"
+  resolved "http://registry.npm.taobao.org/qr.js/download/qr.js-0.0.0.tgz#cace86386f59a0db8050fa90d9b6b0e88a1e364f"
+  integrity sha1-ys6GOG9ZoNuAUPqQ2baw6IoeNk8=
+
 qrcode-terminal@^0.10.0:
   version "0.10.0"
   resolved "https://registry.npmjs.org/qrcode-terminal/-/qrcode-terminal-0.10.0.tgz#a76a48e2610a18f97fa3a2bd532b682acff86c53"
@@ -12252,6 +12257,14 @@ react-qr-reader@2.1.2:
     jsqr "^1.1.1"
     prop-types "^15.5.8"
     webrtc-adapter "^6.4.0"
+
+react-qr-svg@^2.2.1:
+  version "2.2.1"
+  resolved "http://registry.npm.taobao.org/react-qr-svg/download/react-qr-svg-2.2.1.tgz#f6f25820fdb2c39ad0d66a14a758e2f575717c68"
+  integrity sha1-9vJYIP2yw5rQ1moUp1ji9XVxfGg=
+  dependencies:
+    prop-types "^15.5.8"
+    qr.js "0.0.0"
 
 react-router-dom@^4.3.1:
   version "4.3.1"
