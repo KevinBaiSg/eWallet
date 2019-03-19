@@ -289,6 +289,7 @@ class AccountSend extends React.Component<Props> {
     this.onQrScanCancel = this.onQrScanCancel.bind(this);
     this.openQrModal = this.openQrModal.bind(this);
     this.onSend = this.onSend.bind(this);
+    this.callback = this.callback.bind(this);
   }
 
   getAddressInputState(): string {
@@ -387,6 +388,14 @@ class AccountSend extends React.Component<Props> {
     })
   }
 
+  callback(result: boolean) {
+    if (result) {
+      this.onClear();
+    } else {
+      this.setState({isSending: false})
+    }
+  }
+
   openQrModal() {
     this.setState({
       isQrScanning: true,
@@ -420,7 +429,7 @@ class AccountSend extends React.Component<Props> {
     const amount = this.state.amount;
     const fee = this.state.selectedFeeLevel.label;
     this.setState({isSending: true});
-    appState.btcComposeTransaction(address, amount, fee, true, this.onClear);
+    appState.btcComposeTransaction(address, amount, fee, true, this.callback);
   }
 
   render() {
@@ -582,6 +591,7 @@ class AccountSend extends React.Component<Props> {
           <FormButtons isAdvancedSettingsHidden>
             <ClearButton
               isWhite
+              isDisabled={this.state.isSending}
               onClick={() => this.onClear()}
             >
               Clear

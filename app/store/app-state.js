@@ -218,7 +218,7 @@ export default class AppState {
 
   @action
   async btcComposeTransaction(toAddress: string, amount: string,
-                              fee: string, push: boolean, clear: Function) {
+                              fee: string, push: boolean, callback: Function) {
     const device = this.eWalletDevice.device;
     const satAmount = parseAmount(`${amount} btc`).toString();
     if (!!device) {
@@ -248,6 +248,7 @@ export default class AppState {
             cancelable: true,
             actions: [],
           };
+          callback(false);
         });
 
         try {
@@ -275,7 +276,7 @@ export default class AppState {
               cancelable: true,
               actions: [],
             };
-            clear();
+            callback(true);
           } else {
             this.wallet.notification = {
               type: 'error',
@@ -284,6 +285,7 @@ export default class AppState {
               cancelable: true,
               actions: [],
             };
+            callback(false);
           }
         } catch (e) {
           console.error('Call rejected:', e);
@@ -296,6 +298,7 @@ export default class AppState {
             cancelable: true,
             actions: [],
           };
+          callback(false);
         }
       }).catch(function(error) {
         console.error('Call rejected:', error);
@@ -308,6 +311,7 @@ export default class AppState {
           cancelable: true,
           actions: [],
         };
+        callback(false);
       })
     }
   }
