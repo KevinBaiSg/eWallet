@@ -103,8 +103,8 @@
     },
     "publish": {
       "provider": "github",
-      "owner": "Kevin Bai",
-      "repo": "Kevin Bai",
+      "owner": "KevinBaiSg",
+      "repo": "eWallet",
       "private": false
     }
   },
