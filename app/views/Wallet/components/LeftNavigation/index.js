@@ -243,19 +243,19 @@ class LeftNavigation extends React.Component<Props, State> {
           device={eWalletDevice}
           disabled={false}
           isOpen
-          icon={(
-            <React.Fragment>
-              <WalletTypeIcon type={'standard'}
-                              size={25} color={colors.TEXT_SECONDARY}/>
-              <Icon
-                canAnimate={this.state.clicked === true}
-                isActive={wallet.dropdownOpened}
-                size={25}
-                color={colors.TEXT_SECONDARY}
-                icon={icons.ARROW_DOWN}
-              />
-            </React.Fragment>
-          )}
+          // icon={(
+          //   <React.Fragment>
+          //     <WalletTypeIcon type={'standard'}
+          //                     size={25} color={colors.TEXT_SECONDARY}/>
+          //     <Icon
+          //       canAnimate={this.state.clicked === true}
+          //       isActive={wallet.dropdownOpened}
+          //       size={25}
+          //       color={colors.TEXT_SECONDARY}
+          //       icon={icons.ARROW_DOWN}
+          //     />
+          //   </React.Fragment>
+          // )}
           {...this.props}
         />
         <Body minHeight={this.state.bodyMinHeight}>
