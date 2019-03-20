@@ -1,3 +1,10 @@
+
+<div align="center">
+
+![eWallet](https://raw.githubusercontent.com/KevinBaiSg/eWallet/eWallet/images/ewallet.gif)
+
+</div>
+
 ## Install
 
 First, clone the repo via git:
