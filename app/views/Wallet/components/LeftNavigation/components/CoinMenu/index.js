@@ -1,33 +1,32 @@
 /* @flow */
 
-import styled from 'styled-components';
-import coins from 'constants/coins';
-import colors from 'config/colors';
-import ICONS from 'config/icons';
-import PropTypes from 'prop-types';
 import React, { Component } from 'react';
+import PropTypes from 'prop-types';
+import {
+  inject,
+  observer
+} from 'mobx-react';
 import { NavLink } from 'react-router-dom';
-// import Link from 'components/Link';
+import styled from 'styled-components';
 import RowCoin from '../RowCoin';
-
-import type { Props } from '../common';
-import { inject, observer } from 'mobx-react';
 
 const Wrapper = styled.div``;
 
 class CoinMenu extends Component<Props> {
-  // getBaseUrl() {
-  //   const { selectedDevice } = this.props.wallet;
-  //   let baseUrl = '';
-  //   if (selectedDevice && selectedDevice.features) {
-  //     baseUrl = `/device/${selectedDevice.features.device_id}`;
-  //     if (selectedDevice.instance) {
-  //       baseUrl += `:${selectedDevice.instance}`;
-  //     }
-  //   }
-  //
-  //   return baseUrl;
-  // }
+  constructor(props) {
+    super(props);
+    this.getBaseUrl = this.getBaseUrl.bind(this);
+  }
+
+  getBaseUrl() {
+    const { eWalletDevice } = this.props.appState;
+    let baseUrl = '';
+    if (eWalletDevice && eWalletDevice.device) {
+      baseUrl = `/device/${eWalletDevice.device.features.device_id}`;
+    }
+
+    return baseUrl;
+  }
 
   render() {
     const { appState } = this.props;
@@ -37,7 +36,7 @@ class CoinMenu extends Component<Props> {
         {localStorage.networks.map(item => (
           <NavLink
             key={item.shortcut}
-            to='www.baidu.com'
+            to={`${this.getBaseUrl()}/network/${item.shortcut}/account/0`}
           >
             <RowCoin
               network={{
