@@ -179,7 +179,7 @@ class LeftNavigation extends React.Component<Props, State> {
     //     && location.state
     //     && location.state.network
     //     && this.state.animationType === 'slide-left';
-    return true;
+    return this.state.animationType === 'slide-left';
   }
 
   handleOpen() {
@@ -206,26 +206,19 @@ class LeftNavigation extends React.Component<Props, State> {
     const { appState } = props;
     const { eWalletDevice, wallet } = appState;
     let menu;
-    // if (this.shouldRenderAccounts()) {
-    //   menu = (
-    //     <TransitionMenu animationType="slide-left">
-    //       <AccountMenu {...props} />
-    //     </TransitionMenu>
-    //   );
-    // } else if (this.shouldRenderCoins()) {
-    //   menu = (
-    //     <TransitionMenu animationType="slide-right">
-    //       <CoinMenu {...props} />
-    //     </TransitionMenu>
-    //   );
-    // }
-
-    menu = (
-      <TransitionMenu animationType="slide-right">
-        <CoinMenu {...props} />
-      </TransitionMenu>
-    );
-
+    if (this.shouldRenderAccounts()) {
+      menu = (
+        <TransitionMenu animationType="slide-left">
+          <AccountMenu {...props} />
+        </TransitionMenu>
+      );
+    } else if (this.shouldRenderCoins()) {
+      menu = (
+        <TransitionMenu animationType="slide-right">
+          <CoinMenu {...props} />
+        </TransitionMenu>
+      );
+    }
 
     // const { selectedDevice, dropdownOpened } = props.wallet;
     // const isDeviceAccessible = deviceUtils.isDeviceAccessible(selectedDevice);
