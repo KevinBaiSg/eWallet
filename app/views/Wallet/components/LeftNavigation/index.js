@@ -5,25 +5,18 @@ import {
   inject,
   observer
 } from 'mobx-react';
-
+import { matchPath } from 'react-router'
+import { withRouter } from 'react-router-dom';
 import PropTypes from 'prop-types';
-
 import colors from 'config/colors';
 import { FONT_SIZE } from 'config/variables';
-import Icon from 'components/Icon';
-import WalletTypeIcon from 'components/images/WalletType';
-import icons from 'config/icons';
 import { TransitionGroup, CSSTransition } from 'react-transition-group';
 import styled from 'styled-components';
 import DeviceHeader from 'components/DeviceHeader';
-import * as deviceUtils from 'utils/device';
 
 import AccountMenu from './components/AccountMenu';
 import CoinMenu from './components/CoinMenu';
-import DeviceMenu from './components/DeviceMenu';
 import Sidebar from './components/Sidebar';
-
-// import type { Props } from './components/common';
 
 const Header = styled(DeviceHeader)`
     border-right: 1px solid ${colors.BACKGROUND};
@@ -96,16 +89,10 @@ type TransitionMenuProps = {
   children?: React.Node;
 }
 
-// TransitionMenu needs to dispatch window.resize event
-// in order to StickyContainer be recalculated
 const TransitionMenu = (props: TransitionMenuProps): React$Element<TransitionGroup> => (
   <TransitionGroupWrapper component="div" className="transition-container">
     <CSSTransition
       key={props.animationType}
-      onExit={() => {
-        window.dispatchEvent(new Event('resize'));
-      }}
-      onExited={() => window.dispatchEvent(new Event('resize'))}
       in
       out
       classNames={props.animationType}
@@ -125,8 +112,7 @@ type State = {
   bodyMinHeight: number;
 }
 
-type Props = {
-};
+type Props = {};
 
 class LeftNavigation extends React.Component<Props, State> {
   constructor(props: Props) {
@@ -136,7 +122,7 @@ class LeftNavigation extends React.Component<Props, State> {
     // const hasNetwork = location && location.state && location.state.network;
     this.state = {
       // animationType: hasNetwork ? 'slide-left' : null,
-      animationType: 'slide-left',
+      animationType: 'slide-right',
       clicked: false,
       bodyMinHeight: 0
     };
@@ -147,24 +133,25 @@ class LeftNavigation extends React.Component<Props, State> {
   }
 
   componentWillReceiveProps(nextProps: Props) {
-    // const { selectedDevice } = nextProps.wallet;
-    // const { location } = nextProps.router;
-    // const hasNetwork = location && location.state.network;
-    // const deviceReady = selectedDevice && selectedDevice.features && selectedDevice.mode === 'normal';
+    const { eWalletDevice } = nextProps.appState;
+    const deviceReady = eWalletDevice && eWalletDevice.device && eWalletDevice.connected === true;
 
-    // if (hasNetwork) {
-    //     this.setState({
-    //         animationType: 'slide-left',
-    //     });
-    // } else {
-    //     this.setState({
-    //         animationType: deviceReady ? 'slide-right' : null,
-    //     });
-    // }
-
-    this.setState({
-      animationType: 'slide-left'
+    const match = matchPath(nextProps.location.pathname, {
+      path: '/device/:device/network/:network',
+      exact: false,
+      strict: false
     });
+
+    const hasNetwork = match && match.params.network;
+    if (hasNetwork) {
+      this.setState({
+        animationType: 'slide-left'
+      });
+    } else {
+      this.setState({
+        animationType: deviceReady ? 'slide-right' : null
+      });
+    }
   }
 
   componentDidUpdate() {
@@ -204,7 +191,8 @@ class LeftNavigation extends React.Component<Props, State> {
   render() {
     const { props } = this;
     const { appState } = props;
-    const { eWalletDevice, wallet } = appState;
+    const { eWalletDevice } = appState;
+
     let menu;
     if (this.shouldRenderAccounts()) {
       menu = (
@@ -231,7 +219,7 @@ class LeftNavigation extends React.Component<Props, State> {
             // if (isDeviceAccessible || this.props.devices.length > 1) {
             //   this.handleOpen();
             // }
-            console.log('onClickWrapper')
+            console.log('onClickWrapper');
           }}
           device={eWalletDevice}
           disabled={false}
@@ -252,8 +240,6 @@ class LeftNavigation extends React.Component<Props, State> {
           {...this.props}
         />
         <Body minHeight={this.state.bodyMinHeight}>
-        {wallet.dropdownOpened && <DeviceMenu ref={this.deviceMenuRef} {...this.props} />}
-        {/*{isDeviceAccessible && menu}*/}
         {menu}
         </Body>
       </Sidebar>
@@ -265,8 +251,8 @@ LeftNavigation.propTypes = {
   // appState: PropTypes.object.isRequired
 };
 
-export default inject((stores) => {
+export default withRouter(inject((stores) => {
   return {
     appState: stores.appState
   };
-})(observer(LeftNavigation));
+})(observer(LeftNavigation)));
