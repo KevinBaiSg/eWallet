@@ -105,7 +105,7 @@ class AccountBalance extends PureComponent<Props, State> {
 
     render() {
         const { network } = this.props;
-        const fiatRate = this.props.fiat.find(f => f.network === network.shortcut);
+        const fiatRate = this.props.fiat.find(f => f.network.toLowerCase() === network.shortcut.toLowerCase());
         let accountBalance = '';
         let fiatRateValue = '';
         let fiat = '';

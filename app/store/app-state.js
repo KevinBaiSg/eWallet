@@ -53,7 +53,6 @@ export type EWalletDevice = {
 export type Wallet = {
   dropdownOpened: boolean,
   showSidebar: boolean,
-  network: CoinInfo,
   account: Account,
   rates: any,
   //
@@ -83,7 +82,6 @@ export default class AppState {
   wallet: Wallet = {
     dropdownOpened: false,
     showSidebar: false,
-    network: null,
     account: null,
     rates: null,
     //
@@ -109,7 +107,6 @@ export default class AppState {
   cleanWallet() {
     this.wallet.dropdownOpened = false;
     this.wallet.showSidebar = false;
-    // this.wallet.network = null;
     this.wallet.account = null;
   }
 
@@ -122,8 +119,6 @@ export default class AppState {
     let coinInfo = getCoinInfo('bitcoin');
     if (coinInfo) {
       this.localStorage.networks.push(coinInfo);
-      // TODO: 之后修改为选择设置
-      this.wallet.network = coinInfo;
     }
 
     coinInfo = getCoinInfo('ethereum');

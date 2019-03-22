@@ -18,6 +18,7 @@ import PropTypes from "prop-types";
 import { inject, observer } from 'mobx-react';
 import { getCoinInfo } from 'utils/data/CoinInfo';
 import { formatAmount } from 'utils/formatUtils';
+import { matchPath } from "react-router";
 
 const AccountHeading = styled.div`
     padding-bottom: 35px;
@@ -67,6 +68,7 @@ const AddedTokensWrapper = styled.div``;
 class AccountSummary extends React.Component<Props> {
   constructor(props) {
     super(props);
+    this.getCurrentNetwork = this.getCurrentNetwork.bind(this);
   }
 
   componentDidMount(): void {
@@ -75,9 +77,20 @@ class AccountSummary extends React.Component<Props> {
     appState.updateRate();
   }
 
+  getCurrentNetwork() {
+    const { localStorage } = this.props.appState;
+
+    const networks = localStorage.networks
+      .filter(n => n.shortcut.toLowerCase() === 'btc');
+    if (networks && networks.length === 0) {
+      return null;
+    }
+    return networks[0];
+  }
+
   render() {
     const { wallet } = this.props.appState;
-    const {account, rates, network} = wallet;
+    const {account, rates} = wallet;
     if (!account || !rates) {
       const loader = {
         type: 'progress',
@@ -85,10 +98,12 @@ class AccountSummary extends React.Component<Props> {
       };
       return <Content loader={loader} isLoading />;
     }
+    const network = this.getCurrentNetwork();
     const fiat = [{
-      network: network.shortcut,
+      network: network.shortcut.toLowerCase(),
       value: rates.bitcoin['usd'],//cny usd
     }];
+
     const balance = BigNumber(account.balance).dividedBy(1e8, 10).toString();
     // const externalAddress = `https://www.blockchain.com/btc/address/${account.address}`;
     return (
