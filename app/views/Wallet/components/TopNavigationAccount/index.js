@@ -98,8 +98,6 @@ class TopNavigationAccount extends React.Component<Props> {
 
     const basePath = `/device/${eWalletDevice.features.device_id}/network/${network}/account/0`;
 
-    console.log(`basePath = ${basePath}`);
-
     return (
       <Wrapper className="account-tabs" ref={this.wrapperRefCallback}>
         <StyledNavLink exact to={`${basePath}`}>Summary</StyledNavLink>
