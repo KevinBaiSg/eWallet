@@ -8,7 +8,6 @@ import styled, { css } from 'styled-components';
 // import * as stateUtils from 'reducers/utils';
 import Tooltip from 'components/Tooltip';
 import ICONS from 'config/icons';
-
 import { NavLink } from 'react-router-dom';
 // import { findDeviceAccounts } from 'reducers/AccountsReducer';
 import {
@@ -21,6 +20,7 @@ import Row from '../Row';
 import RowCoin from '../RowCoin';
 import PropTypes from "prop-types";
 import { inject, observer } from 'mobx-react';
+import { matchPath } from "react-router";
 
 const Wrapper = styled.div``;
 
@@ -117,15 +117,34 @@ class AccountMenu extends React.Component<Props> {
   }
 
   render() {
-    const { wallet } = this.props.appState;
+    const { localStorage } = this.props.appState;
+
+    const match = matchPath(this.props.location.pathname, {
+      path: '/device/:device/network/:network',
+      exact: false,
+      strict: false
+    });
+
+    let network;
+    if ( match && match.params.network) {
+      network = match.params.network.toLowerCase();
+    } else {
+      return null;
+    }
+
+    const networks = localStorage.networks
+      .filter(n => n.shortcut.toLowerCase() === network);
+    if (networks && networks.length === 0) {
+      return null;
+    }
 
     return (
       <Wrapper>
         <NavLink to={this.getBaseUrl()}>
           <RowCoin
             network={{
-              name: wallet.network.name,
-              shortcut: wallet.network.shortcut,
+              name: networks[0].name,
+              shortcut: networks[0].shortcut,
             }}
             iconLeft={{
               type: ICONS.ARROW_LEFT,

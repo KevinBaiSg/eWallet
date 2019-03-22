@@ -11,6 +11,7 @@ import {
   inject,
   observer
 } from 'mobx-react';
+import { matchPath } from "react-router";
 
 const Wrapper = styled.div`
     position: relative;
@@ -80,10 +81,24 @@ class TopNavigationAccount extends React.Component<Props> {
     if (!eWalletDevice || !eWalletDevice.features || !eWalletDevice.features.device_id) {
       return null;
     }
+
     const { pathname } = this.props.history.location;
-    // const { network } = this.props.selectedAccount;
-    const network = 'btc';
+    const match = matchPath(pathname, {
+      path: '/device/:device/network/:network',
+      exact: false,
+      strict: false
+    });
+
+    let network;
+    if ( match && match.params.network) {
+      network = match.params.network.toLowerCase();
+    } else {
+      return null;
+    }
+
     const basePath = `/device/${eWalletDevice.features.device_id}/network/${network}/account/0`;
+
+    console.log(`basePath = ${basePath}`);
 
     return (
       <Wrapper className="account-tabs" ref={this.wrapperRefCallback}>
