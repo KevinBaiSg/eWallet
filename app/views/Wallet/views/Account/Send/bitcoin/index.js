@@ -22,6 +22,7 @@ import QrModal from 'components/modals/QrModal';
 import ConfirmAction from 'components/modals/confirm/Action';
 import type { parsedURI } from 'utils/cryptoUriParser';
 import { FADE_IN } from 'config/animations';
+import { matchPath } from "react-router";
 
 const NUMBER_RE: RegExp = new RegExp('^(0|0\\.([0-9]+)?|[1-9][0-9]*\\.?([0-9]+)?|\\.[0-9]+)$');
 // TODO: Decide on a small screen width for the whole app
@@ -232,11 +233,10 @@ class AccountSend extends React.Component<Props> {
     isQrScanning: false,
   };
 
+  network = this.getCurrentNetworkbyShortcut('btc');
   constructor(props) {
     super(props);
-
-    const { network } = this.props.appState.wallet;
-
+    // const network = this.getCurrentNetworkbyShortcut('btc');
     this.state = {
       // for address
       address: '',
@@ -255,24 +255,24 @@ class AccountSend extends React.Component<Props> {
       feeLevels: [
         {
           value: 'High',
-          label: network.defaultFees.High,
+          label: this.network.defaultFees.High,
         },
         {
           value: 'Normal',
-          label: network.defaultFees.Normal,
+          label: this.network.defaultFees.Normal,
         },
         {
           value: 'Economy',
-          label: network.defaultFees.Economy,
+          label: this.network.defaultFees.Economy,
         },
         {
           value: 'Low',
-          label: network.defaultFees.Low,
+          label: this.network.defaultFees.Low,
         }
       ],
       selectedFeeLevel: {
         value: 'High',
-        label: network.defaultFees.High,
+        label: this.network.defaultFees.High,
       },
       //
       isQrScanning: false,
@@ -290,6 +290,18 @@ class AccountSend extends React.Component<Props> {
     this.openQrModal = this.openQrModal.bind(this);
     this.onSend = this.onSend.bind(this);
     this.callback = this.callback.bind(this);
+    this.getCurrentNetworkbyShortcut = this.getCurrentNetworkbyShortcut.bind(this);
+  }
+
+  getCurrentNetworkbyShortcut(shortcut: string) {
+    const { localStorage } = this.props.appState;
+
+    const networks = localStorage.networks
+      .filter(n => n.shortcut.toLowerCase() === shortcut.toLowerCase());
+    if (networks && networks.length === 0) {
+      return null;
+    }
+    return networks[0];
   }
 
   getAddressInputState(): string {
@@ -318,15 +330,13 @@ class AccountSend extends React.Component<Props> {
   };
 
   onAddressChange(address: string) {
-    const { network } = this.props.appState.wallet;
-
     this.setState({ address: address });
     if (address.length < 1) {
       this.setState({
         address: address,
         addressErrors: 'Address is not set',
       });
-    } else if (!isValidAddress(address, network)) {
+    } else if (!isValidAddress(address, this.network)) {
       this.setState({
         address: address,
         addressErrors: 'Address is not valid',
@@ -436,7 +446,7 @@ class AccountSend extends React.Component<Props> {
     const { appState } = this.props;
     const { wallet, eWalletDevice } = this.props.appState;
 
-    const {account, rates, network} = wallet;
+    const {account, rates} = wallet;
     if (!account || !rates) {
       const loader = {
         type: 'progress',
@@ -483,7 +493,7 @@ class AccountSend extends React.Component<Props> {
     }
 
     const currencySelectOption = [
-      { value: network.shortcut, label: network.shortcut },
+      { value: this.network.shortcut, label: this.network.shortcut },
     ];
 
     return (

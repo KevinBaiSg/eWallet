@@ -68,7 +68,7 @@ const AddedTokensWrapper = styled.div``;
 class AccountSummary extends React.Component<Props> {
   constructor(props) {
     super(props);
-    this.getCurrentNetwork = this.getCurrentNetwork.bind(this);
+    this.getCurrentNetworkbyShortcut = this.getCurrentNetworkbyShortcut.bind(this);
   }
 
   componentDidMount(): void {
@@ -77,11 +77,11 @@ class AccountSummary extends React.Component<Props> {
     appState.updateRate();
   }
 
-  getCurrentNetwork() {
+  getCurrentNetworkbyShortcut(shortcut: string) {
     const { localStorage } = this.props.appState;
 
     const networks = localStorage.networks
-      .filter(n => n.shortcut.toLowerCase() === 'btc');
+      .filter(n => n.shortcut.toLowerCase() === shortcut.toLowerCase());
     if (networks && networks.length === 0) {
       return null;
     }
@@ -98,7 +98,7 @@ class AccountSummary extends React.Component<Props> {
       };
       return <Content loader={loader} isLoading />;
     }
-    const network = this.getCurrentNetwork();
+    const network = this.getCurrentNetworkbyShortcut('btc');
     const fiat = [{
       network: network.shortcut.toLowerCase(),
       value: rates.bitcoin['usd'],//cny usd
