@@ -118,6 +118,7 @@ app.on('ready', async () => {
     });
 
   mainWindow.on('closed', () => {
+    app.quit();
     mainWindow = null;
   });
 
@@ -128,7 +129,6 @@ app.on('ready', async () => {
   // eslint-disable-next-line
   // new AppUpdater();
 });
-
 
 /*
 * IPC
