@@ -10,7 +10,11 @@ import { dependencies } from '../package.json';
 const gitRevisionPlugin = new GitRevisionPlugin();
 
 export default {
-  externals: [...Object.keys(dependencies || {})],
+
+  externals: [
+    ...Object.keys(dependencies || {})
+      .filter(o => o !== 'bitcoinjs-lib-zcash' && o !== 'trezor.js'),
+  ],
 
   module: {
     rules: [
