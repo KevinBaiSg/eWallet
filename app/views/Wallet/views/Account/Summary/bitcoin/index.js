@@ -5,20 +5,18 @@ import { H2 } from 'components/Heading';
 import BigNumber from 'bignumber.js';
 import Icon from 'components/Icon';
 import { AsyncSelect } from 'components/Select';
-import ICONS from 'config/icons';
 import colors from 'config/colors';
 import Tooltip from 'components/Tooltip';
 import Content from 'views/Wallet/components/Content';
 
 import CoinLogo from 'components/images/CoinLogo';
-import Link from 'components/Link';
+// import Link from 'components/Link';
 import { FONT_WEIGHT, FONT_SIZE } from 'config/variables';
 import AccountBalance from '../components/Balance';
 import PropTypes from "prop-types";
 import { inject, observer } from 'mobx-react';
 import { getCoinInfo } from 'utils/data/CoinInfo';
 import { formatAmount } from 'utils/formatUtils';
-import { matchPath } from "react-router";
 
 const AccountHeading = styled.div`
     padding-bottom: 35px;
