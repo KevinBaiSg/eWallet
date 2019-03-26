@@ -1,7 +1,7 @@
 /* @flow */
 import React from 'react';
 import PropTypes from 'prop-types'
-// import EthereumTypeSummary from './ethereum';
+import EthereumTypeSummary from './ethereum';
 import BitcoinTypeSummary from './bitcoin';
 
 import {
@@ -27,8 +27,8 @@ class WrapperProps extends React.Component<Props> {
       return null;
     }
     switch (network) {
-      // case 'ethereum':
-      //   return <EthereumTypeSummary/>;
+      case 'eth':
+        return <EthereumTypeSummary/>;
       case 'btc':
         return <BitcoinTypeSummary/>;
       default:
