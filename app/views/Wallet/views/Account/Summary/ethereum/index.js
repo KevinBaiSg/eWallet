@@ -71,7 +71,7 @@ class AccountSummary extends React.Component<Props> {
 
   componentDidMount(): void {
     const { appState } = this.props;
-    appState.getAccountInfo();
+    appState.getEthereumAccountInfo();
     appState.updateRate();
   }
 
@@ -88,8 +88,8 @@ class AccountSummary extends React.Component<Props> {
 
   render() {
     const { wallet } = this.props.appState;
-    const {account, rates} = wallet;
-    if (!account || !rates) {
+    const {accountEth, rates} = wallet;
+    if (!accountEth || !rates) {
       const loader = {
         type: 'progress',
         title: 'Loading account',
@@ -102,8 +102,8 @@ class AccountSummary extends React.Component<Props> {
       value: rates.ethereum['usd'],//cny usd
     }];
 
-    const balance = BigNumber(account.balance).dividedBy(1e8, 10).toString();
-    const externalAddress = `https://www.blockchain.com/btc/address/${account.address}`;
+    const balance = BigNumber(accountEth.balance).dividedBy(1e8, 10).toString();
+    const externalAddress = `https://etherscan.io/address/${accountEth.address}`;
     return (
       <Content>
         <React.Fragment>
