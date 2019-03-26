@@ -4,6 +4,7 @@ import Logger from 'js-logger';
 import { BridgeV2 as Transport } from 'trezor-link';
 import Link from 'components/Link';
 import GetAccountInfo from 'utils/GetAccountInfo'
+import EthereumGetAccountInfo from 'utils/EthereumGetAccountInfo'
 import Account from 'utils/account'
 
 import configLocal from '../static/config_signed.bin';
@@ -54,6 +55,7 @@ export type Wallet = {
   dropdownOpened: boolean,
   showSidebar: boolean,
   account: Account,
+  accountEth: Account,
   rates: any,
   //
   buttonRequest_ConfirmOutput: boolean,
@@ -80,9 +82,12 @@ export default class AppState {
 
   @observable
   wallet: Wallet = {
+    path: '',
+    pathEth: '',
     dropdownOpened: false,
     showSidebar: false,
     account: null,
+    accountEth: null,
     rates: null,
     //
     buttonRequest_ConfirmOutput: false,
@@ -108,6 +113,7 @@ export default class AppState {
     this.wallet.dropdownOpened = false;
     this.wallet.showSidebar = false;
     this.wallet.account = null;
+    this.wallet.accountEth = null;
   }
 
   @action
@@ -190,6 +196,19 @@ export default class AppState {
   };
 
   @action
+  getCurrentNetworkByShortcut(shortcut: string) {
+    if (this.localStorage && this.localStorage.networks ) {
+      const networks = this.localStorage.networks
+        .filter(n => n.shortcut.toLowerCase() === shortcut.toLowerCase());
+      if (networks && networks.length === 0) {
+        return null;
+      }
+      return networks[0];
+    }
+    return null;
+  }
+
+  @action
   async getAccountInfo() {
     const device = this.eWalletDevice.device;
 
@@ -202,6 +221,62 @@ export default class AppState {
             session: session
           });
           this.wallet.account = await compose.run();
+        } catch (e) {
+          console.error('Call rejected:', e);
+        }
+      }).catch(function(error) {
+        console.error('Call rejected:', error);
+      })
+    }
+  }
+
+  static async ethereumGetAddress(session: Session)  {
+    const response = await session.ethereumGetAddress(
+      [44 | 0x80000000, 60 | 0x80000000, 0 | 0x80000000, 0, 0],
+      false
+    );
+
+    if (response.type !== 'EthereumAddress') {
+      return null;
+    }
+
+    return {
+      address: `0x${response.message.address}`,
+      path: response.message.path,
+    };
+  }
+
+  @action
+  async getEthereumAccountInfo() {
+    const device = this.eWalletDevice.device;
+    // const network = this.getCurrentNetworkByShortcut('eth');
+    if (!!device) {
+      device.waitForSessionAndRun(async (session) => {
+        try {
+          const response = await AppState.ethereumGetAddress(session);
+          if (!response) {
+            // handle error
+            return;
+          }
+          const address = response.address;
+          console.log(address);
+          const compose = new EthereumGetAccountInfo({
+            account: {
+              address,
+              block: 0,
+              transactions: 0,
+              balance: '0',
+              availableBalance: '0',
+              nonce: 0,
+            },
+            coin: 'eth',
+          });
+          const txs = await compose.run();
+          console.log('EthereumGetAccountInfo');
+          console.log(txs);
+          if (!txs.success) {
+            // throw new Error(txs.payload.error);
+          }
         } catch (e) {
           console.error('Call rejected:', e);
         }
