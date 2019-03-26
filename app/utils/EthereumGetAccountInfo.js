@@ -9,12 +9,21 @@ import { NO_COIN_INFO } from 'constants/errors';
 import BlockBook, { create as createBackend } from 'utils/backend';
 import type { CoreMessage, EthereumNetworkInfo } from 'utils/types';
 import type { EthereumAccount } from 'utils/types/account';
+import type { Session as TrezorSession } from 'trezor.js';
+import type { GetAccountInfoOptions } from './GetAccountInfo';
+import Account from './account';
 
 type Params = {
-  accounts: Array<EthereumAccount>,
+  account: EthereumAccount,
   coinInfo: EthereumNetworkInfo,
-  bundledResponse: boolean,
+  // bundledResponse: boolean,
 }
+
+export type EthereumGetAccountInfoOptions = {
+  coin?: string,
+  account: EthereumAccount,
+  session: TrezorSession,
+};
 
 export default class EthereumGetAccountInfo {
   params: Params;
@@ -22,43 +31,39 @@ export default class EthereumGetAccountInfo {
   backend: BlockBook;
   discovery: ?Discovery;
 
-  constructor(message: CoreMessage) {
-    this.requiredPermissions = [];
+  constructor(options: EthereumGetAccountInfoOptions) {
     this.info = 'Export ethereum account info';
     this.useDevice = false;
-    this.useUi = false;
 
-    const payload: Object = message.payload;
-    let bundledResponse: boolean = true;
-    // create a bundle with only one batch
-    if (!payload.hasOwnProperty('accounts')) {
-      payload.accounts = [...payload.account];
-      bundledResponse = false;
-    }
+    // const payload: Object = message.payload;
+    // let bundledResponse: boolean = true;
+    // // create a bundle with only one batch
+    // if (!options.hasOwnProperty('accounts')) {
+    //   options.accounts = [...options.account];
+    //   bundledResponse = false;
+    // }
 
     // validate incoming parameters
-    validateParams(payload, [
-      { name: 'accounts', type: 'array', obligatory: true },
+    validateParams(options, [
+      { name: 'account', type: 'object', obligatory: true },
       { name: 'coin', type: 'string', obligatory: true }
     ]);
 
-    payload.accounts.forEach(batch => {
-      validateParams(batch, [
-        { name: 'descriptor', type: 'string', obligatory: true },
-        { name: 'block', type: 'number', obligatory: true },
-        { name: 'transactions', type: 'number', obligatory: true }
-      ]);
-    });
+    validateParams(options.account, [
+      { name: 'address', type: 'string', obligatory: true },
+      { name: 'block', type: 'number', obligatory: true },
+      { name: 'transactions', type: 'number', obligatory: true }
+    ]);
 
-    const network: ?EthereumNetworkInfo = getEthereumNetwork(payload.coin);
+    const network: ?EthereumNetworkInfo = getEthereumNetwork(options.coin);
     if (!network) {
       throw NO_COIN_INFO;
     }
 
     this.params = {
-      accounts: payload.accounts,
+      account: options.account,
       coinInfo: network,
-      bundledResponse
+      // bundledResponse
     };
   }
 
@@ -69,34 +74,29 @@ export default class EthereumGetAccountInfo {
     const blockchain = this.backend.blockchain;
     const { height } = await blockchain.lookupSyncStatus();
 
-    const responses: Array<EthereumAccount> = [];
+    const account = this.params.account;
+    const method = 'getAddressHistory';
+    const params = [
+      [account.address],
+      {
+        start: height,
+        end: account.block,
+        from: 0,
+        to: 0,
+        queryMempol: false
+      }
+    ];
+    const socket = await blockchain.socket.promise;
+    const confirmed = await socket.send({ method, params });
 
-    for (let i = 0; i < this.params.accounts.length; i++) {
-      const account = this.params.accounts[i];
-      const method = 'getAddressHistory';
-      const params = [
-        [account.descriptor],
-        {
-          start: height,
-          end: account.block,
-          from: 0,
-          to: 0,
-          queryMempol: false
-        }
-      ];
-      const socket = await blockchain.socket.promise;
-      const confirmed = await socket.send({ method, params });
-
-      responses.push({
-        descriptor: account.descriptor,
-        transactions: confirmed.totalCount,
-        block: height,
-        balance: '0', // TODO: fetch balance from blockbook
-        availableBalance: '0', // TODO: fetch balance from blockbook
-        nonce: 0 // TODO: fetch nonce from blockbook
-      });
-    }
-    return this.params.bundledResponse ? responses : responses[0];
+    return {
+      address: account.address,
+      transactions: confirmed.totalCount,
+      block: height,
+      balance: '0', // TODO: fetch balance from blockbook
+      availableBalance: '0', // TODO: fetch balance from blockbook
+      nonce: 0 // TODO: fetch nonce from blockbook
+    };
 
     /*
     // This will be useful for BTC-like accounts (multi addresses)
