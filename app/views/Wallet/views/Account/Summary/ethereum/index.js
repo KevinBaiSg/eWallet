@@ -5,20 +5,18 @@ import { H2 } from 'components/Heading';
 import BigNumber from 'bignumber.js';
 import Icon from 'components/Icon';
 import { AsyncSelect } from 'components/Select';
-import ICONS from 'config/icons';
 import colors from 'config/colors';
 import Tooltip from 'components/Tooltip';
 import Content from 'views/Wallet/components/Content';
 
 import CoinLogo from 'components/images/CoinLogo';
-import * as stateUtils from 'reducers/utils';
 import Link from 'components/Link';
 import { FONT_WEIGHT, FONT_SIZE } from 'config/variables';
 import AccountBalance from '../components/Balance';
-import AddedToken from '../components/Token';
-import AddTokenMessage from '../components/AddTokenMessage';
-
-import type { Props } from './Container';
+import PropTypes from "prop-types";
+import { inject, observer } from 'mobx-react';
+import { getCoinInfo } from 'utils/data/CoinInfo';
+import { formatAmount } from 'utils/formatUtils';
 
 const AccountHeading = styled.div`
     padding-bottom: 35px;
@@ -65,97 +63,74 @@ const AsyncSelectWrapper = styled.div`
 
 const AddedTokensWrapper = styled.div``;
 
-const AccountSummary = (props: Props) => {
-  const device = props.wallet.selectedDevice;
-  const {
-    account,
-    network,
-    tokens,
-    pending,
-    shouldRender
-  } = props.selectedAccount;
-
-  if (!device || !account || !network || !shouldRender) {
-    const { loader, exceptionPage } = props.selectedAccount;
-    return <Content loader={loader} exceptionPage={exceptionPage} isLoading/>;
+class AccountSummary extends React.Component<Props> {
+  constructor(props) {
+    super(props);
+    this.getCurrentNetworkbyShortcut = this.getCurrentNetworkbyShortcut.bind(this);
   }
 
-  const explorerLink: string = `${network.explorer.address}${account.descriptor}`;
-  const pendingAmount: BigNumber = stateUtils.getPendingAmount(pending, network.symbol);
-  const balance: string = new BigNumber(account.balance).minus(pendingAmount).toString(10);
+  componentDidMount(): void {
+    const { appState } = this.props;
+    appState.getAccountInfo();
+    appState.updateRate();
+  }
 
-  return (
-    <Content>
-      <React.Fragment>
-        <AccountHeading>
-          <AccountName>
-            <CoinLogo network={account.network}/>
-            <AccountTitle>Account #{parseInt(account.index, 10) + 1}</AccountTitle>
-          </AccountName>
-          <Link href={explorerLink} isGray>See full transaction history</Link>
-        </AccountHeading>
-        <AccountBalance
-          network={network}
-          balance={balance}
-          fiat={props.fiat}
-        />
-        <H2Wrapper>
-          <H2>Tokens</H2>
-          <StyledTooltip
-            maxWidth={200}
-            placement="top"
-            content="Insert token name, symbol or address to be able to send it."
-          >
-            <StyledIcon
-              icon={ICONS.HELP}
-              color={colors.TEXT_SECONDARY}
-              size={24}
-            />
-          </StyledTooltip>
-        </H2Wrapper>
-        <AsyncSelectWrapper>
-          <AsyncSelect
-            isSearchable
-            defaultOptions
-            value={null}
-            isMulti={false}
-            placeholder="Type in a token name or a token address"
-            loadingMessage={() => 'Loading...'}
-            noOptionsMessage={() => 'Token not found'}
-            onChange={(token) => {
-              if (token.name) {
-                const isAdded = tokens.find(t => t.symbol === token.symbol);
-                if (!isAdded) {
-                  props.addToken(token, account);
-                }
-              }
-            }}
-            loadOptions={input => props.loadTokens(input, account.network)}
-            formatOptionLabel={(option) => {
-              const isAdded = tokens.find(t => t.symbol === option.symbol);
-              if (isAdded) {
-                return `${option.name} (Already added)`;
-              }
-              return option.name;
-            }}
-            getOptionLabel={option => option.name}
-            getOptionValue={option => option.symbol}
+  getCurrentNetworkbyShortcut(shortcut: string) {
+    const { localStorage } = this.props.appState;
+
+    const networks = localStorage.networks
+      .filter(n => n.shortcut.toLowerCase() === shortcut.toLowerCase());
+    if (networks && networks.length === 0) {
+      return null;
+    }
+    return networks[0];
+  }
+
+  render() {
+    const { wallet } = this.props.appState;
+    const {account, rates} = wallet;
+    if (!account || !rates) {
+      const loader = {
+        type: 'progress',
+        title: 'Loading account',
+      };
+      return <Content loader={loader} isLoading />;
+    }
+    const network = this.getCurrentNetworkbyShortcut('eth');
+    const fiat = [{
+      network: network.shortcut.toLowerCase(),
+      value: rates.ethereum['usd'],//cny usd
+    }];
+
+    const balance = BigNumber(account.balance).dividedBy(1e8, 10).toString();
+    const externalAddress = `https://www.blockchain.com/btc/address/${account.address}`;
+    return (
+      <Content>
+        <React.Fragment>
+          <AccountHeading>
+            <AccountName>
+              <CoinLogo network="eth"/>
+              <AccountTitle>Account #{parseInt("0", 10) + 1}</AccountTitle>
+            </AccountName>
+            <Link openExternal={externalAddress} isGray>See full transaction history</Link>
+          </AccountHeading>
+          <AccountBalance
+            network={network}
+            balance={balance}
+            fiat={fiat}
           />
-        </AsyncSelectWrapper>
-        <AddedTokensWrapper>
-          {tokens.length < 1 && (<AddTokenMessage/>)}
-          {tokens.map(token => (
-            <AddedToken
-              key={token.symbol}
-              token={token}
-              pending={pending}
-              removeToken={props.removeToken}
-            />
-          ))}
-        </AddedTokensWrapper>
-      </React.Fragment>
-    </Content>
-  );
+        </React.Fragment>
+      </Content>
+    );
+  }
+}
+
+AccountSummary.propTypes = {
+  appState: PropTypes.object.isRequired
 };
 
-export default AccountSummary;
+export default inject((stores) => {
+  return {
+    appState: stores.appState
+  };
+})(observer(AccountSummary));
