@@ -295,7 +295,7 @@
     "styled-normalize": "^8.0.6",
     "trezor.js": "^6.19.4",
     "unorm": "^1.4.1",
-    "web3": "^1.0.0-beta.50",
+    "web3": "1.0.0-beta.35",
     "worker-loader": "^2.0.0"
   },
   "devEngines": {
