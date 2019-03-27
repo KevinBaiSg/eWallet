@@ -102,7 +102,7 @@ class AccountSummary extends React.Component<Props> {
       value: rates.ethereum['usd'],//cny usd
     }];
 
-    const balance = BigNumber(accountEth.balance).dividedBy(1e8, 10).toString();
+    // const balance = BigNumber(accountEth.balance).dividedBy(1e8, 10).toString();
     const externalAddress = `https://etherscan.io/address/${accountEth.address}`;
     return (
       <Content>
@@ -116,7 +116,7 @@ class AccountSummary extends React.Component<Props> {
           </AccountHeading>
           <AccountBalance
             network={network}
-            balance={balance}
+            balance={accountEth.balance}
             fiat={fiat}
           />
         </React.Fragment>
