@@ -17,6 +17,7 @@ import ComposeTransaction from 'utils/ComposeTransaction';
 import type { BitcoinNetworkInfo } from '../utils/types';
 import { parseAmount } from 'utils/btcParse';
 import React from 'react';
+import Web3 from "web3";
 
 const CoinGecko = require('coingecko-api');
 const CoinGeckoClient = new CoinGecko();
@@ -36,6 +37,12 @@ if (process.env.NODE_ENV === 'development') {
 } else {
   Logger.setLevel(Logger.WARN);
 }
+
+export type Web3Instance = {
+  web3: Web3,
+  latestBlock: number,
+  gasPrice: number,
+};
 
 export type EWalletDevice = {
   label: string,
@@ -62,6 +69,8 @@ export type Wallet = {
   buttonRequest_SignTx: boolean,
   // notification
   notification: any,
+  //
+  web3Instance: Web3Instance,
 };
 
 export type LocalStorage = {
@@ -94,6 +103,8 @@ export default class AppState {
     buttonRequest_SignTx: false,
     //
     notification: null,
+    //
+    web3Instance: null,
   };
 
   @observable
@@ -114,6 +125,43 @@ export default class AppState {
     this.wallet.showSidebar = false;
     this.wallet.account = null;
     this.wallet.accountEth = null;
+  }
+
+  @action
+  async getWeb3Instance() {
+    return new Promise(async (resolve, reject) => {
+      if (this.wallet.web3Instance && this.wallet.web3Instance.web3.currentProvider.connected) {
+        resolve(this.wallet.web3Instance);
+        return;
+      }
+
+      const web3 = new Web3(new Web3.providers.WebsocketProvider('wss://eth2.trezor.io/geth'));
+      const onConnect = async () => {
+        const latestBlock = await web3.eth.getBlockNumber();
+        const gasPrice = await web3.eth.getGasPrice();
+
+        this.wallet.web3Instance = {
+          web3,
+          latestBlock,
+          gasPrice,
+        };
+
+        resolve(this.wallet.web3Instance);
+      };
+
+      const onEnd = async () => {
+        web3.currentProvider.reset();
+        this.wallet.web3Instance = null;
+        // if (this.web3Instance && this.web3Instance.web3.currentProvider.connected) {
+        //   // backend disconnects
+        // }
+        reject();
+      };
+
+      web3.currentProvider.on('connect', onConnect);
+      web3.currentProvider.on('end', onEnd);
+      web3.currentProvider.on('error', onEnd);
+    });
   }
 
   @action
@@ -248,18 +296,38 @@ export default class AppState {
 
   @action
   async getEthereumAccountInfo() {
+    const self = this;
     const device = this.eWalletDevice.device;
     // const network = this.getCurrentNetworkByShortcut('eth');
     if (!!device) {
       device.waitForSessionAndRun(async (session) => {
         try {
+          const web3Instance = await this.getWeb3Instance();
+          if (!web3Instance) {
+            this.wallet.accountEth = null;
+            this.wallet.notification = {
+              type: 'error',
+              title: 'Web3 error',
+              cancelable: true,
+              actions: [],
+            };
+            return
+          }
+
           const response = await AppState.ethereumGetAddress(session);
           if (!response) {
             // handle error
+            this.wallet.accountEth = null;
+            this.wallet.notification = {
+              type: 'error',
+              title: 'Get Ethereum Address error',
+              cancelable: true,
+              actions: [],
+            };
             return;
           }
+
           const address = response.address;
-          console.log(address);
           const compose = new EthereumGetAccountInfo({
             account: {
               address,
@@ -270,18 +338,43 @@ export default class AppState {
               nonce: 0,
             },
             coin: 'eth',
+            session,
+            web3Instance,
           });
-          const txs = await compose.run();
-          console.log('EthereumGetAccountInfo');
-          console.log(txs);
-          if (!txs.success) {
-            // throw new Error(txs.payload.error);
+          const info = await compose.run();
+          if (!info.success) {
+            this.wallet.accountEth = null;
+            this.wallet.notification = {
+              type: 'error',
+              title: 'Get Ethereum Account error',
+              message: info.error.message || info.error,
+              cancelable: true,
+              actions: [],
+            };
           }
+          delete info.success;
+          this.wallet.accountEth = info;
         } catch (e) {
           console.error('Call rejected:', e);
+          this.wallet.accountEth = null;
+          this.wallet.notification = {
+            type: 'error',
+            title: 'Get Ethereum Account error',
+            message: e.message || e,
+            cancelable: true,
+            actions: [],
+          };
         }
       }).catch(function(error) {
         console.error('Call rejected:', error);
+        self.wallet.accountEth = null;
+        self.wallet.notification = {
+          type: 'error',
+          title: 'Get Ethereum Account error',
+          message: error.message || error,
+          cancelable: true,
+          actions: [],
+        };
       })
     }
   }
