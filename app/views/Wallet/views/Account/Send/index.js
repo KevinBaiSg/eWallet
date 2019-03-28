@@ -1,7 +1,7 @@
 /* @flow */
 import React from 'react';
 import PropTypes from 'prop-types'
-// import EthereumTypeSendForm from './ethereum';
+import EthereumTypeSendForm from './ethereum';
 import BitcoinTypeSendForm from './bitcoin';
 
 import {
@@ -29,8 +29,8 @@ class AccountSend extends React.Component<Props> {
     }
 
     switch (network) {
-      // case 'ethereum':
-      //   return <EthereumTypeSendForm/>;
+      case 'eth':
+        return <EthereumTypeSendForm/>;
       case 'btc':
         return <BitcoinTypeSendForm/>;
       default:
