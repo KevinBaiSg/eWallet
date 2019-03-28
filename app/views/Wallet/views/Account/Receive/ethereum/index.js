@@ -12,12 +12,13 @@ import DeviceIcon from 'components/images/DeviceIcon';
 
 import ICONS from 'config/icons';
 import colors from 'config/colors';
-import { CONTEXT_DEVICE } from 'actions/constants/modal';
 
 import Content from 'views/Wallet/components/Content';
 import VerifyAddressTooltip from '../components/VerifyAddressTooltip';
-
-import type { Props } from './Container';
+import PropTypes from "prop-types";
+import { inject, observer } from 'mobx-react';
+import type { MessageResponse } from 'trezor.js'
+import { validatePath } from 'utils/pathUtils';
 
 const Label = styled.div`
     padding-bottom: 10px;
@@ -91,93 +92,152 @@ const QrWrapper = styled.div`
     flex-direction: column;
 `;
 
-const AccountReceive = (props: Props) => {
-    const device = props.wallet.selectedDevice;
-    const {
-        account,
-        discovery,
-        shouldRender,
-    } = props.selectedAccount;
+class AccountReceive extends React.Component<Props> {
+  state = {
+    addressVerified: false,
+    isAddressVerifying: false,
+    completed: false,
+  };
 
-    if (!device || !account || !discovery || !shouldRender) {
-        const { loader, exceptionPage } = props.selectedAccount;
-        return <Content loader={loader} exceptionPage={exceptionPage} isLoading />;
+  constructor(props) {
+    super(props);
+    this.state = {
+      addressVerified: false,
+      isAddressVerifying: false,
+      completed: false,
+    };
+    this.showAddress = this.showAddress.bind(this);
+  }
+
+  showAddress(path: Array<number>, address: string) {
+    const { device } = this.props.appState.eWalletDevice;
+    this.setState({isAddressVerifying: true});
+    if (!!device) {
+      device.waitForSessionAndRun(async (session) => {
+        try {
+          const response = await session.ethereumGetAddress(path, true);
+          if (!response || !response.type || response.type !== 'EthereumAddress') {
+            this.setState({
+              addressVerified: false,
+              isAddressVerifying: false,
+            });
+            return ;
+          }
+
+          if (!response.message || !response.message.address ||
+            `0x${response.message.address}` !== address) {
+            this.setState({
+              addressVerified: false,
+              isAddressVerifying: false,
+            });
+            return ;
+          }
+
+          this.setState({
+            addressVerified: true,
+            isAddressVerifying: false,
+          });
+        } catch (e) {
+          console.error('Call rejected:', e);
+          this.setState({isAddressVerifying: false});
+        }
+      }).catch(function(error) {
+        console.error('Call rejected:', error);
+        this.setState({isAddressVerifying: false});
+      })
+    }
+  };
+
+  render() {
+    const { wallet, eWalletDevice } = this.props.appState;
+
+    const {accountEth, rates} = wallet;
+    if (!accountEth || !rates) {
+      const loader = {
+        type: 'progress',
+        title: 'Loading account',
+      };
+      return <Content loader={loader} isLoading />;
     }
 
-    const {
-        addressVerified,
-        addressUnverified,
-    } = props.receive;
-
-    const isAddressVerifying = props.modal.context === CONTEXT_DEVICE && props.modal.windowType === 'ButtonRequest_Address';
-    const isAddressHidden = !isAddressVerifying && !addressVerified && !addressUnverified;
-
-    let address = `${account.descriptor.substring(0, 20)}...`;
-    if (addressVerified || addressUnverified || isAddressVerifying) {
-        address = account.descriptor;
+    const isAddressHidden = !this.state.isAddressVerifying && !this.state.addressVerified;
+    const { address, addressPath } = accountEth;
+    let showAddress = `${address.substring(0, 20)}...`;
+    if (this.state.addressVerified || this.state.isAddressVerifying) {
+      showAddress = address;
     }
 
     return (
-        <Content>
-            <React.Fragment>
-                <Title>Receive Ethereum or tokens</Title>
-                <AddressWrapper isShowingQrCode={addressVerified || addressUnverified}>
-                    <Row>
-                        <Input
-                            type="text"
-                            readOnly
-                            autoSelect
-                            topLabel="Address"
-                            value={address}
-                            isPartiallyHidden={isAddressHidden}
-                            trezorAction={isAddressVerifying ? (
-                                <React.Fragment>
-                                    <DeviceIcon device={device} color={colors.WHITE} />
-                                    Check address on your Trezor
-                                </React.Fragment>
-                            ) : null}
-                            icon={((addressVerified || addressUnverified) && !isAddressVerifying) && (
-                                <Tooltip
-                                    placement="left"
-                                    content={(
-                                        <VerifyAddressTooltip
-                                            isConnected={device.connected}
-                                            isAvailable={device.available}
-                                            addressUnverified={addressUnverified}
-                                        />
-                                    )}
-                                >
-                                    <EyeButton onClick={() => props.showAddress(account.accountPath)}>
-                                        <Icon
-                                            icon={addressUnverified ? ICONS.EYE_CROSSED : ICONS.EYE}
-                                            color={addressUnverified ? colors.ERROR_PRIMARY : colors.TEXT_PRIMARY}
-                                        />
-                                    </EyeButton>
-                                </Tooltip>
-                            )}
-                        />
-                        {!(addressVerified || addressUnverified) && (
-                            <ShowAddressButton onClick={() => props.showAddress(account.accountPath)} isDisabled={device.connected && !discovery.completed}>
-                                <ShowAddressIcon icon={ICONS.EYE} color={colors.WHITE} />Show full address
-                            </ShowAddressButton>
-                        )}
-                    </Row>
-                    {(addressVerified || addressUnverified) && !isAddressVerifying && (
-                        <QrWrapper>
-                            <Label>QR code</Label>
-                            <StyledQRCode
-                                bgColor="#FFFFFF"
-                                fgColor="#000000"
-                                level="Q"
-                                style={{ width: 150 }}
-                                value={account.descriptor}
-                            />
-                        </QrWrapper>
+      <Content>
+        <React.Fragment>
+          <Title>Receive Ethereum(ETH)</Title>
+          <AddressWrapper isShowingQrCode={this.state.addressVerified}>
+            <Row>
+              <Input
+                type="text"
+                readOnly
+                autoSelect
+                topLabel="Address"
+                value={showAddress}
+                isPartiallyHidden={isAddressHidden}
+                trezorAction={this.state.isAddressVerifying ? (
+                  <React.Fragment>
+                    <DeviceIcon device={eWalletDevice.device} color={colors.WHITE}/>
+                    Check address on your Device
+                  </React.Fragment>
+                ) : null}
+                icon={(this.state.addressVerified && !this.state.isAddressVerifying) && (
+                  <Tooltip
+                    placement="left"
+                    content={(
+                      <VerifyAddressTooltip
+                        isConnected={eWalletDevice.connected}
+                        isAvailable={eWalletDevice.available}
+                        addressUnverified={false}
+                      />
                     )}
-                </AddressWrapper>
-            </React.Fragment>
-        </Content>
+                  >
+                    <EyeButton onClick={() => { this.showAddress(addressPath, address) }}>
+                      <Icon
+                        icon={ICONS.EYE}
+                        color={colors.TEXT_PRIMARY}
+                      />
+                    </EyeButton>
+                  </Tooltip>
+                )}
+              />
+              {!this.state.addressVerified && (
+                <ShowAddressButton onClick={() => { this.showAddress(addressPath, address) } }
+                                   isDisabled={eWalletDevice.connected && this.state.completed}>
+                  <ShowAddressIcon icon={ICONS.EYE} color={colors.WHITE}/>Show full address
+                </ShowAddressButton>
+              )}
+            </Row>
+            {this.state.addressVerified && !this.state.isAddressVerifying && (
+              <QrWrapper>
+                <Label>QR code</Label>
+                <StyledQRCode
+                  bgColor="#FFFFFF"
+                  fgColor="#000000"
+                  level="Q"
+                  style={{ width: 150 }}
+                  value={address}
+                />
+              </QrWrapper>
+            )}
+          </AddressWrapper>
+        </React.Fragment>
+      </Content>
     );
+  }
+}
+
+AccountReceive.propTypes = {
+  appState: PropTypes.object.isRequired
 };
 
-export default AccountReceive;
+export default inject((stores) => {
+  return {
+    appState: stores.appState
+  };
+})(observer(AccountReceive));

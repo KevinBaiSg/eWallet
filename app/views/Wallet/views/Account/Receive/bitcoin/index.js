@@ -137,71 +137,6 @@ class AccountReceive extends React.Component<Props> {
         this.setState({isAddressVerifying: false});
       })
     }
-
-
-    // const selected = getState().wallet.selectedDevice;
-    // const { network } = getState().selectedAccount;
-    //
-    // if (!selected || !network) return;
-    //
-    // if (selected && (!selected.connected || !selected.available)) {
-    //   dispatch({
-    //     type: RECEIVE.REQUEST_UNVERIFIED,
-    //     device: selected,
-    //   });
-    //   return;
-    // }
-    //
-    // const params = {
-    //   device: {
-    //     path: selected.path,
-    //     instance: selected.instance,
-    //     state: selected.state,
-    //   },
-    //   path,
-    //   useEmptyPassphrase: selected.useEmptyPassphrase,
-    // };
-    //
-    // let response;
-    // switch (network.type) {
-    //   case 'ethereum':
-    //     response = await TrezorConnect.ethereumGetAddress(params);
-    //     break;
-    //   case 'ripple':
-    //     response = await TrezorConnect.rippleGetAddress(params);
-    //     break;
-    //   default:
-    //     response = { payload: { error: `ReceiveActions.showAddress: Unknown network type: ${network.type}` } };
-    //     break;
-    // }
-    //
-    // if (response.success) {
-    //   dispatch({
-    //     type: RECEIVE.SHOW_ADDRESS,
-    //   });
-    // } else {
-    //   dispatch({
-    //     type: RECEIVE.HIDE_ADDRESS,
-    //   });
-    //
-    //   dispatch({
-    //     type: NOTIFICATION.ADD,
-    //     payload: {
-    //       type: 'error',
-    //       title: 'Verifying address error',
-    //       message: response.payload.error,
-    //       cancelable: true,
-    //       actions: [
-    //         {
-    //           label: 'Try again',
-    //           callback: () => {
-    //             dispatch(showAddress(path));
-    //           },
-    //         },
-    //       ],
-    //     },
-    //   });
-    // }
   };
 
   render() {
@@ -216,7 +151,6 @@ class AccountReceive extends React.Component<Props> {
       return <Content loader={loader} isLoading />;
     }
 
-    // const isAddressVerifying = props.modal.context === CONTEXT_DEVICE && props.modal.windowType === 'ButtonRequest_Address';
     const isAddressHidden = !this.state.isAddressVerifying && !this.state.addressVerified;
     const { address, addressPath } = account;
     let showAddress = `${address.substring(0, 16)}...`;
