@@ -354,6 +354,7 @@ export default class AppState {
           }
           delete info.success;
           this.wallet.accountEth = info;
+          this.wallet.accountEth.addressPath = response.path;
         } catch (e) {
           console.error('Call rejected:', e);
           this.wallet.accountEth = null;
