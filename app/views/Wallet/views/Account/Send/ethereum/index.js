@@ -18,7 +18,6 @@ import Content from 'views/Wallet/components/Content';
 // import AdvancedForm from './components/AdvancedForm';
 // import PendingTransactions from '../components/PendingTransactions';
 import { inject, observer } from 'mobx-react';
-// import { isValidAddress } from 'utils/addressUtils';
 import QrModal from 'components/modals/QrModal';
 import ConfirmAction from 'components/modals/confirm/Action';
 import type { parsedURI } from 'utils/cryptoUriParser';
