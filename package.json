@@ -264,7 +264,7 @@
     "env": "^0.0.2",
     "ethereumjs-tx": "^1.3.7",
     "ethereumjs-units": "^0.2.0",
-    "ethereumjs-util": "^6.1.0",
+    "ethereumjs-util": "^5.1.4",
     "exenv": "^1.2.2",
     "git-revision-webpack-plugin": "^3.0.3",
     "hd-wallet": "7.14.3",
