@@ -19,6 +19,7 @@ import PropTypes from "prop-types";
 import { inject, observer } from 'mobx-react';
 import type { MessageResponse } from 'trezor.js'
 import { validatePath } from 'utils/pathUtils';
+import EthereumjsUtil from "ethereumjs-util";
 
 const Label = styled.div`
     padding-bottom: 10px;
@@ -125,7 +126,7 @@ class AccountReceive extends React.Component<Props> {
           }
 
           if (!response.message || !response.message.address ||
-            `0x${response.message.address}` !== address) {
+            EthereumjsUtil.addHexPrefix(response.message.address) !== address) {
             this.setState({
               addressVerified: false,
               isAddressVerifying: false,

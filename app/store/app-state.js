@@ -19,6 +19,7 @@ import { parseAmount } from 'utils/btcParse';
 import React from 'react';
 import Web3 from "web3";
 import EthereumjsUnits from 'ethereumjs-units';
+import EthereumjsUtil from 'ethereumjs-util';
 
 const CoinGecko = require('coingecko-api');
 const CoinGeckoClient = new CoinGecko();
@@ -293,7 +294,7 @@ export default class AppState {
     }
 
     return {
-      address: `0x${response.message.address}`,
+      address: EthereumjsUtil.addHexPrefix(response.message.address),
       path: response.message.path,
     };
   }
