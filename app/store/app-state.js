@@ -18,6 +18,7 @@ import type { BitcoinNetworkInfo } from '../utils/types';
 import { parseAmount } from 'utils/btcParse';
 import React from 'react';
 import Web3 from "web3";
+import EthereumjsUnits from 'ethereumjs-units';
 
 const CoinGecko = require('coingecko-api');
 const CoinGeckoClient = new CoinGecko();
@@ -42,6 +43,8 @@ export type Web3Instance = {
   web3: Web3,
   latestBlock: number,
   gasPrice: number,
+  defaultGasPrice: number,
+  defaultGasLimit: number,
 };
 
 export type EWalletDevice = {
@@ -143,9 +146,10 @@ export default class AppState {
         this.wallet.web3Instance = {
           web3,
           latestBlock,
-          gasPrice,
+          gasPrice: EthereumjsUnits.convert(gasPrice, 'wei', 'gwei'),
+          defaultGasPrice: 64,
+          defaultGasLimit: 21000,
         };
-
         resolve(this.wallet.web3Instance);
       };
 

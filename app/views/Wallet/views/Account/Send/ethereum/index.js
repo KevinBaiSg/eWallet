@@ -1,6 +1,7 @@
 /* @flow */
 
 import React from 'react';
+import PropTypes from 'prop-types';
 import BigNumber from 'bignumber.js';
 import styled, { css } from 'styled-components';
 import { Select } from 'components/Select';
@@ -14,12 +15,20 @@ import colors from 'config/colors';
 import Title from 'views/Wallet/components/Title';
 import P from 'components/Paragraph';
 import Content from 'views/Wallet/components/Content';
-import * as stateUtils from 'reducers/utils';
-import type { Token } from 'flowtype';
-import AdvancedForm from './components/AdvancedForm';
-import PendingTransactions from '../components/PendingTransactions';
+// import AdvancedForm from './components/AdvancedForm';
+// import PendingTransactions from '../components/PendingTransactions';
+import { inject, observer } from 'mobx-react';
+// import { isValidAddress } from 'utils/addressUtils';
+import QrModal from 'components/modals/QrModal';
+import ConfirmAction from 'components/modals/confirm/Action';
+import type { parsedURI } from 'utils/cryptoUriParser';
+import { FADE_IN } from 'config/animations';
+import EthereumjsUtil from 'ethereumjs-util';
+import EthereumjsUnits from 'ethereumjs-units';
+import type { FeeLevel, FeeLevelInfo } from 'utils/types/fee';
 
-// import type { Props } from './Container';
+const NUMBER_RE: RegExp = new RegExp('^(0|0\\.([0-9]+)?|[1-9][0-9]*\\.?([0-9]+)?|\\.[0-9]+)$');
+const UPPERCASE_RE = new RegExp('^(.*[A-Z].*)$');
 
 // TODO: Decide on a small screen width for the whole app
 // and put it inside config/variables.js
@@ -162,9 +171,9 @@ const FormButtons = styled.div`
 `;
 
 const SendButton = styled(Button)`
-    word-break: break-all;
-    flex: 1;
-
+  flex: 1;
+  margin-right: 5px;
+  width: 100px;
 `;
 
 const ClearButton = styled(Button)`
@@ -183,297 +192,514 @@ const QrButton = styled(Button)`
     padding: 0 10px;
 `;
 
-// render helpers
-const getAddressInputState = (address: string, addressErrors: string, addressWarnings: string): string => {
+const ModalContainer = styled.div`
+    position: fixed;
+    z-index: 10000;
+    width: 100%;
+    height: 100%;
+    top: 0px;
+    left: 0px;
+    background: rgba(0, 0, 0, 0.35);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    overflow: auto;
+    padding: 20px;
+    animation: ${FADE_IN} 0.3s;
+`;
+
+const ModalWindow = styled.div`
+    margin: auto;
+    position: relative;
+    border-radius: 4px;
+    background-color: ${colors.WHITE};
+    text-align: center;
+`;
+
+class AccountSend extends React.Component<Props> {
+  state = {
+    // for address
+    address: '',
+    addressErrors: null,
+    addressWarnings: null,
+    addressInfos: null,
+    // for amount
+    amount: '',
+    amountErrors: null,
+    amountWarnings: null,
+    amountInfos: null,
+    isSetMax: false,
+    //
+    isSending: false,
+    //
+    selectedFeeLevel: null,
+    // for qr scan
+    isQrScanning: false,
+  };
+
+  network = this.getCurrentNetworkbyShortcut('eth');
+  constructor(props) {
+    super(props);
+    // const network = this.getCurrentNetworkbyShortcut('btc');
+    this.state = {
+      // for address
+      address: '',
+      addressErrors: null,
+      addressWarnings: null,
+      addressInfos: null,
+      // for amount
+      amount: '',
+      amountErrors: null,
+      amountWarnings: null,
+      amountInfos: null,
+      isSetMax: false,
+      //
+      isSending: false,
+      //
+      feeLevels: null,
+      selectedFeeLevel: null,
+      //
+      isQrScanning: false,
+    };
+
+    this.getAddressInputState = this.getAddressInputState.bind(this);
+    this.getAmountInputState = this.getAmountInputState.bind(this);
+    this.onAddressChange = this.onAddressChange.bind(this);
+    this.onAmountChange = this.onAmountChange.bind(this);
+    this.onSetMax = this.onSetMax.bind(this);
+    this.onFeeLevelChange = this.onFeeLevelChange.bind(this);
+    this.onClear = this.onClear.bind(this);
+    this.onQrScan = this.onQrScan.bind(this);
+    this.onQrScanCancel = this.onQrScanCancel.bind(this);
+    this.openQrModal = this.openQrModal.bind(this);
+    this.onSend = this.onSend.bind(this);
+    this.callback = this.callback.bind(this);
+    this.getCurrentNetworkbyShortcut = this.getCurrentNetworkbyShortcut.bind(this);
+    this.calculateFee = this.calculateFee.bind(this);
+    this.calculateTotal = this.calculateTotal.bind(this);
+    this.calculateMaxAmount = this.calculateMaxAmount.bind(this);
+    this.getGasPrice = this.getGasPrice.bind(this);
+    this.getGasPrice = this.getGasPrice.bind(this);
+  }
+
+  getGasPrice() {
+    const { web3Instance } = this.props.appState.wallet;
+
+    if (web3Instance && web3Instance.gasPrice) {
+      return web3Instance.gasPrice;
+    } else {
+      return BigNumber(web3Instance.defaultGasPrice);
+    }
+  };
+
+  calculateFee(gasPrice: string, gasLimit: string): string {
+    try {
+      return EthereumjsUnits.convert(new BigNumber(gasPrice).times(gasLimit).toFixed(), 'gwei', 'ether');
+    } catch (error) {
+      return '0';
+    }
+  };
+
+  calculateTotal(amount: string, gasPrice: string, gasLimit: string): string {
+    try {
+      return new BigNumber(amount).plus(this.calculateFee(gasPrice, gasLimit)).toFixed();
+    } catch (error) {
+      return '0';
+    }
+  };
+
+  calculateMaxAmount(balance: BigNumber, gasPrice: string, gasLimit: string): string {
+    try {
+      // TODO - minus pendings
+      const fee = this.calculateFee(gasPrice, gasLimit);
+      const max = balance.minus(fee);
+      if (max.lessThan(0)) return '0';
+      return max.toFixed();
+    } catch (error) {
+      return '0';
+    }
+  };
+
+  getFeeLevels(symbol: string,
+               gasPrice: BigNumber | string,
+               gasLimit: string): Array<FeeLevel> {
+    const price: BigNumber = typeof gasPrice === 'string' ? new BigNumber(gasPrice) : gasPrice;
+    const quarter: BigNumber = price.dividedBy(4);
+    const high: string = price.plus(quarter.times(2)).toFixed();
+    const low: string = price.minus(quarter.times(2)).toFixed();
+
+    // const customLevel: FeeLevel = selected && selected.value === 'Custom' ? {
+    //   value: 'Custom',
+    //   gasPrice: selected.gasPrice,
+    //   // label: `${ calculateFee(gasPrice, gasLimit) } ${ symbol }`
+    //   label: `${this.calculateFee(selected.gasPrice, gasLimit)} ${symbol}`,
+    // } : {
+    //   value: 'Custom',
+    //   gasPrice: low,
+    //   label: '',
+    // };
+
+    return [
+      {
+        value: 'High',
+        gasPrice: high,
+        label: `${this.calculateFee(high, gasLimit)} ${symbol}`,
+      },
+      {
+        value: 'Normal',
+        gasPrice: gasPrice.toString(),
+        label: `${this.calculateFee(price.toFixed(), gasLimit)} ${symbol}`,
+      },
+      {
+        value: 'Low',
+        gasPrice: low,
+        label: `${this.calculateFee(low, gasLimit)} ${symbol}`,
+      },
+      // customLevel,
+    ];
+  };
+
+  getCurrentNetworkbyShortcut(shortcut: string) {
+    const { localStorage } = this.props.appState;
+
+    const networks = localStorage.networks
+      .filter(n => n.shortcut.toLowerCase() === shortcut.toLowerCase());
+    if (networks && networks.length === 0) {
+      return null;
+    }
+    return networks[0];
+  }
+
+  getAddressInputState(): string {
     let state = '';
-    if (address && !addressErrors) {
-        state = 'success';
+    if (this.state.address && !this.state.addressErrors) {
+      state = 'success';
     }
-    if (addressWarnings && !addressErrors) {
-        state = 'warning';
+    if (this.state.addressWarnings && !this.state.addressErrors) {
+      state = 'warning';
     }
-    if (addressErrors) {
-        state = 'error';
+    if (this.state.addressErrors) {
+      state = 'error';
     }
     return state;
-};
+  };
 
-const getAmountInputState = (amountErrors: string, amountWarnings: string): string => {
+  getAmountInputState(): string {
     let state = '';
-    if (amountWarnings && !amountErrors) {
-        state = 'warning';
+    if (this.state.amountWarnings && !this.state.amountErrors) {
+      state = 'warning';
     }
-    if (amountErrors) {
-        state = 'error';
+    if (this.state.amountErrors) {
+      state = 'error';
     }
     return state;
-};
+  };
 
-const getTokensSelectData = (tokens: Array<Token>, accountNetwork: any): Array<{ value: string, label: string }> => {
-    const tokensSelectData: Array<{ value: string, label: string }> = tokens.map(t => ({ value: t.symbol, label: t.symbol }));
-    tokensSelectData.unshift({ value: accountNetwork.symbol, label: accountNetwork.symbol });
+  onAddressChange(address: string) {
+    this.setState({ address: address });
+    if (address.length < 1) {
+      this.setState({
+        address: address,
+        addressErrors: 'Address is not set',
+      });
+    } else if (!EthereumjsUtil.isValidAddress(address)) {
+      this.setState({
+        address: address,
+        addressErrors: 'Address is not valid',
+      });
+    } else if (address.match(UPPERCASE_RE) && !EthereumjsUtil.isValidChecksumAddress(address)) {
+      this.setState({
+        address: address,
+        addressErrors: 'Address is not a valid checksum',
+      });
+    } else {
+      this.setState({
+        address: address,
+        addressErrors: null,
+        addressWarnings: null,
+        addressInfos: null,
+      });
+    }
+  }
 
-    return tokensSelectData;
-};
+  onAmountChange(amount: string) {
+    if (amount.length < 1) {
+      this.setState({
+        amount: amount,
+        amountErrors: 'Amount is not set'
+      });
+    } else if (amount.length > 0 && !amount.match(NUMBER_RE)) {
+      this.setState({
+        amount: amount,
+        amountErrors: 'Amount is not a number'
+      });
+    } else {
+      this.setState({
+        amount: amount,
+        amountErrors: null,
+        amountWarnings: null,
+        amountInfos: null,
+      });
+    }
+  }
 
-// stateless component
-const AccountSend = (props: Props) => {
-    const device = props.wallet.selectedDevice;
-    const {
-        account,
-        network,
-        discovery,
-        tokens,
-        shouldRender,
-    } = props.selectedAccount;
-    const {
-        address,
-        amount,
-        setMax,
-        networkSymbol,
-        currency,
-        feeLevels,
-        selectedFeeLevel,
-        gasPriceNeedsUpdate,
-        total,
-        errors,
-        warnings,
-        infos,
-        sending,
-        advanced,
-    } = props.sendForm;
+  onSetMax() {
+    // TODO: 计算 max 并设置 this.state.amount
+    this.setState({isSetMax: !this.state.isSetMax})
+  }
 
-    const {
-        toggleAdvanced,
-        onAddressChange,
-        onAmountChange,
-        onSetMax,
-        onCurrencyChange,
-        onFeeLevelChange,
-        updateFeeLevels,
-        onSend,
-        onClear,
-    } = props.sendFormActions;
+  onFeeLevelChange(selectedFee) {
+    this.setState({selectedFeeLevel: selectedFee})
+  }
 
-    if (!device || !account || !discovery || !network || !shouldRender) {
-        const { loader, exceptionPage } = props.selectedAccount;
-        return <Content loader={loader} exceptionPage={exceptionPage} isLoading />;
+  onClear() {
+    this.setState({
+      address: '',
+      addressErrors: null,
+      addressWarnings: null,
+      addressInfos: null,
+      // for amount
+      amount: '',
+      amountErrors: null,
+      amountWarnings: null,
+      amountInfos: null,
+      isSetMax: false,
+      //
+      isSending: false,
+    })
+  }
+
+  callback(result: boolean) {
+    if (result) {
+      this.onClear();
+    } else {
+      this.setState({isSending: false})
+    }
+  }
+
+  openQrModal() {
+    this.setState({
+      isQrScanning: true,
+    })
+  }
+
+  onQrScanCancel() {
+    this.setState({
+      isQrScanning: false,
+    })
+  }
+
+  onQrScan(parsedUri: parsedURI) {
+    const { address = '', amount } = parsedUri;
+    if (amount) {
+      this.setState({
+        address: address,
+        amount: amount,
+      })
+    } else {
+      this.setState({
+        address: address,
+      })
+    }
+    this.onAddressChange(address);
+  }
+
+  onSend() {
+    const { appState } = this.props;
+    const address = this.state.address;
+    const amount = this.state.amount;
+    const fee = this.state.selectedFeeLevel.label;
+    this.setState({isSending: true});
+    // appState.btcComposeTransaction(address, amount, fee, true, this.callback);
+  }
+
+  render() {
+    const { appState } = this.props;
+    const { wallet, eWalletDevice } = this.props.appState;
+
+    const {accountEth, rates, web3Instance } = wallet;
+    if (!accountEth || !rates || !web3Instance) {
+      const loader = {
+        type: 'progress',
+        title: 'Loading account',
+      };
+      return <Content loader={loader} isLoading />;
     }
 
-    const isCurrentCurrencyToken = networkSymbol !== currency;
-
-    let selectedTokenBalance = '0';
-    const selectedToken = tokens.find(t => t.symbol === currency);
-    if (selectedToken) {
-        const pendingAmount: BigNumber = stateUtils.getPendingAmount(props.selectedAccount.pending, selectedToken.symbol, true);
-        selectedTokenBalance = new BigNumber(selectedToken.balance).minus(pendingAmount).toString(10);
+    if (!!appState.wallet.buttonRequest_SignTx) {
+      return (
+        <ModalContainer>
+          <ModalWindow>
+            <ModalContainer>
+              <ModalWindow>
+                <ConfirmAction device={eWalletDevice.device} />
+              </ModalWindow>
+            </ModalContainer>
+          </ModalWindow>
+        </ModalContainer>
+      )
     }
 
-    let isSendButtonDisabled: boolean = Object.keys(errors).length > 0 || total === '0' || amount.length === 0 || address.length === 0 || sending;
-    let sendButtonText: string = 'Send';
-    if (networkSymbol !== currency && amount.length > 0 && !errors.amount) {
-        sendButtonText += ` ${amount} ${currency.toUpperCase()}`;
-    } else if (networkSymbol === currency && total !== '0') {
-        sendButtonText += ` ${total} ${network.symbol}`;
+    if (appState.wallet.buttonRequest_ConfirmOutput) {
+      return (
+        <ModalContainer>
+          <ModalWindow>
+            <ConfirmAction device={eWalletDevice.device} />
+          </ModalWindow>
+        </ModalContainer>
+      )
     }
 
-    if (!device.connected) {
-        sendButtonText = 'Device is not connected';
-        isSendButtonDisabled = true;
-    } else if (!device.available) {
-        sendButtonText = 'Device is unavailable';
-        isSendButtonDisabled = true;
-    } else if (!discovery.completed) {
-        sendButtonText = 'Loading accounts';
-        isSendButtonDisabled = true;
+    if (this.state.isQrScanning) {
+      return (
+        <ModalContainer>
+          <ModalWindow>
+            <QrModal
+              onCancel={this.onQrScanCancel}
+              onScan={parsedUri => this.onQrScan(parsedUri)}
+            />
+          </ModalWindow>
+        </ModalContainer>
+      )
     }
 
-    const tokensSelectData = getTokensSelectData(tokens, network);
-    const tokensSelectValue = tokensSelectData.find(t => t.value === currency);
-    const isAdvancedSettingsHidden = !advanced;
-
+    const currencySelectOption = [
+      { value: this.network.shortcut, label: this.network.shortcut },
+    ];
+    const gasPrice = this.getGasPrice();
+    console.log(gasPrice);
+    const feeLevels = this.getFeeLevels(
+      this.network.shortcut, gasPrice, web3Instance.defaultGasLimit.toString());
+    const selectedFeeLevel = !!this.state.selectedFeeLevel ? feeLevels[0] : this.state.selectedFeeLevel
     return (
-        <Content>
-            <Title>Send Ethereum or tokens</Title>
-            <InputRow>
-                <Input
-                    state={getAddressInputState(address, errors.address, warnings.address)}
-                    autoComplete="off"
-                    autoCorrect="off"
-                    autoCapitalize="off"
-                    spellCheck="false"
-                    topLabel="Address"
-                    bottomText={errors.address || warnings.address || infos.address}
-                    value={address}
-                    onChange={event => onAddressChange(event.target.value)}
-                    sideAddons={[(
-                        <QrButton
-                            key="qrButton"
-                            isWhite
-                            onClick={props.openQrModal}
-                        >
-                            <Icon
-                                size={25}
-                                color={colors.TEXT_SECONDARY}
-                                icon={ICONS.QRCODE}
-                            />
-                        </QrButton>
-                    )]}
+      <Content>
+        <Title>Send Ethereum(ETH)</Title>
+        <InputRow>
+          <Input
+            state={this.getAddressInputState()}
+            autoComplete="off"
+            autoCorrect="off"
+            autoCapitalize="off"
+            spellCheck="false"
+            topLabel="Address"
+            bottomText={this.state.addressErrors || this.state.addressWarnings || this.state.addressInfos}
+            value={this.state.address}
+            onChange={event => this.onAddressChange(event.target.value)}
+            sideAddons={[(
+              <QrButton
+                key="qrButton"
+                isWhite
+                onClick={this.openQrModal}
+              >
+                <Icon
+                  size={25}
+                  color={colors.TEXT_SECONDARY}
+                  icon={ICONS.QRCODE}
                 />
-            </InputRow>
-            <InputRow>
-                <Input
-                    state={getAmountInputState(errors.amount, warnings.amount)}
-                    autoComplete="off"
-                    autoCorrect="off"
-                    autoCapitalize="off"
-                    spellCheck="false"
-                    topLabel={(
-                        <AmountInputLabelWrapper>
-                            <AmountInputLabel>Amount</AmountInputLabel>
-                            {(isCurrentCurrencyToken && selectedToken) && (
-                                <AmountInputLabel>You have: {selectedTokenBalance} {selectedToken.symbol}</AmountInputLabel>
-                            )}
-                        </AmountInputLabelWrapper>
-                    )}
-                    value={amount}
-                    onChange={event => onAmountChange(event.target.value)}
-                    bottomText={errors.amount || warnings.amount || infos.amount}
-                    sideAddons={[
-                        (
-                            <SetMaxAmountButton
-                                key="icon"
-                                onClick={() => onSetMax()}
-                                isActive={setMax}
-                            >
-                                {!setMax && (
-                                    <Icon
-                                        icon={ICONS.TOP}
-                                        size={25}
-                                        color={colors.TEXT_SECONDARY}
-                                    />
-                                )}
-                                {setMax && (
-                                    <Icon
-                                        icon={ICONS.CHECKED}
-                                        size={25}
-                                        color={colors.WHITE}
-                                    />
-                                )}
-                                Set max
-                            </SetMaxAmountButton>
-                        ),
-                        (
-                            <CurrencySelect
-                                key="currency"
-                                isSearchable={false}
-                                isClearable={false}
-                                value={tokensSelectValue}
-                                isDisabled={tokensSelectData.length < 2}
-                                onChange={onCurrencyChange}
-                                options={tokensSelectData}
-                            />
-                        ),
-                    ]}
+              </QrButton>
+            )]}
+          />
+        </InputRow>
+        <InputRow>
+          <Input
+            state={this.getAmountInputState()}
+            autoComplete="off"
+            autoCorrect="off"
+            autoCapitalize="off"
+            spellCheck="false"
+            topLabel={(
+              <AmountInputLabelWrapper>
+                <AmountInputLabel>Amount</AmountInputLabel>
+              </AmountInputLabelWrapper>
+            )}
+            value={this.state.amount}
+            onChange={event => this.onAmountChange(event.target.value)}
+            bottomText={this.state.amountErrors || this.state.amountWarnings || this.state.amountInfos}
+            sideAddons={[
+              // (
+              //   <SetMaxAmountButton
+              //     key="icon"
+              //     onClick={() => this.onSetMax()}
+              //     isActive={this.state.isSetMax}
+              //   >
+              //     {!this.state.isSetMax && (
+              //       <Icon
+              //         icon={ICONS.TOP}
+              //         size={25}
+              //         color={colors.TEXT_SECONDARY}
+              //       />
+              //     )}
+              //     {this.state.isSetMax && (
+              //       <Icon
+              //         icon={ICONS.CHECKED}
+              //         size={25}
+              //         color={colors.WHITE}
+              //       />
+              //     )}
+              //     Set max
+              //   </SetMaxAmountButton>
+              // ),
+              (
+                <CurrencySelect
+                  key="currency"
+                  isSearchable={false}
+                  isClearable={false}
+                  value={currencySelectOption}
+                  isDisabled={true}
+                  // onChange={onCurrencyChange}
+                  options={[currencySelectOption]}
                 />
-            </InputRow>
+              )
+            ]}
+          />
+        </InputRow>
+        <InputRow>
+          <FeeLabelWrapper>
+            <FeeLabel>Fee</FeeLabel>
+          </FeeLabelWrapper>
+          <Select
+            isSearchable={false}
+            isClearable={false}
+            value={selectedFeeLevel}
+            onChange={this.onFeeLevelChange}
+            options={feeLevels}
+            formatOptionLabel={option => (
+              <FeeOptionWrapper>
+                <OptionValue>{option.value}</OptionValue>
+                <OptionLabel>{option.label}</OptionLabel>
+              </FeeOptionWrapper>
+            )}
+          />
+        </InputRow>
 
-            <InputRow>
-                <FeeLabelWrapper>
-                    <FeeLabel>Fee</FeeLabel>
-                    {gasPriceNeedsUpdate && (
-                        <UpdateFeeWrapper>
-                            <Icon
-                                icon={ICONS.WARNING}
-                                color={colors.WARNING_PRIMARY}
-                                size={20}
-                            />
-                            Recommended fees updated. <StyledLink onClick={updateFeeLevels} isGreen>Click here to use them</StyledLink>
-                        </UpdateFeeWrapper>
-                    )}
-                </FeeLabelWrapper>
-                <Select
-                    isSearchable={false}
-                    isClearable={false}
-                    value={selectedFeeLevel}
-                    onChange={onFeeLevelChange}
-                    options={feeLevels}
-                    formatOptionLabel={option => (
-                        <FeeOptionWrapper>
-                            <OptionValue>{option.value}</OptionValue>
-                            <OptionLabel>{option.label}</OptionLabel>
-                        </FeeOptionWrapper>
-                    )}
-                />
-            </InputRow>
-
-            <ToggleAdvancedSettingsWrapper
-                isAdvancedSettingsHidden={isAdvancedSettingsHidden}
+        <ToggleAdvancedSettingsWrapper isAdvancedSettingsHidden>
+          <FormButtons isAdvancedSettingsHidden>
+            <ClearButton
+              isWhite
+              isDisabled={this.state.isSending}
+              onClick={() => this.onClear()}
             >
-                <ToggleAdvancedSettingsButton
-                    isTransparent
-                    onClick={toggleAdvanced}
-                >
-                    Advanced settings
-                    <AdvancedSettingsIcon
-                        icon={ICONS.ARROW_DOWN}
-                        color={colors.TEXT_SECONDARY}
-                        size={24}
-                        isActive={advanced}
-                        canAnimate
-                    />
-                </ToggleAdvancedSettingsButton>
-
-                {isAdvancedSettingsHidden && (
-                    <FormButtons
-                        isAdvancedSettingsHidden={isAdvancedSettingsHidden}
-                    >
-                        <ClearButton
-                            isWhite
-                            onClick={() => onClear()}
-                        >
-                            Clear
-                        </ClearButton>
-                        <SendButton
-                            isDisabled={isSendButtonDisabled}
-                            onClick={() => onSend()}
-                        >
-                            {sendButtonText}
-                        </SendButton>
-                    </FormButtons>
-                )}
-            </ToggleAdvancedSettingsWrapper>
-
-            {advanced && (
-                <AdvancedForm {...props}>
-                    <FormButtons
-                        isAdvancedSettingsHidden={isAdvancedSettingsHidden}
-                    >
-                        <ClearButton
-                            isWhite
-                            onClick={() => onClear()}
-                        >
-                            Clear
-                        </ClearButton>
-                        <SendButton
-                            isDisabled={isSendButtonDisabled}
-                            onClick={() => onSend()}
-                        >
-                            {sendButtonText}
-                        </SendButton>
-                    </FormButtons>
-                </AdvancedForm>
-            )}
-
-            {props.selectedAccount.pending.length > 0 && (
-                <PendingTransactions
-                    pending={props.selectedAccount.pending}
-                    tokens={props.selectedAccount.tokens}
-                    network={network}
-                />
-            )}
-        </Content>
+              Clear
+            </ClearButton>
+            <SendButton
+              isDisabled={this.state.isSending}
+              onClick={() => this.onSend()}
+            >
+              Send
+            </SendButton>
+          </FormButtons>
+        </ToggleAdvancedSettingsWrapper>
+      </Content>
     );
+  }
+}
+
+AccountSend.propTypes = {
+  appState: PropTypes.object.isRequired
 };
 
-export default AccountSend;
+export default inject((stores) => {
+  return {
+    appState: stores.appState
+  };
+})(observer(AccountSend));
