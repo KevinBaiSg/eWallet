@@ -22,7 +22,6 @@ import QrModal from 'components/modals/QrModal';
 import ConfirmAction from 'components/modals/confirm/Action';
 import type { parsedURI } from 'utils/cryptoUriParser';
 import { FADE_IN } from 'config/animations';
-import { matchPath } from "react-router";
 
 const NUMBER_RE: RegExp = new RegExp('^(0|0\\.([0-9]+)?|[1-9][0-9]*\\.?([0-9]+)?|\\.[0-9]+)$');
 // TODO: Decide on a small screen width for the whole app
