@@ -566,10 +566,10 @@ class AccountSend extends React.Component<Props> {
       { value: this.network.shortcut, label: this.network.shortcut },
     ];
     const gasPrice = this.getGasPrice();
-    console.log(gasPrice);
     const feeLevels = this.getFeeLevels(
       this.network.shortcut, gasPrice, web3Instance.defaultGasLimit.toString());
-    const selectedFeeLevel = !!this.state.selectedFeeLevel ? feeLevels[0] : this.state.selectedFeeLevel
+    const selectedFeeLevel = !!this.state.selectedFeeLevel ? this.state.selectedFeeLevel : feeLevels[0];
+
     return (
       <Content>
         <Title>Send Ethereum(ETH)</Title>
