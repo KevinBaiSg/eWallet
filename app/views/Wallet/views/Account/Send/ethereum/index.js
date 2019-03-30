@@ -246,8 +246,8 @@ class AccountSend extends React.Component<Props> {
     //
     isSending: false,
     //
-    feeLevels: null,
-    selectedFeeLevel: null,
+    // feeLevels: null,
+    // selectedFeeLevel: null,
     // for qr scan
     isQrScanning: false,
   };
@@ -271,8 +271,8 @@ class AccountSend extends React.Component<Props> {
       //
       isSending: false,
       //
-      feeLevels: null,
-      selectedFeeLevel: null,
+      // feeLevels: null,
+      // selectedFeeLevel: null,
       //
       isQrScanning: false,
     };
@@ -782,6 +782,7 @@ AccountSend.propTypes = {
 
 export default inject((stores) => {
   return {
-    appState: stores.appState
+    appState: stores.appState,
+    sendStore: stores.sendStore,
   };
 })(observer(AccountSend));
