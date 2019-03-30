@@ -2,12 +2,12 @@
 
 import { createHashHistory } from 'history';
 // import type { counterStateType } from '../reducers/types';
-import { AppState } from './index';
+import { CreateStoreMap } from './index';
 
 const history = createHashHistory();
 
 function configureStore() {
-  return new AppState();
+  return CreateStoreMap();
 }
 
 export default { configureStore, history };

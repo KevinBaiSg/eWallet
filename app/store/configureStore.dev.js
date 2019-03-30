@@ -1,7 +1,7 @@
 import { createHashHistory } from 'history';
 // import type { counterStateType } from '../reducers/types';
 import makeInspectable from 'mobx-devtools-mst';
-import { AppState } from './index';
+import { CreateStoreMap } from './index';
 
 const history = createHashHistory();
 
@@ -12,7 +12,7 @@ const configureStore = () => {
     2.mobx-react-router
     3.logger
   */
-  const store = new AppState();
+  const store = CreateStoreMap();
 
   // Mobx Devtools
   makeInspectable(store);

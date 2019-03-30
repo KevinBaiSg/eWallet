@@ -1,13 +1,19 @@
 import AppState from './app-state';
+import SendStore from './SendStore';
 
-export { AppState };
-
-export default {
-  AppState
+export {
+  AppState,
+  SendStore
 };
 
-export const createStoreMap = () => {
+export default {
+  AppState,
+  SendStore
+};
+
+export const CreateStoreMap = () => {
   return {
-    appState: new AppState()
+    appState: new AppState(),
+    sendStore: new SendStore(),
   };
 };
