@@ -1,7 +1,7 @@
 import { createHashHistory } from 'history';
 // import type { counterStateType } from '../reducers/types';
 import makeInspectable from 'mobx-devtools-mst';
-import { CreateStoreMap } from './index';
+import { CreateStoreMap, CreateActionMap } from './index';
 
 const history = createHashHistory();
 
@@ -20,4 +20,8 @@ const configureStore = () => {
   return store;
 };
 
-export default { configureStore, history };
+function configureAction(stores) {
+  return CreateActionMap(stores);
+}
+
+export default { configureStore, configureAction, history };

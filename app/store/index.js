@@ -1,6 +1,8 @@
 import AppState from './app-state';
 import SendStore from './SendStore';
 
+import SendActions from './SendActions'
+
 export {
   AppState,
   SendStore
@@ -16,4 +18,10 @@ export const CreateStoreMap = () => {
     appState: new AppState(),
     sendStore: new SendStore(),
   };
+};
+
+export const CreateActionMap = (stores) => {
+  return {
+    SendActions: new SendActions(stores),
+  }
 };

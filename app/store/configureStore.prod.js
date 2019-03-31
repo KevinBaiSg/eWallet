@@ -2,7 +2,7 @@
 
 import { createHashHistory } from 'history';
 // import type { counterStateType } from '../reducers/types';
-import { CreateStoreMap } from './index';
+import { CreateStoreMap, CreateActionMap } from './index';
 
 const history = createHashHistory();
 
@@ -10,4 +10,8 @@ function configureStore() {
   return CreateStoreMap();
 }
 
-export default { configureStore, history };
+function configureAction() {
+  return CreateActionMap();
+}
+
+export default { configureStore, configureAction, history };

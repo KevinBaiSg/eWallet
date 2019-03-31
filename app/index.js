@@ -4,11 +4,12 @@ import { AppContainer } from 'react-hot-loader';
 import { Normalize } from 'styled-normalize';
 import BaseStyles from 'support/styles';
 import Root from './containers/Root';
-import { configureStore, history } from './store/configureStore';
+import { configureStore, configureAction, history } from './store/configureStore';
 import './app.global.css';
 
-const store = configureStore();
-const { appState } = store;
+const stores = configureStore();
+const actions = configureAction(stores);
+const { appState } = stores;
 appState.start();
 
 render(
@@ -16,7 +17,7 @@ render(
     <Normalize />
     <BaseStyles />
     <AppContainer>
-      <Root {...store} history={history} />
+      <Root store={stores} actions={actions} history={history} />
     </AppContainer>
   </React.Fragment>,
   document.getElementById('root')
@@ -31,7 +32,7 @@ if (module.hot) {
         <Normalize />
         <BaseStyles />
         <AppContainer>
-          <NextRoot {...store} history={history} />
+          <NextRoot store={store} actions={actions} history={history} />
         </AppContainer>,
       </React.Fragment>,
       document.getElementById('root')
