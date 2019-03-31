@@ -22,6 +22,6 @@ export const CreateStoreMap = () => {
 
 export const CreateActionMap = (stores) => {
   return {
-    SendActions: new SendActions(stores),
+    sendActions: new SendActions(stores),
   }
 };

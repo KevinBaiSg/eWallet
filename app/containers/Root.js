@@ -7,16 +7,16 @@ import { getPattern } from 'support/routes';
 import Routes from '../Routes';
 
 type Props = {
-  store: any,
+  stores: any,
   actions: any,
   history: {}
 };
 
 export default class Root extends Component<Props> {
   render() {
-    const { store, actions } = this.props;
+    const { stores, actions } = this.props;
     return (
-      <Provider {...store} actions={actions}>
+      <Provider {...stores} {...actions}>
         <MemoryRouter initialEntries={[getPattern('landing-home')]}>
           <Routes />
         </MemoryRouter>

@@ -10,8 +10,8 @@ function configureStore() {
   return CreateStoreMap();
 }
 
-function configureAction() {
-  return CreateActionMap();
+function configureAction(stores) {
+  return CreateActionMap(stores);
 }
 
 export default { configureStore, configureAction, history };

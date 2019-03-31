@@ -231,301 +231,25 @@ type EthereumTxRequest = {
 }
 
 class AccountSend extends React.Component<Props> {
-  state = {
-    // for address
-    address: '',
-    addressErrors: null,
-    addressWarnings: null,
-    addressInfos: null,
-    // for amount
-    amount: '',
-    amountErrors: null,
-    amountWarnings: null,
-    amountInfos: null,
-    isSetMax: false,
-    //
-    isSending: false,
-    //
-    // feeLevels: null,
-    // selectedFeeLevel: null,
-    // for qr scan
-    isQrScanning: false,
-  };
-
-  network = this.getCurrentNetworkbyShortcut('eth');
   constructor(props) {
     super(props);
-    // const network = this.getCurrentNetworkbyShortcut('btc');
-    this.state = {
-      // for address
-      address: '',
-      addressErrors: null,
-      addressWarnings: null,
-      addressInfos: null,
-      // for amount
-      amount: '',
-      amountErrors: null,
-      amountWarnings: null,
-      amountInfos: null,
-      isSetMax: false,
-      //
-      isSending: false,
-      //
-      // feeLevels: null,
-      // selectedFeeLevel: null,
-      //
-      isQrScanning: false,
-    };
 
-    this.getAddressInputState = this.getAddressInputState.bind(this);
-    this.getAmountInputState = this.getAmountInputState.bind(this);
-    this.onAddressChange = this.onAddressChange.bind(this);
-    this.onAmountChange = this.onAmountChange.bind(this);
-    this.onSetMax = this.onSetMax.bind(this);
-    this.onFeeLevelChange = this.onFeeLevelChange.bind(this);
-    this.onClear = this.onClear.bind(this);
-    this.onQrScan = this.onQrScan.bind(this);
-    this.onQrScanCancel = this.onQrScanCancel.bind(this);
-    this.openQrModal = this.openQrModal.bind(this);
-    this.onSend = this.onSend.bind(this);
-    this.callback = this.callback.bind(this);
-    this.getCurrentNetworkbyShortcut = this.getCurrentNetworkbyShortcut.bind(this);
-    this.calculateFee = this.calculateFee.bind(this);
-    this.calculateTotal = this.calculateTotal.bind(this);
-    this.calculateMaxAmount = this.calculateMaxAmount.bind(this);
-    this.getGasPrice = this.getGasPrice.bind(this);
-    this.getGasPrice = this.getGasPrice.bind(this);
-    this.prepareEthereumTx = this.prepareEthereumTx.bind(this);
-    this.getWeb3Instance = this.getWeb3Instance.bind(this);
+    const { sendActions } = this.props;
+    sendActions.setNetworkby('eth');
+
+    // this.onSetMax = this.onSetMax.bind(this);
+    // this.onSend = this.onSend.bind(this);
   }
 
-  getWeb3Instance() {
-    // TODO: check web3Instance !== null
-    const { web3Instance } = this.props.appState.wallet;
-    return web3Instance
+  componentDidMount(): void {
+    const { sendActions } = this.props;
+    sendActions.updateEthereumFeeLevels().then();
   }
 
-  getGasPrice() {
-    const { web3Instance } = this.props.appState.wallet;
-
-    if (web3Instance && web3Instance.gasPrice) {
-      return web3Instance.gasPrice;
-    } else {
-      return BigNumber(web3Instance.defaultGasPrice);
-    }
-  };
-
-  calculateFee(gasPrice: string, gasLimit: string): string {
-    try {
-      return EthereumjsUnits.convert(new BigNumber(gasPrice).times(gasLimit).toFixed(), 'gwei', 'ether');
-    } catch (error) {
-      return '0';
-    }
-  };
-
-  calculateTotal(amount: string, gasPrice: string, gasLimit: string): string {
-    try {
-      return new BigNumber(amount).plus(this.calculateFee(gasPrice, gasLimit)).toFixed();
-    } catch (error) {
-      return '0';
-    }
-  };
-
-  calculateMaxAmount(balance: BigNumber, gasPrice: string, gasLimit: string): string {
-    try {
-      // TODO - minus pendings
-      const fee = this.calculateFee(gasPrice, gasLimit);
-      const max = balance.minus(fee);
-      if (max.lessThan(0)) return '0';
-      return max.toFixed();
-    } catch (error) {
-      return '0';
-    }
-  };
-
-  getFeeLevels(symbol: string,
-               gasPrice: BigNumber | string,
-               gasLimit: string): Array<FeeLevel> {
-    const price: BigNumber = typeof gasPrice === 'string' ? new BigNumber(gasPrice) : gasPrice;
-    const quarter: BigNumber = price.dividedBy(4);
-    const high: string = price.plus(quarter.times(2)).toFixed();
-    const low: string = price.minus(quarter.times(2)).toFixed();
-
-    // const customLevel: FeeLevel = selected && selected.value === 'Custom' ? {
-    //   value: 'Custom',
-    //   gasPrice: selected.gasPrice,
-    //   // label: `${ calculateFee(gasPrice, gasLimit) } ${ symbol }`
-    //   label: `${this.calculateFee(selected.gasPrice, gasLimit)} ${symbol}`,
-    // } : {
-    //   value: 'Custom',
-    //   gasPrice: low,
-    //   label: '',
-    // };
-
-    return [
-      {
-        value: 'High',
-        gasPrice: high,
-        label: `${this.calculateFee(high, gasLimit)} ${symbol}`,
-      },
-      {
-        value: 'Normal',
-        gasPrice: gasPrice.toString(),
-        label: `${this.calculateFee(price.toFixed(), gasLimit)} ${symbol}`,
-      },
-      {
-        value: 'Low',
-        gasPrice: low,
-        label: `${this.calculateFee(low, gasLimit)} ${symbol}`,
-      },
-      // customLevel,
-    ];
-  };
-
-  getCurrentNetworkbyShortcut(shortcut: string) {
-    const { localStorage } = this.props.appState;
-
-    const networks = localStorage.networks
-      .filter(n => n.shortcut.toLowerCase() === shortcut.toLowerCase());
-    if (networks && networks.length === 0) {
-      return null;
-    }
-    return networks[0];
-  }
-
-  getAddressInputState(): string {
-    let state = '';
-    if (this.state.address && !this.state.addressErrors) {
-      state = 'success';
-    }
-    if (this.state.addressWarnings && !this.state.addressErrors) {
-      state = 'warning';
-    }
-    if (this.state.addressErrors) {
-      state = 'error';
-    }
-    return state;
-  };
-
-  getAmountInputState(): string {
-    let state = '';
-    if (this.state.amountWarnings && !this.state.amountErrors) {
-      state = 'warning';
-    }
-    if (this.state.amountErrors) {
-      state = 'error';
-    }
-    return state;
-  };
-
-  onAddressChange(address: string) {
-    this.setState({ address: address });
-    if (address.length < 1) {
-      this.setState({
-        address: address,
-        addressErrors: 'Address is not set',
-      });
-    } else if (!EthereumjsUtil.isValidAddress(address)) {
-      this.setState({
-        address: address,
-        addressErrors: 'Address is not valid',
-      });
-    } else if (address.match(UPPERCASE_RE) && !EthereumjsUtil.isValidChecksumAddress(address)) {
-      this.setState({
-        address: address,
-        addressErrors: 'Address is not a valid checksum',
-      });
-    } else {
-      this.setState({
-        address: address,
-        addressErrors: null,
-        addressWarnings: null,
-        addressInfos: null,
-      });
-    }
-  }
-
-  onAmountChange(amount: string) {
-    if (amount.length < 1) {
-      this.setState({
-        amount: amount,
-        amountErrors: 'Amount is not set'
-      });
-    } else if (amount.length > 0 && !amount.match(NUMBER_RE)) {
-      this.setState({
-        amount: amount,
-        amountErrors: 'Amount is not a number'
-      });
-    } else {
-      this.setState({
-        amount: amount,
-        amountErrors: null,
-        amountWarnings: null,
-        amountInfos: null,
-      });
-    }
-  }
-
-  onSetMax() {
-    // TODO: 计算 max 并设置 this.state.amount
-    this.setState({isSetMax: !this.state.isSetMax})
-  }
-
-  onFeeLevelChange(selectedFee) {
-    this.setState({selectedFeeLevel: selectedFee})
-  }
-
-  onClear() {
-    this.setState({
-      address: '',
-      addressErrors: null,
-      addressWarnings: null,
-      addressInfos: null,
-      // for amount
-      amount: '',
-      amountErrors: null,
-      amountWarnings: null,
-      amountInfos: null,
-      isSetMax: false,
-      //
-      isSending: false,
-    })
-  }
-
-  callback(result: boolean) {
-    if (result) {
-      this.onClear();
-    } else {
-      this.setState({isSending: false})
-    }
-  }
-
-  openQrModal() {
-    this.setState({
-      isQrScanning: true,
-    })
-  }
-
-  onQrScanCancel() {
-    this.setState({
-      isQrScanning: false,
-    })
-  }
-
-  onQrScan(parsedUri: parsedURI) {
-    const { address = '', amount } = parsedUri;
-    if (amount) {
-      this.setState({
-        address: address,
-        amount: amount,
-      })
-    } else {
-      this.setState({
-        address: address,
-      })
-    }
-    this.onAddressChange(address);
-  }
+  // onSetMax() {
+  //   // TODO: 计算 max 并设置 this.state.amount
+  //   this.setState({isSetMax: !this.state.isSetMax})
+  // }
 
   onSend() {
     /* ethereum send flow
@@ -537,58 +261,58 @@ class AccountSend extends React.Component<Props> {
     serializedTx = serializeEthereumTx(txData)
     push = TrezorConnect.pushTransaction()
     * */
-    const { wallet } = this.props.appState;
-    const { accountEth } = wallet;
-    const address = this.state.address;
-    const amount = this.state.amount;
-    const selectedFeeLevel = !!this.state.selectedFeeLevel ? this.state.selectedFeeLevel : feeLevels[0];
-    const fee = this.state.selectedFeeLevel.label;
-
-    this.setState({isSending: true});
-
-    const txData = prepareEthereumTx({
-      network: network.shortcut,
-      token: null,
-      from: accountEth.address,
-      to: address,
-      amount: amount,
-      data: '', // TODO: support data
-      gasLimit: currentState.gasLimit,
-      gasPrice: currentState.gasPrice,
-      nonce,
-    });
-    console.log(txData);
+    // const { wallet } = this.props.appState;
+    // const { accountEth } = wallet;
+    // const address = this.state.address;
+    // const amount = this.state.amount;
+    // const selectedFeeLevel = !!this.state.selectedFeeLevel ? this.state.selectedFeeLevel : feeLevels[0];
+    // const fee = this.state.selectedFeeLevel.label;
+    //
+    // this.setState({isSending: true});
+    //
+    // const txData = prepareEthereumTx({
+    //   network: network.shortcut,
+    //   token: null,
+    //   from: accountEth.address,
+    //   to: address,
+    //   amount: amount,
+    //   data: '', // TODO: support data
+    //   gasLimit: currentState.gasLimit,
+    //   gasPrice: currentState.gasPrice,
+    //   nonce,
+    // });
+    // console.log(txData);
   }
 
-  prepareEthereumTx(tx: EthereumTxRequest): Promise<EthereumTransaction> {
-    const instance = this.getWeb3Instance();
-    const { token } = tx;
-    let data: string = ethUtils.sanitizeHex(tx.data);
-    let value: string = toHex(EthereumjsUnits.convert(tx.amount, 'ether', 'wei'));
-    let to: string = tx.to; // eslint-disable-line prefer-destructuring
-    if (token) {
-      // smart contract transaction
-      const contract = instance.erc20.clone();
-      contract.options.address = token.address;
-      const tokenAmount: string = new BigNumber(tx.amount).times(10 ** token.decimals).toString(10);
-      data = instance.erc20.methods.transfer(to, tokenAmount).encodeABI();
-      value = '0x00';
-      to = token.address;
-    }
-
-    return {
-      to,
-      value,
-      data,
-      chainId: instance.chainId,
-      nonce: toHex(tx.nonce),
-      gasLimit: toHex(tx.gasLimit),
-      gasPrice: toHex(EthereumjsUnits.convert(tx.gasPrice, 'gwei', 'wei')),
-      r: '',
-      s: '',
-      v: '',
-    };
-  };
+  // prepareEthereumTx(tx: EthereumTxRequest): Promise<EthereumTransaction> {
+  //   const instance = this.getWeb3Instance();
+  //   const { token } = tx;
+  //   let data: string = ethUtils.sanitizeHex(tx.data);
+  //   let value: string = toHex(EthereumjsUnits.convert(tx.amount, 'ether', 'wei'));
+  //   let to: string = tx.to; // eslint-disable-line prefer-destructuring
+  //   if (token) {
+  //     // smart contract transaction
+  //     const contract = instance.erc20.clone();
+  //     contract.options.address = token.address;
+  //     const tokenAmount: string = new BigNumber(tx.amount).times(10 ** token.decimals).toString(10);
+  //     data = instance.erc20.methods.transfer(to, tokenAmount).encodeABI();
+  //     value = '0x00';
+  //     to = token.address;
+  //   }
+  //
+  //   return {
+  //     to,
+  //     value,
+  //     data,
+  //     chainId: instance.chainId,
+  //     nonce: toHex(tx.nonce),
+  //     gasLimit: toHex(tx.gasLimit),
+  //     gasPrice: toHex(EthereumjsUnits.convert(tx.gasPrice, 'gwei', 'wei')),
+  //     r: '',
+  //     s: '',
+  //     v: '',
+  //   };
+  // };
 
   // export const serializeEthereumTx = (tx: EthereumTransaction): PromiseAction<string> => async (): Promise<string> => {
   //   const ethTx = new EthereumjsTx(tx);
@@ -596,11 +320,11 @@ class AccountSend extends React.Component<Props> {
   // };
 
   render() {
-    const { appState } = this.props;
+    const { appState, sendStore, sendActions } = this.props;
     const { wallet, eWalletDevice } = this.props.appState;
-
-    const {accountEth, rates, web3Instance } = wallet;
-    if (!accountEth || !rates || !web3Instance) {
+    const {accountEth, rates } = wallet;
+    const {feeLevels} = sendStore;
+    if (!accountEth || !rates || !feeLevels) {
       const loader = {
         type: 'progress',
         title: 'Loading account',
@@ -632,13 +356,13 @@ class AccountSend extends React.Component<Props> {
       )
     }
 
-    if (this.state.isQrScanning) {
+    if (sendStore.isQrScanning) {
       return (
         <ModalContainer>
           <ModalWindow>
             <QrModal
-              onCancel={this.onQrScanCancel}
-              onScan={parsedUri => this.onQrScan(parsedUri)}
+              onCancel={() => sendActions.onQrScanCancel()}
+              onScan={parsedUri => sendActions.onQrScan(parsedUri)}
             />
           </ModalWindow>
         </ModalContainer>
@@ -646,32 +370,28 @@ class AccountSend extends React.Component<Props> {
     }
 
     const currencySelectOption = [
-      { value: this.network.shortcut, label: this.network.shortcut },
+      { value: sendStore.network.shortcut, label: sendStore.network.shortcut },
     ];
-    const gasPrice = this.getGasPrice();
-    const feeLevels = this.getFeeLevels(
-      this.network.shortcut, gasPrice, web3Instance.defaultGasLimit.toString());
-    const selectedFeeLevel = !!this.state.selectedFeeLevel ? this.state.selectedFeeLevel : feeLevels[0];
 
     return (
       <Content>
         <Title>Send Ethereum(ETH)</Title>
         <InputRow>
           <Input
-            state={this.getAddressInputState()}
+            state={sendStore.addressInputState}
             autoComplete="off"
             autoCorrect="off"
             autoCapitalize="off"
             spellCheck="false"
             topLabel="Address"
-            bottomText={this.state.addressErrors || this.state.addressWarnings || this.state.addressInfos}
-            value={this.state.address}
-            onChange={event => this.onAddressChange(event.target.value)}
+            bottomText={sendStore.addressMessage}
+            value={sendStore.address}
+            onChange={event => sendActions.onAddressChange(event.target.value)}
             sideAddons={[(
               <QrButton
                 key="qrButton"
                 isWhite
-                onClick={this.openQrModal}
+                onClick={() => sendActions.openQrModal()}
               >
                 <Icon
                   size={25}
@@ -684,7 +404,7 @@ class AccountSend extends React.Component<Props> {
         </InputRow>
         <InputRow>
           <Input
-            state={this.getAmountInputState()}
+            state={sendStore.amountInputState}
             autoComplete="off"
             autoCorrect="off"
             autoCapitalize="off"
@@ -694,9 +414,9 @@ class AccountSend extends React.Component<Props> {
                 <AmountInputLabel>Amount</AmountInputLabel>
               </AmountInputLabelWrapper>
             )}
-            value={this.state.amount}
-            onChange={event => this.onAmountChange(event.target.value)}
-            bottomText={this.state.amountErrors || this.state.amountWarnings || this.state.amountInfos}
+            value={sendStore.amount}
+            onChange={event => sendActions.onAmountChange(event.target.value)}
+            bottomText={sendStore.amountMessage}
             sideAddons={[
               // (
               //   <SetMaxAmountButton
@@ -742,8 +462,8 @@ class AccountSend extends React.Component<Props> {
           <Select
             isSearchable={false}
             isClearable={false}
-            value={selectedFeeLevel}
-            onChange={this.onFeeLevelChange}
+            value={sendStore.selectedFeeLevel}
+            onChange={(selectedFee) => sendActions.onFeeLevelChange(selectedFee)}
             options={feeLevels}
             formatOptionLabel={option => (
               <FeeOptionWrapper>
@@ -758,13 +478,13 @@ class AccountSend extends React.Component<Props> {
           <FormButtons isAdvancedSettingsHidden>
             <ClearButton
               isWhite
-              isDisabled={this.state.isSending}
-              onClick={() => this.onClear()}
+              isDisabled={sendStore.isSending}
+              onClick={() => sendActions.onClear()}
             >
               Clear
             </ClearButton>
             <SendButton
-              isDisabled={this.state.isSending}
+              isDisabled={sendStore.isSending}
               onClick={() => this.onSend()}
             >
               Send
@@ -777,12 +497,12 @@ class AccountSend extends React.Component<Props> {
 }
 
 AccountSend.propTypes = {
-  appState: PropTypes.object.isRequired
 };
 
 export default inject((stores) => {
   return {
     appState: stores.appState,
     sendStore: stores.sendStore,
+    sendActions: stores.sendActions,
   };
 })(observer(AccountSend));

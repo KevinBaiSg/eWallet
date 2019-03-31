@@ -17,7 +17,7 @@ render(
     <Normalize />
     <BaseStyles />
     <AppContainer>
-      <Root store={stores} actions={actions} history={history} />
+      <Root stores={stores} actions={actions} history={history} />
     </AppContainer>
   </React.Fragment>,
   document.getElementById('root')
@@ -32,7 +32,7 @@ if (module.hot) {
         <Normalize />
         <BaseStyles />
         <AppContainer>
-          <NextRoot store={store} actions={actions} history={history} />
+          <NextRoot stores={store} actions={actions} history={history} />
         </AppContainer>,
       </React.Fragment>,
       document.getElementById('root')
