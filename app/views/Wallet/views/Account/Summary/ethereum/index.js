@@ -99,7 +99,7 @@ class AccountSummary extends React.Component<Props> {
     const network = this.getCurrentNetworkbyShortcut('eth');
     const fiat = rates ? [{
       network: network.shortcut.toLowerCase(),
-      value: rates.bitcoin['usd'],//cny usd
+      value: rates.ethereum['usd'],//cny usd
     }] : [];
 
     // const balance = BigNumber(accountEth.balance).dividedBy(1e8, 10).toString();
