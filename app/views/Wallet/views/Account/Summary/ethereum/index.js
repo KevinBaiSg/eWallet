@@ -89,7 +89,7 @@ class AccountSummary extends React.Component<Props> {
   render() {
     const { wallet } = this.props.appState;
     const {accountEth, rates} = wallet;
-    if (!accountEth || !rates) {
+    if (!accountEth) {
       const loader = {
         type: 'progress',
         title: 'Loading account',
@@ -97,10 +97,10 @@ class AccountSummary extends React.Component<Props> {
       return <Content loader={loader} isLoading />;
     }
     const network = this.getCurrentNetworkbyShortcut('eth');
-    const fiat = [{
+    const fiat = rates ? [{
       network: network.shortcut.toLowerCase(),
-      value: rates.ethereum['usd'],//cny usd
-    }];
+      value: rates.bitcoin['usd'],//cny usd
+    }] : [];
 
     // const balance = BigNumber(accountEth.balance).dividedBy(1e8, 10).toString();
     const externalAddress = `https://etherscan.io/address/${accountEth.address}`;

@@ -89,7 +89,7 @@ class AccountSummary extends React.Component<Props> {
   render() {
     const { wallet } = this.props.appState;
     const {account, rates} = wallet;
-    if (!account || !rates) {
+    if (!account) {
       const loader = {
         type: 'progress',
         title: 'Loading account',
@@ -97,10 +97,11 @@ class AccountSummary extends React.Component<Props> {
       return <Content loader={loader} isLoading />;
     }
     const network = this.getCurrentNetworkbyShortcut('btc');
-    const fiat = [{
+
+    const fiat = rates ? [{
       network: network.shortcut.toLowerCase(),
       value: rates.bitcoin['usd'],//cny usd
-    }];
+    }] : [];
 
     const balance = BigNumber(account.balance).dividedBy(1e8, 10).toString();
     // const externalAddress = `https://www.blockchain.com/btc/address/${account.address}`;
