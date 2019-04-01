@@ -1019,6 +1019,13 @@
   dependencies:
     regenerator-runtime "^0.12.0"
 
+"@babel/runtime@^7.3.1":
+  version "7.4.2"
+  resolved "http://registry.npm.taobao.org/@babel/runtime/download/@babel/runtime-7.4.2.tgz#f5ab6897320f16decd855eed70b705908a313fe8"
+  integrity sha1-9atolzIPFt7NhV7tcLcFkIoxP+g=
+  dependencies:
+    regenerator-runtime "^0.13.2"
+
 "@babel/template@7.0.0-beta.44":
   version "7.0.0-beta.44"
   resolved "https://registry.yarnpkg.com/@babel/template/-/template-7.0.0-beta.44.tgz#f8832f4fdcee5d59bf515e595fc5106c529b394f"
@@ -1301,6 +1308,13 @@
   version "2.1.2"
   resolved "https://registry.npmjs.org/@sinonjs/samsam/-/samsam-2.1.2.tgz#16947fce5f57258d01f1688fdc32723093c55d3f"
   integrity sha512-ZwTHAlC9akprWDinwEPD4kOuwaYZlyMwVJIANsKNC3QVp0AHB04m7RnB4eqeWfgmxw8MGTzS9uMaw93Z3QcZbw==
+
+"@types/bn.js@^4.11.4":
+  version "4.11.4"
+  resolved "http://registry.npm.taobao.org/@types/bn.js/download/@types/bn.js-4.11.4.tgz#a7bed5bdef9f16b25c92ba27745ab261374787d7"
+  integrity sha1-p77Vve+fFrJckrondFqyYTdHh9c=
+  dependencies:
+    "@types/node" "*"
 
 "@types/error-stack-parser@^1.3.18":
   version "1.3.18"
@@ -3345,7 +3359,7 @@ bn.js@4.11.6:
   resolved "http://registry.npm.taobao.org/bn.js/download/bn.js-4.11.6.tgz#53344adb14617a13f6e8dd2ce28905d1c0ba3215"
   integrity sha1-UzRK2xRhehP26N0s4okF0cC6MhU=
 
-bn.js@^4.0.0, bn.js@^4.1.0, bn.js@^4.1.1, bn.js@^4.11.0, bn.js@^4.11.1, bn.js@^4.11.3, bn.js@^4.11.6, bn.js@^4.4.0:
+bn.js@4.11.8, bn.js@^4.0.0, bn.js@^4.1.0, bn.js@^4.1.1, bn.js@^4.11.0, bn.js@^4.11.1, bn.js@^4.11.3, bn.js@^4.11.6, bn.js@^4.4.0:
   version "4.11.8"
   resolved "https://registry.npmjs.org/bn.js/-/bn.js-4.11.8.tgz#2cde09eb5ee341f484746bb0309b3253b1b1442f"
   integrity sha512-ItfYfPLkWHUjckQCk8xC+LwxgK8NYcXywGigJgSwOP8Y2iyWT4f2vsZnoOXTTbo+o5yXmIUJ4gn5538SO5S3gA==
@@ -6403,6 +6417,15 @@ eth-lib@0.2.7:
     elliptic "^6.4.0"
     xhr-request-promise "^0.1.2"
 
+eth-lib@0.2.8:
+  version "0.2.8"
+  resolved "http://registry.npm.taobao.org/eth-lib/download/eth-lib-0.2.8.tgz#b194058bef4b220ad12ea497431d6cb6aa0623c8"
+  integrity sha1-sZQFi+9LIgrRLqSXQx1stqoGI8g=
+  dependencies:
+    bn.js "^4.11.6"
+    elliptic "^6.4.0"
+    xhr-request-promise "^0.1.2"
+
 ethereum-common@^0.0.18:
   version "0.0.18"
   resolved "http://registry.npm.taobao.org/ethereum-common/download/ethereum-common-0.0.18.tgz#2fdc3576f232903358976eb39da783213ff9523f"
@@ -6436,7 +6459,7 @@ ethereumjs-util@^5.0.0, ethereumjs-util@^5.1.4:
     safe-buffer "^5.1.1"
     secp256k1 "^3.0.1"
 
-ethjs-unit@0.1.6:
+ethjs-unit@0.1.6, ethjs-unit@^0.1.6:
   version "0.1.6"
   resolved "http://registry.npm.taobao.org/ethjs-unit/download/ethjs-unit-0.1.6.tgz#c665921e476e87bce2a9d588a6fe0405b2c41699"
   integrity sha1-xmWSHkduh7ziqdWIpv4EBbLEFpk=
@@ -12951,6 +12974,11 @@ regenerator-runtime@^0.12.0:
   resolved "https://registry.npmjs.org/regenerator-runtime/-/regenerator-runtime-0.12.1.tgz#fa1a71544764c036f8c49b13a08b2594c9f8a0de"
   integrity sha512-odxIc1/vDlo4iZcfXqRYFj0vpXFNoGdKMAUieAlFYO6m/nl5e9KR/beGf41z4a1FI+aQgtjhuaSlDxQ0hmkrHg==
 
+regenerator-runtime@^0.13.2:
+  version "0.13.2"
+  resolved "http://registry.npm.taobao.org/regenerator-runtime/download/regenerator-runtime-0.13.2.tgz#32e59c9a6fb9b1a4aff09b4930ca2d4477343447"
+  integrity sha1-MuWcmm+5saSv8JtJMMotRHc0NEc=
+
 regenerator-transform@^0.10.0:
   version "0.10.1"
   resolved "https://registry.npmjs.org/regenerator-transform/-/regenerator-transform-0.10.1.tgz#1e4996837231da8b7f3cf4114d71b5691a0680dd"
@@ -16066,6 +16094,22 @@ web3-utils@1.0.0-beta.35:
     number-to-bn "1.7.0"
     randomhex "0.1.5"
     underscore "1.8.3"
+    utf8 "2.1.1"
+
+web3-utils@^1.0.0-beta.35:
+  version "1.0.0-beta.51"
+  resolved "http://registry.npm.taobao.org/web3-utils/download/web3-utils-1.0.0-beta.51.tgz#6b0767289be4f27b14895b011bcb5fa6c707fca5"
+  integrity sha1-awdnKJvk8nsUiVsBG8tfpscH/KU=
+  dependencies:
+    "@babel/runtime" "^7.3.1"
+    "@types/bn.js" "^4.11.4"
+    "@types/node" "^10.12.18"
+    bn.js "4.11.8"
+    eth-lib "0.2.8"
+    ethjs-unit "^0.1.6"
+    lodash "^4.17.11"
+    number-to-bn "1.7.0"
+    randomhex "0.1.5"
     utf8 "2.1.1"
 
 web3@1.0.0-beta.35:
