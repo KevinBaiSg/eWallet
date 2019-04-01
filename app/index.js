@@ -2,24 +2,22 @@ import React from 'react';
 import { render } from 'react-dom';
 import { AppContainer } from 'react-hot-loader';
 import { Normalize } from 'styled-normalize';
+import BaseStyles from 'support/styles';
 import Root from './containers/Root';
-import { configureStore, history } from './store/configureStore';
-// import { configureStore, history } from './store/configureStore';
+import { configureStore, configureAction, history } from './store/configureStore';
 import './app.global.css';
 
-// const history = createHashHistory();
-// const store = configureStore();
-const appState = configureStore();
-
-const store = {
-  appState
-};
+const stores = configureStore();
+const actions = configureAction(stores);
+const { appState } = stores;
+appState.start();
 
 render(
   <React.Fragment>
     <Normalize />
+    <BaseStyles />
     <AppContainer>
-      <Root {...store} history={history} />
+      <Root stores={stores} actions={actions} history={history} />
     </AppContainer>
   </React.Fragment>,
   document.getElementById('root')
@@ -32,8 +30,9 @@ if (module.hot) {
     render(
       <React.Fragment>
         <Normalize />
+        <BaseStyles />
         <AppContainer>
-          <NextRoot {...store} history={history} />
+          <NextRoot stores={store} actions={actions} history={history} />
         </AppContainer>,
       </React.Fragment>,
       document.getElementById('root')

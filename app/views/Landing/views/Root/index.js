@@ -23,15 +23,13 @@ class Root extends Component<Props> {
   }
 
   componentDidMount() {
-    const { appState } = this.props;
-    appState.start();
   }
 
   render() {
     const { appState } = this.props;
 
-    if (appState.deviceConnected === true) {
-      this.props.history.replace('/device/dals');
+    if (!!appState.eWalletDevice.connected) {
+      this.props.history.replace(`/device/${appState.eWalletDevice.features.device_id}`);
       return null
     }
 

@@ -52,3 +52,5 @@ npm-debug.log.*
 
 # package-lock.json
 package-lock.json
+
+app/store/app-state-ignore.js

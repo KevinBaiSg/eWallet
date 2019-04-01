@@ -5,6 +5,9 @@
     "allowImportExportEverywhere": true
   },
   "extends": ["airbnb", "prettier", "prettier/flowtype", "prettier/react"],
+  "globals": {
+    "COMMITHASH": true
+  },
   "env": {
     "browser": true,
     "node": true

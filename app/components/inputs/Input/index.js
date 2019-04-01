@@ -5,11 +5,11 @@ import colors from 'config/colors';
 import ICONS from 'config/icons';
 import Icon from 'components/Icon';
 import {
-    FONT_SIZE,
-    FONT_FAMILY,
-    FONT_WEIGHT,
-    LINE_HEIGHT,
-    TRANSITION,
+  FONT_SIZE,
+  FONT_FAMILY,
+  FONT_WEIGHT,
+  LINE_HEIGHT,
+  TRANSITION
 } from 'config/variables';
 
 const Wrapper = styled.div`
@@ -142,118 +142,118 @@ const ArrowUp = styled.div`
 `;
 
 class Input extends PureComponent {
-    getIcon(inputState) {
-        let icon = [];
-        if (inputState === 'success') {
-            icon = ICONS.CHECKED;
-        } else if (inputState === 'warning') {
-            icon = ICONS.WARNING;
-        } else if (inputState === 'error') {
-            icon = ICONS.ERROR;
-        }
-        return icon;
+  getIcon(inputState) {
+    let icon = [];
+    if (inputState === 'success') {
+      icon = ICONS.CHECKED;
+    } else if (inputState === 'warning') {
+      icon = ICONS.WARNING;
+    } else if (inputState === 'error') {
+      icon = ICONS.ERROR;
     }
+    return icon;
+  }
 
-    getColor(inputState) {
-        let color = '';
-        if (inputState === 'success') {
-            color = colors.SUCCESS_PRIMARY;
-        } else if (inputState === 'warning') {
-            color = colors.WARNING_PRIMARY;
-        } else if (inputState === 'error') {
-            color = colors.ERROR_PRIMARY;
-        }
-        return color;
+  getColor(inputState) {
+    let color = '';
+    if (inputState === 'success') {
+      color = colors.SUCCESS_PRIMARY;
+    } else if (inputState === 'warning') {
+      color = colors.WARNING_PRIMARY;
+    } else if (inputState === 'error') {
+      color = colors.ERROR_PRIMARY;
     }
+    return color;
+  }
 
-    render() {
-        return (
-            <Wrapper
-                className={this.props.className}
-            >
-                {this.props.topLabel && (
-                    <TopLabel>{this.props.topLabel}</TopLabel>
-                )}
-                <InputWrapper>
-                    <InputIconWrapper>
-                        {this.props.state && (
-                            <StyledIcon
-                                icon={this.getIcon(this.props.state)}
-                                color={this.getColor(this.props.state)}
-                            />
-                        )}
-                        <Overlay isPartiallyHidden={this.props.isPartiallyHidden} />
-                        {this.props.icon}
-                        <StyledInput
-                            autoComplete="off"
-                            height={this.props.height}
-                            trezorAction={this.props.trezorAction}
-                            hasIcon={this.props.icon || this.getIcon(this.props.state).length > 0}
-                            ref={this.props.innerRef}
-                            hasAddon={!!this.props.sideAddons}
-                            type={this.props.type}
-                            color={this.getColor(this.props.state)}
-                            placeholder={this.props.placeholder}
-                            autoCorrect={this.props.autocorrect}
-                            autoCapitalize={this.props.autocapitalize}
-                            spellCheck={this.props.spellCheck}
-                            isSmallText={this.props.isSmallText}
-                            value={this.props.value}
-                            readOnly={this.props.readOnly}
-                            onChange={this.props.onChange}
-                            onClick={this.props.autoSelect ? event => event.target.select() : null}
-                            borderColor={this.getColor(this.props.state)}
-                            disabled={this.props.isDisabled}
-                            name={this.props.name}
-                            data-lpignore="true"
-                        />
-                        <TrezorAction action={this.props.trezorAction}>
-                            <ArrowUp />{this.props.trezorAction}
-                        </TrezorAction>
-                    </InputIconWrapper>
-                    {this.props.sideAddons && this.props.sideAddons.map(sideAddon => sideAddon)}
-                </InputWrapper>
-                {this.props.bottomText && (
-                    <BottomText
-                        color={this.getColor(this.props.state)}
-                    >
-                        {this.props.bottomText}
-                    </BottomText>
-                )}
-            </Wrapper>
-        );
-    }
+  render() {
+    return (
+      <Wrapper
+        className={this.props.className}
+      >
+        {this.props.topLabel && (
+          <TopLabel>{this.props.topLabel}</TopLabel>
+        )}
+        <InputWrapper>
+          <InputIconWrapper>
+            {this.props.state && (
+              <StyledIcon
+                icon={this.getIcon(this.props.state)}
+                color={this.getColor(this.props.state)}
+              />
+            )}
+            <Overlay isPartiallyHidden={this.props.isPartiallyHidden}/>
+            {this.props.icon}
+            <StyledInput
+              autoComplete="off"
+              height={this.props.height}
+              trezorAction={this.props.trezorAction}
+              hasIcon={this.props.icon || this.getIcon(this.props.state).length > 0}
+              ref={this.props.innerRef}
+              hasAddon={!!this.props.sideAddons}
+              type={this.props.type}
+              color={this.getColor(this.props.state)}
+              placeholder={this.props.placeholder}
+              autoCorrect={this.props.autocorrect}
+              autoCapitalize={this.props.autocapitalize}
+              spellCheck={this.props.spellCheck}
+              isSmallText={this.props.isSmallText}
+              value={this.props.value}
+              readOnly={this.props.readOnly}
+              onChange={this.props.onChange}
+              onClick={this.props.autoSelect ? event => event.target.select() : null}
+              borderColor={this.getColor(this.props.state)}
+              disabled={this.props.isDisabled}
+              name={this.props.name}
+              data-lpignore="true"
+            />
+            <TrezorAction action={this.props.trezorAction}>
+              <ArrowUp/>{this.props.trezorAction}
+            </TrezorAction>
+          </InputIconWrapper>
+          {this.props.sideAddons && this.props.sideAddons.map(sideAddon => sideAddon)}
+        </InputWrapper>
+        {this.props.bottomText && (
+          <BottomText
+            color={this.getColor(this.props.state)}
+          >
+            {this.props.bottomText}
+          </BottomText>
+        )}
+      </Wrapper>
+    );
+  }
 }
 
 Input.propTypes = {
-    className: PropTypes.string,
-    innerRef: PropTypes.func,
-    placeholder: PropTypes.string,
-    type: PropTypes.string,
-    height: PropTypes.number,
-    autocorrect: PropTypes.string,
-    autocapitalize: PropTypes.string,
-    icon: PropTypes.node,
-    spellCheck: PropTypes.string,
-    value: PropTypes.string,
-    readOnly: PropTypes.bool,
-    autoSelect: PropTypes.bool,
-    onChange: PropTypes.func,
-    state: PropTypes.string,
-    bottomText: PropTypes.string,
-    topLabel: PropTypes.node,
-    trezorAction: PropTypes.node,
-    sideAddons: PropTypes.arrayOf(PropTypes.node),
-    isDisabled: PropTypes.bool,
-    name: PropTypes.string,
-    isSmallText: PropTypes.bool,
-    isPartiallyHidden: PropTypes.bool,
+  className: PropTypes.string,
+  innerRef: PropTypes.func,
+  placeholder: PropTypes.string,
+  type: PropTypes.string,
+  height: PropTypes.number,
+  autocorrect: PropTypes.string,
+  autocapitalize: PropTypes.string,
+  icon: PropTypes.node,
+  spellCheck: PropTypes.string,
+  value: PropTypes.string,
+  readOnly: PropTypes.bool,
+  autoSelect: PropTypes.bool,
+  onChange: PropTypes.func,
+  state: PropTypes.string,
+  bottomText: PropTypes.string,
+  topLabel: PropTypes.node,
+  trezorAction: PropTypes.node,
+  sideAddons: PropTypes.arrayOf(PropTypes.node),
+  isDisabled: PropTypes.bool,
+  name: PropTypes.string,
+  isSmallText: PropTypes.bool,
+  isPartiallyHidden: PropTypes.bool
 };
 
 Input.defaultProps = {
-    type: 'text',
-    autoSelect: false,
-    height: 40,
+  type: 'text',
+  autoSelect: false,
+  height: 40
 };
 
 export default Input;

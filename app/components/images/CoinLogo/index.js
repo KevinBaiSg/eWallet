@@ -16,7 +16,7 @@ const Logo = styled.img`
 class CoinLogo extends PureComponent {
     constructor() {
         super();
-        this.longIcons = ['etc', 'eth', 'trop'];
+        this.longIcons = ['btc', 'eth'];
     }
 
     hasLongIcon(network) {

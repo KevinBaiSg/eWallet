@@ -74,6 +74,8 @@ app.on('ready', async () => {
     show: false,
     width: 1024,
     height: 728,
+    resizable: false,
+    fullscreen: false,
     webPreferences: {
       nodeIntegrationInWorker: true,
       // nodeIntegration: true,
@@ -116,6 +118,7 @@ app.on('ready', async () => {
     });
 
   mainWindow.on('closed', () => {
+    app.quit();
     mainWindow = null;
   });
 
@@ -126,7 +129,6 @@ app.on('ready', async () => {
   // eslint-disable-next-line
   // new AppUpdater();
 });
-
 
 /*
 * IPC

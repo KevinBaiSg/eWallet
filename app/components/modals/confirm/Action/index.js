@@ -8,7 +8,7 @@ import DeviceIcon from 'components/images/DeviceIcon';
 import type { TrezorDevice } from 'flowtype';
 
 type Props = {
-    device: TrezorDevice;
+  device: TrezorDevice;
 }
 
 const Wrapper = styled.div``;
@@ -18,16 +18,16 @@ const Header = styled.div`
 `;
 
 const ConfirmAction = (props: Props) => (
-    <Wrapper>
-        <Header>
-            <DeviceIcon device={props.device} size={100} />
-            <H3>Confirm action on your Trezor</H3>
-        </Header>
-    </Wrapper>
+  <Wrapper>
+    <Header>
+      <DeviceIcon device={props.device} size={100}/>
+      <H3>Confirm action on your Device</H3>
+    </Header>
+  </Wrapper>
 );
 
 ConfirmAction.propTypes = {
-    device: PropTypes.object.isRequired,
+  device: PropTypes.object.isRequired
 };
 
 

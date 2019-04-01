@@ -1,7 +1,6 @@
 /* @flow */
 import React from 'react';
 import styled from 'styled-components';
-import { NavLink } from 'react-router-dom';
 import colors from 'config/colors';
 import { SCREEN_SIZE } from 'config/variables';
 import type { toggleSidebar as toggleSidebarType } from 'actions/WalletActions';
@@ -118,9 +117,7 @@ const Header = ({ sidebarEnabled, sidebarOpened, toggleSidebar }: Props) => (
                 { sidebarEnabled && <MenuToggler onClick={toggleSidebar}>{sidebarOpened ? '✕ Close' : '☰ Menu'}</MenuToggler>}
             </Left>
             <Logo>
-                <NavLink to="/">
-                    eWallet
-                </NavLink>
+              eWallet
             </Logo>
         </LayoutWrapper>
     </Wrapper>

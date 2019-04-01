@@ -15,7 +15,7 @@ import Link from 'components/Link';
 
 import { parseUri } from 'utils/cryptoUriParser';
 import type { parsedURI } from 'utils/cryptoUriParser';
-import type { Props as BaseProps } from '../Container';
+// import type { Props as BaseProps } from '../Container';
 
 const Wrapper = styled.div`
     width: 90vw;
@@ -49,11 +49,11 @@ const StyledQrReader = styled(QrReader)`
 `;
 
 // TODO fix types
-type Props = {
-    onScan: (data: parsedURI) => any,
-    onError?: (error: any) => any,
-    onCancel?: $ElementType<$ElementType<BaseProps, 'modalActions'>, 'onCancel'>;
-}
+// type Props = {
+//     onScan: (data: parsedURI) => any,
+//     onError?: (error: any) => any,
+//     onCancel?: $ElementType<$ElementType<BaseProps, 'modalActions'>, 'onCancel'>;
+// }
 
 type State = {
     readerLoaded: boolean,

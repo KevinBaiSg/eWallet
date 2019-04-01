@@ -53,7 +53,7 @@ const RowCoin = ({
                     </IconWrapper>
                 )}
                 <CoinNameWrapper>
-                    <CoinLogo network={network.shortcut} />
+                    <CoinLogo network={network.shortcut.toLowerCase()} />
                     <p>{network.name}</p>
                 </CoinNameWrapper>
             </Left>
