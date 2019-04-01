@@ -1,8 +1,7 @@
 /* @flow */
 
 import React from 'react';
-import PropTypes from 'prop-types';
-import BigNumber from 'bignumber.js';
+// import PropTypes from 'prop-types';
 import styled, { css } from 'styled-components';
 import { Select } from 'components/Select';
 import Button from 'components/Button';
@@ -15,22 +14,12 @@ import colors from 'config/colors';
 import Title from 'views/Wallet/components/Title';
 import P from 'components/Paragraph';
 import Content from 'views/Wallet/components/Content';
-// import AdvancedForm from './components/AdvancedForm';
-// import PendingTransactions from '../components/PendingTransactions';
 import { inject, observer } from 'mobx-react';
 import QrModal from 'components/modals/QrModal';
 import ConfirmAction from 'components/modals/confirm/Action';
 import type { parsedURI } from 'utils/cryptoUriParser';
 import { FADE_IN } from 'config/animations';
-import EthereumjsUtil from 'ethereumjs-util';
-import EthereumjsUnits from 'ethereumjs-units';
 import type { FeeLevel, FeeLevelInfo } from 'utils/types/fee';
-import type { Transaction as EthereumTransaction } from 'utils/types/ethereum';
-import * as ethUtils from 'utils/ethUtils';
-import * as currentState from 'web3';
-
-const NUMBER_RE: RegExp = new RegExp('^(0|0\\.([0-9]+)?|[1-9][0-9]*\\.?([0-9]+)?|\\.[0-9]+)$');
-const UPPERCASE_RE = new RegExp('^(.*[A-Z].*)$');
 
 // TODO: Decide on a small screen width for the whole app
 // and put it inside config/variables.js
@@ -236,9 +225,6 @@ class AccountSend extends React.Component<Props> {
 
     const { sendActions } = this.props;
     sendActions.setNetworkby('eth');
-
-    // this.onSetMax = this.onSetMax.bind(this);
-    // this.onSend = this.onSend.bind(this);
   }
 
   componentDidMount(): void {
@@ -250,74 +236,6 @@ class AccountSend extends React.Component<Props> {
   //   // TODO: 计算 max 并设置 this.state.amount
   //   this.setState({isSetMax: !this.state.isSetMax})
   // }
-
-  onSend() {
-    /* ethereum send flow
-    txData = prepareEthereumTx()
-    signedTransaction = TrezorConnect.ethereumSignTransaction()
-      txData.r = signedTransaction.payload.r;
-      txData.s = signedTransaction.payload.s;
-      txData.v = signedTransaction.payload.v;
-    serializedTx = serializeEthereumTx(txData)
-    push = TrezorConnect.pushTransaction()
-    * */
-    // const { wallet } = this.props.appState;
-    // const { accountEth } = wallet;
-    // const address = this.state.address;
-    // const amount = this.state.amount;
-    // const selectedFeeLevel = !!this.state.selectedFeeLevel ? this.state.selectedFeeLevel : feeLevels[0];
-    // const fee = this.state.selectedFeeLevel.label;
-    //
-    // this.setState({isSending: true});
-    //
-    // const txData = prepareEthereumTx({
-    //   network: network.shortcut,
-    //   token: null,
-    //   from: accountEth.address,
-    //   to: address,
-    //   amount: amount,
-    //   data: '', // TODO: support data
-    //   gasLimit: currentState.gasLimit,
-    //   gasPrice: currentState.gasPrice,
-    //   nonce,
-    // });
-    // console.log(txData);
-  }
-
-  // prepareEthereumTx(tx: EthereumTxRequest): Promise<EthereumTransaction> {
-  //   const instance = this.getWeb3Instance();
-  //   const { token } = tx;
-  //   let data: string = ethUtils.sanitizeHex(tx.data);
-  //   let value: string = toHex(EthereumjsUnits.convert(tx.amount, 'ether', 'wei'));
-  //   let to: string = tx.to; // eslint-disable-line prefer-destructuring
-  //   if (token) {
-  //     // smart contract transaction
-  //     const contract = instance.erc20.clone();
-  //     contract.options.address = token.address;
-  //     const tokenAmount: string = new BigNumber(tx.amount).times(10 ** token.decimals).toString(10);
-  //     data = instance.erc20.methods.transfer(to, tokenAmount).encodeABI();
-  //     value = '0x00';
-  //     to = token.address;
-  //   }
-  //
-  //   return {
-  //     to,
-  //     value,
-  //     data,
-  //     chainId: instance.chainId,
-  //     nonce: toHex(tx.nonce),
-  //     gasLimit: toHex(tx.gasLimit),
-  //     gasPrice: toHex(EthereumjsUnits.convert(tx.gasPrice, 'gwei', 'wei')),
-  //     r: '',
-  //     s: '',
-  //     v: '',
-  //   };
-  // };
-
-  // export const serializeEthereumTx = (tx: EthereumTransaction): PromiseAction<string> => async (): Promise<string> => {
-  //   const ethTx = new EthereumjsTx(tx);
-  //   return `0x${ethTx.serialize().toString('hex')}`;
-  // };
 
   render() {
     const { appState, sendStore, sendActions } = this.props;
@@ -485,7 +403,7 @@ class AccountSend extends React.Component<Props> {
             </ClearButton>
             <SendButton
               isDisabled={sendStore.isSending}
-              onClick={() => this.onSend()}
+              onClick={() => sendActions.onSend()}
             >
               Send
             </SendButton>
