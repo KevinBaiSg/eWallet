@@ -12,6 +12,7 @@ import SendStore from './SendStore';
 import AppState from './app-state';
 import type { Transaction as EthereumTransaction } from 'utils/types/ethereum';
 import { stripHexPrefix } from 'utils/ethereumUtils';
+import PushTransaction from 'utils/PushTransaction'
 
 const NUMBER_RE: RegExp = new RegExp('^(0|0\\.([0-9]+)?|[1-9][0-9]*\\.?([0-9]+)?|\\.[0-9]+)$');
 const UPPERCASE_RE = new RegExp('^(.*[A-Z].*)$');
@@ -207,9 +208,20 @@ export class SendActions {
             txData.v = toHex(signed.v);
           }
 
+          console.log('txData');
           console.log(txData);
+
           const serializedTx: string = await SendActions.serializeEthereumTx(txData);
-          console.log(serializedTx);
+          console.log(`serializedTx = ${serializedTx}`);
+
+          const compose = new PushTransaction({
+            tx: serializedTx,
+            coin: 'ethereum',
+          });
+          const txid = await compose.run();
+          console.log('txid');
+          console.log(txid);
+
         } catch (e) {
           this.sendStore.isSending = false;
           console.log(e);
