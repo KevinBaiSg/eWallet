@@ -150,7 +150,7 @@ export default class AppState {
           gasPrice: EthereumjsUnits.convert(gasPrice, 'wei', 'gwei'),
           defaultGasPrice: 64,
           defaultGasLimit: 21000,
-          chainId: 61,
+          chainId: 1,
         };
         resolve(this.wallet.web3Instance);
       };
