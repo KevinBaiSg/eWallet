@@ -22,6 +22,7 @@ import QrModal from 'components/modals/QrModal';
 import ConfirmAction from 'components/modals/confirm/Action';
 import type { parsedURI } from 'utils/cryptoUriParser';
 import { FADE_IN } from 'config/animations';
+import { withNamespaces } from "react-i18next";
 
 const NUMBER_RE: RegExp = new RegExp('^(0|0\\.([0-9]+)?|[1-9][0-9]*\\.?([0-9]+)?|\\.[0-9]+)$');
 // TODO: Decide on a small screen width for the whole app
@@ -438,18 +439,18 @@ class AccountSend extends React.Component<Props> {
     const amount = this.state.amount;
     const fee = this.state.selectedFeeLevel.label;
     this.setState({isSending: true});
-    appState.btcComposeTransaction(address, amount, fee, true, this.callback);
+    appState.btcComposeTransaction(address, amount, fee, true, this.callback).then();
   }
 
   render() {
-    const { appState } = this.props;
+    const { appState, t } = this.props;
     const { wallet, eWalletDevice } = this.props.appState;
 
     const {account, rates} = wallet;
     if (!account || !rates) {
       const loader = {
         type: 'progress',
-        title: 'Loading account',
+        title: t('Loading account'),
       };
       return <Content loader={loader} isLoading />;
     }
@@ -497,7 +498,7 @@ class AccountSend extends React.Component<Props> {
 
     return (
       <Content>
-        <Title>Send Bitcoin(BTC)</Title>
+        <Title>{t('Send Bitcoin(BTC)')}</Title>
         <InputRow>
           <Input
             state={this.getAddressInputState()}
@@ -505,7 +506,7 @@ class AccountSend extends React.Component<Props> {
             autoCorrect="off"
             autoCapitalize="off"
             spellCheck="false"
-            topLabel="Address"
+            topLabel={t('Address')}
             bottomText={this.state.addressErrors || this.state.addressWarnings || this.state.addressInfos}
             value={this.state.address}
             onChange={event => this.onAddressChange(event.target.value)}
@@ -533,7 +534,9 @@ class AccountSend extends React.Component<Props> {
             spellCheck="false"
             topLabel={(
               <AmountInputLabelWrapper>
-                <AmountInputLabel>Amount</AmountInputLabel>
+                <AmountInputLabel>
+                  {t('Amount')}
+                </AmountInputLabel>
               </AmountInputLabelWrapper>
             )}
             value={this.state.amount}
@@ -579,7 +582,9 @@ class AccountSend extends React.Component<Props> {
         </InputRow>
         <InputRow>
           <FeeLabelWrapper>
-            <FeeLabel>Fee</FeeLabel>
+            <FeeLabel>
+              {t('Fee')}
+            </FeeLabel>
           </FeeLabelWrapper>
           <Select
             isSearchable={false}
@@ -603,13 +608,13 @@ class AccountSend extends React.Component<Props> {
               isDisabled={this.state.isSending}
               onClick={() => this.onClear()}
             >
-              Clear
+              {t('Clear')}
             </ClearButton>
             <SendButton
               isDisabled={this.state.isSending}
               onClick={() => this.onSend()}
             >
-              Send
+              {t('Send')}
             </SendButton>
           </FormButtons>
         </ToggleAdvancedSettingsWrapper>
@@ -622,8 +627,8 @@ AccountSend.propTypes = {
   appState: PropTypes.object.isRequired
 };
 
-export default inject((stores) => {
+export default withNamespaces()(inject((stores) => {
   return {
     appState: stores.appState
   };
-})(observer(AccountSend));
+})(observer(AccountSend)));
