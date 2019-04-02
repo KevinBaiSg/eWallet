@@ -20,6 +20,7 @@ import ConfirmAction from 'components/modals/confirm/Action';
 import type { parsedURI } from 'utils/cryptoUriParser';
 import { FADE_IN } from 'config/animations';
 import type { FeeLevel, FeeLevelInfo } from 'utils/types/fee';
+import { withNamespaces } from 'react-i18next';
 
 // TODO: Decide on a small screen width for the whole app
 // and put it inside config/variables.js
@@ -238,14 +239,14 @@ class AccountSend extends React.Component<Props> {
   // }
 
   render() {
-    const { appState, sendStore, sendActions } = this.props;
+    const { appState, sendStore, sendActions, t } = this.props;
     const { wallet, eWalletDevice } = this.props.appState;
     const {accountEth, rates } = wallet;
     const {feeLevels} = sendStore;
     if (!accountEth || !rates || !feeLevels) {
       const loader = {
         type: 'progress',
-        title: 'Loading account',
+        title: t('Loading account'),
       };
       return <Content loader={loader} isLoading />;
     }
@@ -293,7 +294,7 @@ class AccountSend extends React.Component<Props> {
 
     return (
       <Content>
-        <Title>Send Ethereum(ETH)</Title>
+        <Title>{ t('Send Ethereum(ETH)') }</Title>
         <InputRow>
           <Input
             state={sendStore.addressInputState}
@@ -301,7 +302,7 @@ class AccountSend extends React.Component<Props> {
             autoCorrect="off"
             autoCapitalize="off"
             spellCheck="false"
-            topLabel="Address"
+            topLabel={t('Address')}
             bottomText={sendStore.addressMessage}
             value={sendStore.address}
             onChange={event => sendActions.onAddressChange(event.target.value)}
@@ -329,7 +330,9 @@ class AccountSend extends React.Component<Props> {
             spellCheck="false"
             topLabel={(
               <AmountInputLabelWrapper>
-                <AmountInputLabel>Amount</AmountInputLabel>
+                <AmountInputLabel>
+                  { t('Amount') }
+                </AmountInputLabel>
               </AmountInputLabelWrapper>
             )}
             value={sendStore.amount}
@@ -375,7 +378,9 @@ class AccountSend extends React.Component<Props> {
         </InputRow>
         <InputRow>
           <FeeLabelWrapper>
-            <FeeLabel>Fee</FeeLabel>
+            <FeeLabel>
+              { t('Fee') }
+            </FeeLabel>
           </FeeLabelWrapper>
           <Select
             isSearchable={false}
@@ -399,13 +404,13 @@ class AccountSend extends React.Component<Props> {
               isDisabled={sendStore.isSending}
               onClick={() => sendActions.onClear()}
             >
-              Clear
+              {t('Clear')}
             </ClearButton>
             <SendButton
               isDisabled={sendStore.isSending}
               onClick={() => sendActions.onSend()}
             >
-              Send
+              {t('Send')}
             </SendButton>
           </FormButtons>
         </ToggleAdvancedSettingsWrapper>
@@ -417,10 +422,10 @@ class AccountSend extends React.Component<Props> {
 AccountSend.propTypes = {
 };
 
-export default inject((stores) => {
+export default withNamespaces()(inject((stores) => {
   return {
     appState: stores.appState,
     sendStore: stores.sendStore,
     sendActions: stores.sendActions,
   };
-})(observer(AccountSend));
+})(observer(AccountSend)));
