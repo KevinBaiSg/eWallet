@@ -19,6 +19,7 @@ import PropTypes from "prop-types";
 import { inject, observer } from 'mobx-react';
 import type { MessageResponse } from 'trezor.js'
 import { validatePath } from 'utils/pathUtils';
+import { withNamespaces } from "react-i18next";
 
 const Label = styled.div`
     padding-bottom: 10px;
@@ -140,13 +141,14 @@ class AccountReceive extends React.Component<Props> {
   };
 
   render() {
+    const { t } = this.props;
     const { wallet, eWalletDevice } = this.props.appState;
 
     const {account, rates} = wallet;
     if (!account || !rates) {
       const loader = {
         type: 'progress',
-        title: 'Loading account',
+        title: t('Loading account'),
       };
       return <Content loader={loader} isLoading />;
     }
@@ -161,20 +163,22 @@ class AccountReceive extends React.Component<Props> {
     return (
       <Content>
         <React.Fragment>
-          <Title>Receive Bitcoin(BTC)</Title>
+          <Title>
+            {t('Receive Bitcoin(BTC)')}
+          </Title>
           <AddressWrapper isShowingQrCode={this.state.addressVerified}>
             <Row>
               <Input
                 type="text"
                 readOnly
                 autoSelect
-                topLabel="Address"
+                topLabel={t('Address')}
                 value={showAddress}
                 isPartiallyHidden={isAddressHidden}
                 trezorAction={this.state.isAddressVerifying ? (
                   <React.Fragment>
                     <DeviceIcon device={eWalletDevice.device} color={colors.WHITE}/>
-                    Check address on your Device
+                    {t('Check address on your Device')}
                   </React.Fragment>
                 ) : null}
                 icon={(this.state.addressVerified && !this.state.isAddressVerifying) && (
@@ -200,7 +204,8 @@ class AccountReceive extends React.Component<Props> {
               {!this.state.addressVerified && (
                 <ShowAddressButton onClick={() => { this.showAddress(addressPath, address) } }
                                    isDisabled={eWalletDevice.connected && this.state.completed}>
-                  <ShowAddressIcon icon={ICONS.EYE} color={colors.WHITE}/>Show full address
+                  <ShowAddressIcon icon={ICONS.EYE} color={colors.WHITE}/>
+                  {t('Show full address')}
                 </ShowAddressButton>
               )}
             </Row>
@@ -227,8 +232,8 @@ AccountReceive.propTypes = {
   appState: PropTypes.object.isRequired
 };
 
-export default inject((stores) => {
+export default withNamespaces()(inject((stores) => {
   return {
     appState: stores.appState
   };
-})(observer(AccountReceive));
+})(observer(AccountReceive)));
