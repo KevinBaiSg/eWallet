@@ -20,7 +20,7 @@ import React from 'react';
 import Web3 from "web3";
 import EthereumjsUnits from 'ethereumjs-units';
 import EthereumjsUtil from 'ethereumjs-util';
-
+import { Trans } from 'react-i18next';
 const CoinGecko = require('coingecko-api');
 const CoinGeckoClient = new CoinGecko();
 
@@ -446,7 +446,11 @@ export default class AppState {
             this.wallet.notification = {
               type: 'success',
               title: 'Transaction success',
-              message: <Link openExternal={externalAddress} isGray>See transaction detail</Link>,
+              message: (
+                <Link openExternal={externalAddress} isGray>
+                  <Trans>See transaction detail</Trans>
+                </Link>
+              ),
               cancelable: true,
               actions: [],
             };

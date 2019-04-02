@@ -14,6 +14,8 @@ import { stripHexPrefix } from 'utils/ethereumUtils';
 import PushTransaction from 'utils/PushTransaction'
 import React from 'react';
 import Link from 'components/Link';
+import { Trans } from 'react-i18next';
+
 const Logger = require('utils/logger').default;
 
 const NUMBER_RE: RegExp = new RegExp('^(0|0\\.([0-9]+)?|[1-9][0-9]*\\.?([0-9]+)?|\\.[0-9]+)$');
@@ -230,14 +232,18 @@ export class SendActions {
             tx: serializedTx,
             coin: 'ethereum',
           });
-          const txid = await compose.run();
-          Logger.debug('txid: ', txid);
+          const response = await compose.run();
+          Logger.debug('txid: ', response.txid);
 
-          const externalAddress = `https://etherscan.io/tx/${txid}`;
+          const externalAddress = `https://etherscan.io/tx/${response.txid}`;
           this.appStore.addContextNotification({
             type: 'success',
             title: 'Transaction success',
-            message: <Link openExternal={externalAddress} isGray>See transaction detail</Link>,
+            message: (
+              <Link openExternal={externalAddress} isGray>
+                <Trans>See transaction detail</Trans>
+              </Link>
+            ),
             cancelable: true,
             actions: [],
           });
