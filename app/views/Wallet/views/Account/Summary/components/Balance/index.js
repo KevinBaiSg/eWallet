@@ -2,22 +2,24 @@
 import React, { PureComponent } from 'react';
 import BigNumber from 'bignumber.js';
 import styled from 'styled-components';
+import {format} from 'currency-formatter';
 import Icon from 'components/Icon';
 import colors from 'config/colors';
 import ICONS from 'config/icons';
 import { FONT_SIZE, FONT_WEIGHT } from 'config/variables';
 
-import type { Network, State as ReducersState } from 'flowtype';
+import type { Network } from 'flowtype';
 
 type Props = {
-    network: Network,
-    balance: string,
-    fiat: $ElementType<ReducersState, 'fiat'>,
+  network: Network,
+  balance: string,
+  fiat: any,
+  currency: string,
 }
 
 type State = {
-    isHidden: boolean,
-    canAnimateHideBalanceIcon: boolean,
+  isHidden: boolean,
+  canAnimateHideBalanceIcon: boolean,
 };
 
 const Wrapper = styled.div`
@@ -88,67 +90,69 @@ const Label = styled.div`
 
 
 class AccountBalance extends PureComponent<Props, State> {
-    constructor(props: Props) {
-        super(props);
-        this.state = {
-            isHidden: false,
-            canAnimateHideBalanceIcon: false,
-        };
+  constructor(props: Props) {
+    super(props);
+    this.state = {
+      isHidden: false,
+      canAnimateHideBalanceIcon: false
+    };
+  }
+
+  handleHideBalanceIconClick() {
+    this.setState(previousState => ({
+      isHidden: !previousState.isHidden,
+      canAnimateHideBalanceIcon: true
+    }));
+  }
+
+  render() {
+    const { network, currency } = this.props;
+    const fiatRate = this.props.fiat.find(f => f.network.toLowerCase() === network.shortcut.toLowerCase());
+    let accountBalance = '';
+    let fiatRateValue = '';
+    let fiatRateValueFormated = '';
+    let fiat = '';
+    if (fiatRate) {
+      accountBalance = new BigNumber(this.props.balance);
+      fiatRateValue = new BigNumber(fiatRate.value).toFixed(2);
+      fiatRateValueFormated = format(fiatRateValue, { code: currency })
+      fiat = format(accountBalance.times(fiatRateValue).toFixed(2), { code: currency });
     }
 
-    handleHideBalanceIconClick() {
-        this.setState(previousState => ({
-            isHidden: !previousState.isHidden,
-            canAnimateHideBalanceIcon: true,
-        }));
-    }
-
-    render() {
-        const { network } = this.props;
-        const fiatRate = this.props.fiat.find(f => f.network.toLowerCase() === network.shortcut.toLowerCase());
-        let accountBalance = '';
-        let fiatRateValue = '';
-        let fiat = '';
-        if (fiatRate) {
-            accountBalance = new BigNumber(this.props.balance);
-            fiatRateValue = new BigNumber(fiatRate.value).toFixed(2);
-            fiat = accountBalance.times(fiatRateValue).toFixed(2);
-        }
-
-        return (
-            <Wrapper isHidden={this.state.isHidden}>
-                <HideBalanceIconWrapper
-                    onClick={() => this.handleHideBalanceIconClick()}
-                >
-                    <Icon
-                        canAnimate={this.state.canAnimateHideBalanceIcon}
-                        isActive={this.state.isHidden}
-                        icon={ICONS.ARROW_UP}
-                        color={colors.TEXT_SECONDARY}
-                        size={26}
-                    />
-                </HideBalanceIconWrapper>
-                {!this.state.isHidden && (
-                    <React.Fragment>
-                        <BalanceWrapper>
-                            <Label>Balance</Label>
-                            {fiatRate && (
-                                <FiatValue>${fiat}</FiatValue>
-                            )}
-                            <CoinBalance>{this.props.balance} {network.shortcut}</CoinBalance>
-                        </BalanceWrapper>
-                        {fiatRate && (
-                            <BalanceRateWrapper>
-                                <Label>Rate</Label>
-                                <FiatValueRate>${fiatRateValue}</FiatValueRate>
-                                <CoinBalance>1.00 {network.shortcut}</CoinBalance>
-                            </BalanceRateWrapper>
-                        )}
-                    </React.Fragment>
-                )}
-            </Wrapper>
-        );
-    }
+    return (
+      <Wrapper isHidden={this.state.isHidden}>
+        <HideBalanceIconWrapper
+          onClick={() => this.handleHideBalanceIconClick()}
+        >
+          <Icon
+            canAnimate={this.state.canAnimateHideBalanceIcon}
+            isActive={this.state.isHidden}
+            icon={ICONS.ARROW_UP}
+            color={colors.TEXT_SECONDARY}
+            size={26}
+          />
+        </HideBalanceIconWrapper>
+        {!this.state.isHidden && (
+          <React.Fragment>
+            <BalanceWrapper>
+              <Label>Balance</Label>
+              {fiatRate && (
+                <FiatValue>{fiat}</FiatValue>
+              )}
+              <CoinBalance>{this.props.balance} {network.shortcut}</CoinBalance>
+            </BalanceWrapper>
+            {fiatRate && (
+              <BalanceRateWrapper>
+                <Label>Rate</Label>
+                <FiatValueRate>{fiatRateValueFormated}</FiatValueRate>
+                <CoinBalance>1.00 {network.shortcut}</CoinBalance>
+              </BalanceRateWrapper>
+            )}
+          </React.Fragment>
+        )}
+      </Wrapper>
+    );
+  }
 }
 
 export default AccountBalance;

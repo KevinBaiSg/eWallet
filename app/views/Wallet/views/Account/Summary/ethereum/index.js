@@ -99,7 +99,7 @@ class AccountSummary extends React.Component<Props> {
     const network = this.getCurrentNetworkbyShortcut('eth');
     const fiat = rates ? [{
       network: network.shortcut.toLowerCase(),
-      value: rates.ethereum['usd'],//cny usd
+      value: rates.ethereum[wallet.currency.toLowerCase()],
     }] : [];
 
     const externalAddress = `https://etherscan.io/address/${accountEth.address}`;
@@ -117,6 +117,7 @@ class AccountSummary extends React.Component<Props> {
             network={network}
             balance={accountEth.balance}
             fiat={fiat}
+            currency={wallet.currency.toUpperCase()}
           />
         </React.Fragment>
       </Content>

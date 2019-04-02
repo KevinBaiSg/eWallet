@@ -75,6 +75,8 @@ export type Wallet = {
   notification: any,
   //
   web3Instance: Web3Instance,
+  //
+  currency: string,
 };
 
 export type LocalStorage = {
@@ -109,6 +111,8 @@ export default class AppState {
     notification: null,
     //
     web3Instance: null,
+    //
+    currency: 'cny', // cny or usd...
   };
 
   @observable

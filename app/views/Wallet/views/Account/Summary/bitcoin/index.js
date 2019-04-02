@@ -100,7 +100,7 @@ class AccountSummary extends React.Component<Props> {
 
     const fiat = rates ? [{
       network: network.shortcut.toLowerCase(),
-      value: rates.bitcoin['usd'],//cny usd
+      value: rates.bitcoin[wallet.currency.toLowerCase()],
     }] : [];
 
     const balance = BigNumber(account.balance).dividedBy(1e8, 10).toString();
@@ -119,6 +119,7 @@ class AccountSummary extends React.Component<Props> {
             network={network}
             balance={balance}
             fiat={fiat}
+            currency={wallet.currency.toUpperCase()}
           />
         </React.Fragment>
       </Content>
