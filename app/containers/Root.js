@@ -5,6 +5,7 @@ import { MemoryRouter } from 'react-router-dom';
 import { getPattern } from 'support/routes';
 // import { AppState } from '../store';
 import Routes from '../Routes';
+import 'translations/i18n'
 
 type Props = {
   stores: any,

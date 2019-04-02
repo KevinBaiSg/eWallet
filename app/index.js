@@ -26,7 +26,7 @@ render(
 if (module.hot) {
   module.hot.accept('./', () => {
     // eslint-disable-next-line global-require
-    const NextRoot = require('./views').default;
+    const NextRoot = require('./containers/Root').default;
     render(
       <React.Fragment>
         <Normalize />

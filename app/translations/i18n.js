@@ -1,44 +1,30 @@
-const path = require("path");
-const electron = require('electron');
-const fs = require('fs');
+import i18n from "i18next";
+import { reactI18nextModule } from "react-i18next";
 
-let loadedLanguage;
-const app = electron.app ? electron.app : electron.remote.app;
+import en from './en.json';
+import zh from './zh.json';
 
-module.exports = i18n;
-
-// function i18n() {
-// 	if(fs.existsSync(path.join(__dirname, `${app.getLocale()}.js`))) {
-// 		loadedLanguage = JSON.parse(
-// 		  fs.readFileSync(path.join(__dirname, `${app.getLocale()}.js`),
-//         'utf8'))
-// 	}
-// 	else {
-// 		// loadedLanguage = JSON.parse(
-// 		//   fs.readFileSync(path.join(__dirname, 'en.js'), 'utf8'))
-//     loadedLanguage = JSON.parse(
-//       fs.readFileSync(path.join(__dirname, 'zh.js'), 'utf8'))
-// 	}
-// }
-
-function i18n() {
-  if(fs.existsSync(path.join(__dirname, 'app.asar', `${app.getLocale()}.js`))) {
-    loadedLanguage = JSON.parse(
-      fs.readFileSync(path.join(__dirname, 'app.asar', `${app.getLocale()}.js`),
-        'utf8'))
+// the translations
+const resources = {
+  en: {
+    translation: en
+  },
+  zh: {
+    translation: zh
   }
-  else {
-    // loadedLanguage = JSON.parse(
-    //   fs.readFileSync(path.join(__dirname, 'en.js'), 'utf8'))
-    loadedLanguage = JSON.parse(
-      fs.readFileSync(path.join(__dirname, 'app.asar', 'zh.js'), 'utf8'))
-  }
-}
-
-i18n.prototype.__ = (phrase) => {
-	let translation = loadedLanguage[phrase];
-  if(translation === undefined) {
-    translation = phrase
-  }
-	return translation
 };
+
+i18n
+  .use(reactI18nextModule) // passes i18n down to react-i18next
+  .init({
+    resources,
+    lng: "en",
+
+    keySeparator: false, // we do not use keys in form messages.welcome
+
+    interpolation: {
+      escapeValue: false // react already safes from xss
+    }
+  });
+
+export default i18n;
