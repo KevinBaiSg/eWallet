@@ -158,17 +158,6 @@ export class SendActions {
 
   @action
   async onSend() {
-    /* ethereum send flow
-    txData = prepareEthereumTx()
-    signedTransaction = TrezorConnect.ethereumSignTransaction()
-      txData.r = signedTransaction.payload.r;
-      txData.s = signedTransaction.payload.s;
-      txData.v = signedTransaction.payload.v;
-    serializedTx = serializeEthereumTx(txData)
-    push = TrezorConnect.pushTransaction()
-    * */
-
-    // set the sending flag
     this.sendStore.isSending = true;
 
     const device = this.appStore.eWalletDevice.device;
@@ -178,6 +167,7 @@ export class SendActions {
           const web3Instance = await this.appStore.getWeb3Instance();
           const tx = this.prepareEthereumTxRequest(web3Instance);
           const txData = this.prepareEthereumTx(web3Instance, tx);
+          // copy txData and remove hex prefix
           const txStripHexPrefix =  Object.assign({}, txData);
 
           Object.keys(txStripHexPrefix).map(key => {
@@ -207,8 +197,6 @@ export class SendActions {
           } else {
             txData.v = toHex(signed.v);
           }
-
-          console.log('txData');
           console.log(txData);
 
           const serializedTx: string = await SendActions.serializeEthereumTx(txData);
@@ -219,8 +207,10 @@ export class SendActions {
             coin: 'ethereum',
           });
           const txid = await compose.run();
-          console.log('txid');
           console.log(txid);
+          this.upgradeNonce();
+          this.onClear();
+          this.sendStore.isSending = false;
 
         } catch (e) {
           this.sendStore.isSending = false;
@@ -231,6 +221,11 @@ export class SendActions {
         console.log(e);
       })
     }
+  }
+
+  upgradeNonce() {
+    const { accountEth } = this.appStore.wallet;
+    accountEth.nonce ++;
   }
 
   prepareEthereumTxRequest(web3Instance) {
