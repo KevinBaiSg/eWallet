@@ -15,6 +15,7 @@ import Link from 'components/Link';
 
 import { parseUri } from 'utils/cryptoUriParser';
 import type { parsedURI } from 'utils/cryptoUriParser';
+import { withNamespaces } from "react-i18next";
 // import type { Props as BaseProps } from '../Container';
 
 const Wrapper = styled.div`
@@ -56,104 +57,105 @@ const StyledQrReader = styled(QrReader)`
 // }
 
 type State = {
-    readerLoaded: boolean,
-    error: any,
+  readerLoaded: boolean,
+  error: any,
 };
 
 class QrModal extends React.Component<Props, State> {
-    constructor(props: Props) {
-        super(props);
-        this.state = {
-            readerLoaded: false,
-            error: null,
-        };
-    }
+  constructor(props: Props) {
+    super(props);
+    this.state = {
+      readerLoaded: false,
+      error: null
+    };
+  }
 
-    onLoad = () => {
-        this.setState({
-            readerLoaded: true,
-        });
-    }
+  onLoad = () => {
+    this.setState({
+      readerLoaded: true
+    });
+  };
 
-    handleScan = (data: string) => {
-        if (data) {
-            try {
-                const parsedUri = parseUri(data);
-                if (parsedUri) {
-                    this.props.onScan(parsedUri);
-                    // reset error
-                    this.setState({
-                        error: null,
-                    });
-                    // close window
-                    this.handleCancel();
-                }
-            } catch (error) {
-                this.handleError(error);
-            }
+  handleScan = (data: string) => {
+    if (data) {
+      try {
+        const parsedUri = parseUri(data);
+        if (parsedUri) {
+          this.props.onScan(parsedUri);
+          // reset error
+          this.setState({
+            error: null
+          });
+          // close window
+          this.handleCancel();
         }
+      } catch (error) {
+        this.handleError(error);
+      }
     }
+  };
 
-    handleError = (err: any) => {
-        console.log(err);
-        this.setState({
-            error: err,
-        });
+  handleError = (err: any) => {
+    console.log(err);
+    this.setState({
+      error: err
+    });
 
-        if (this.props.onError) {
-            this.props.onError(err);
-        }
+    if (this.props.onError) {
+      this.props.onError(err);
     }
+  };
 
-    handleCancel = () => {
-        if (this.props.onCancel) {
-            this.props.onCancel();
-        }
+  handleCancel = () => {
+    if (this.props.onCancel) {
+      this.props.onCancel();
     }
+  };
 
 
-    render() {
-        return (
-            <Wrapper>
-                <CloseLink onClick={this.handleCancel}>
-                    <Icon
-                        size={24}
-                        color={colors.TEXT_SECONDARY}
-                        icon={icons.CLOSE}
-                    />
-                </CloseLink>
-                <Padding>
-                    <H2>Scan an address from a QR code</H2>
-                    {!this.state.readerLoaded && (
-                        <CameraPlaceholder>
-                            Waiting for camera...
-                        </CameraPlaceholder>)
-                    }
-                </Padding>
-                <StyledQrReader
-                    delay={500}
-                    onError={this.handleError}
-                    onScan={this.handleScan}
-                    onLoad={this.onLoad}
-                    style={{ width: '100%' }}
-                    showViewFinder={false}
-                />
-                <Padding>
-                    {this.state.error && (
-                        <Error>
-                            {this.state.error.toString()}
-                        </Error>
-                    )}
-                </Padding>
-            </Wrapper>
-        );
-    }
+  render() {
+    const { t } = this.props;
+    return (
+      <Wrapper>
+        <CloseLink onClick={this.handleCancel}>
+          <Icon
+            size={24}
+            color={colors.TEXT_SECONDARY}
+            icon={icons.CLOSE}
+          />
+        </CloseLink>
+        <Padding>
+          <H2>{t('Scan an address from a QR code')}</H2>
+          {!this.state.readerLoaded && (
+            <CameraPlaceholder>
+              {t('Waiting for camera...')}
+            </CameraPlaceholder>)
+          }
+        </Padding>
+        <StyledQrReader
+          delay={500}
+          onError={this.handleError}
+          onScan={this.handleScan}
+          onLoad={this.onLoad}
+          style={{ width: '100%' }}
+          showViewFinder={false}
+        />
+        <Padding>
+          {this.state.error && (
+            <Error>
+              {this.state.error.toString()}
+            </Error>
+          )}
+        </Padding>
+      </Wrapper>
+    );
+  }
 }
 
 QrModal.propTypes = {
-    onScan: PropTypes.func.isRequired,
-    onError: PropTypes.func,
-    onCancel: PropTypes.func,
+  onScan: PropTypes.func.isRequired,
+  onError: PropTypes.func,
+  onCancel: PropTypes.func
 };
 
-export default QrModal;
+export default withNamespaces()(QrModal);
