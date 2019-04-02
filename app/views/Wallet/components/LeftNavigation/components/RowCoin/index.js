@@ -6,6 +6,7 @@ import CoinLogo from 'components/images/CoinLogo';
 import { FONT_SIZE, LEFT_NAVIGATION_ROW } from 'config/variables';
 import colors from 'config/colors';
 import Row from '../Row';
+import { withNamespaces } from "react-i18next";
 
 
 const CoinNameWrapper = styled.div`
@@ -38,48 +39,48 @@ const IconWrapper = styled.div`
 `;
 
 const RowCoin = ({
-    network, iconLeft, iconRight,
-}) => (
-    <RowCoinWrapper>
-        <Row>
-            <Left>
-                {iconLeft && (
-                    <IconWrapper>
-                        <Icon
-                            icon={iconLeft.type}
-                            size={iconLeft.size}
-                            color={iconLeft.color}
-                        />
-                    </IconWrapper>
-                )}
-                <CoinNameWrapper>
-                    <CoinLogo network={network.shortcut.toLowerCase()} />
-                    <p>{network.name}</p>
-                </CoinNameWrapper>
-            </Left>
-            {iconRight && (
-                <Icon
-                    icon={iconRight.type}
-                    size={iconRight.size}
-                    color={iconRight.color}
-                />
-            )}
-        </Row>
-    </RowCoinWrapper>
+                   network, iconLeft, iconRight, t
+                 }) => (
+  <RowCoinWrapper>
+    <Row>
+      <Left>
+        {iconLeft && (
+          <IconWrapper>
+            <Icon
+              icon={iconLeft.type}
+              size={iconLeft.size}
+              color={iconLeft.color}
+            />
+          </IconWrapper>
+        )}
+        <CoinNameWrapper>
+          <CoinLogo network={network.shortcut.toLowerCase()}/>
+          <p>{t(network.name)}</p>
+        </CoinNameWrapper>
+      </Left>
+      {iconRight && (
+        <Icon
+          icon={iconRight.type}
+          size={iconRight.size}
+          color={iconRight.color}
+        />
+      )}
+    </Row>
+  </RowCoinWrapper>
 );
 
 const iconShape = {
-    type: PropTypes.arrayOf(PropTypes.string).isRequired,
-    color: PropTypes.string.isRequired,
-    size: PropTypes.number.isRequired,
+  type: PropTypes.arrayOf(PropTypes.string).isRequired,
+  color: PropTypes.string.isRequired,
+  size: PropTypes.number.isRequired
 };
 RowCoin.propTypes = {
-    network: PropTypes.shape({
-        name: PropTypes.string.isRequired,
-        shortcut: PropTypes.string,
-    }).isRequired,
-    iconLeft: PropTypes.shape(iconShape),
-    iconRight: PropTypes.shape(iconShape),
+  network: PropTypes.shape({
+    name: PropTypes.string.isRequired,
+    shortcut: PropTypes.string
+  }).isRequired,
+  iconLeft: PropTypes.shape(iconShape),
+  iconRight: PropTypes.shape(iconShape)
 };
 
-export default RowCoin;
+export default withNamespaces()(RowCoin);
