@@ -16,6 +16,7 @@ import EthIcon from 'images/coins/eth.png';
 
 import { H1 } from 'components/Heading';
 import Paragraph from 'components/Paragraph';
+import { withNamespaces } from 'react-i18next';
 
 const Wrapper = styled.div`
     display: flex;
@@ -54,21 +55,24 @@ const Image = styled.img`
     }
 `;
 
-const Dashboard = () => (
-  <Content>
-    <Wrapper>
-      <Row>
-        <H1>Please select your coin</H1>
-        <StyledP>You will gain access to receiving &amp; sending selected coin</StyledP>
-        <Overlay>
-          <Image src={BtcIcon} width={25}/>
-          <Image src={EthIcon} width={20}/>
-        </Overlay>
-      </Row>
-    </Wrapper>
-  </Content>
-);
+const Dashboard = (props) => {
+  const { t } = props;
+  return (
+    <Content>
+      <Wrapper>
+        <Row>
+          <H1>{ t('Please select your coin') }</H1>
+          <StyledP>{ t('You will gain access to receiving') } &amp; { t('sending selected coin') }</StyledP>
+          <Overlay>
+            <Image src={BtcIcon} width={25}/>
+            <Image src={EthIcon} width={20}/>
+          </Overlay>
+        </Row>
+      </Wrapper>
+    </Content>
+  );
+};
 
 Dashboard.propTypes = {};
 
-export default Dashboard;
+export default withNamespaces()(Dashboard);

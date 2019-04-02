@@ -17,6 +17,7 @@ import PropTypes from "prop-types";
 import { inject, observer } from 'mobx-react';
 import { getCoinInfo } from 'utils/data/CoinInfo';
 import { formatAmount } from 'utils/formatUtils';
+import { withNamespaces } from 'react-i18next';
 
 const AccountHeading = styled.div`
     padding-bottom: 35px;
@@ -72,7 +73,7 @@ class AccountSummary extends React.Component<Props> {
   componentDidMount(): void {
     const { appState } = this.props;
     appState.getAccountInfo();
-    appState.updateRate();
+    appState.updateRate().then();
   }
 
   getCurrentNetworkbyShortcut(shortcut: string) {
@@ -87,12 +88,13 @@ class AccountSummary extends React.Component<Props> {
   }
 
   render() {
+    const { t } = this.props;
     const { wallet } = this.props.appState;
     const {account, rates} = wallet;
     if (!account) {
       const loader = {
         type: 'progress',
-        title: 'Loading account',
+        title: t('Loading account'),
       };
       return <Content loader={loader} isLoading />;
     }
@@ -111,7 +113,9 @@ class AccountSummary extends React.Component<Props> {
           <AccountHeading>
             <AccountName>
               <CoinLogo network="btc"/>
-              <AccountTitle>Account #{parseInt("0", 10) + 1}</AccountTitle>
+              <AccountTitle>
+                { t('Account') } #{parseInt("0", 10) + 1}
+              </AccountTitle>
             </AccountName>
             {/*<Link openExternal={externalAddress} isGray>See full transaction history</Link>*/}
           </AccountHeading>
@@ -131,8 +135,8 @@ AccountSummary.propTypes = {
   appState: PropTypes.object.isRequired
 };
 
-export default inject((stores) => {
+export default withNamespaces()(inject((stores) => {
   return {
     appState: stores.appState
   };
-})(observer(AccountSummary));
+})(observer(AccountSummary)));

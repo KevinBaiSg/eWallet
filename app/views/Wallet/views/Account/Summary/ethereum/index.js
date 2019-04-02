@@ -2,13 +2,12 @@
 import styled from 'styled-components';
 import React from 'react';
 import { H2 } from 'components/Heading';
-import BigNumber from 'bignumber.js';
 import Icon from 'components/Icon';
 import { AsyncSelect } from 'components/Select';
 import colors from 'config/colors';
 import Tooltip from 'components/Tooltip';
 import Content from 'views/Wallet/components/Content';
-
+import { withNamespaces } from 'react-i18next';
 import CoinLogo from 'components/images/CoinLogo';
 import Link from 'components/Link';
 import { FONT_WEIGHT, FONT_SIZE } from 'config/variables';
@@ -87,12 +86,13 @@ class AccountSummary extends React.Component<Props> {
   }
 
   render() {
+    const { t } = this.props;
     const { wallet } = this.props.appState;
     const {accountEth, rates} = wallet;
     if (!accountEth) {
       const loader = {
         type: 'progress',
-        title: 'Loading account',
+        title: t('Loading account'),
       };
       return <Content loader={loader} isLoading />;
     }
@@ -109,9 +109,13 @@ class AccountSummary extends React.Component<Props> {
           <AccountHeading>
             <AccountName>
               <CoinLogo network="eth"/>
-              <AccountTitle>Account #{parseInt("0", 10) + 1}</AccountTitle>
+              <AccountTitle>
+                { t('Account') } #{parseInt("0", 10) + 1}
+              </AccountTitle>
             </AccountName>
-            <Link openExternal={externalAddress} isGray>See full transaction history</Link>
+            <Link openExternal={externalAddress} isGray>
+              { t('See full transaction history') }
+            </Link>
           </AccountHeading>
           <AccountBalance
             network={network}
@@ -129,8 +133,8 @@ AccountSummary.propTypes = {
   appState: PropTypes.object.isRequired
 };
 
-export default inject((stores) => {
+export default withNamespaces()(inject((stores) => {
   return {
     appState: stores.appState
   };
-})(observer(AccountSummary));
+})(observer(AccountSummary)));

@@ -1,3 +1,9 @@
 {
-	"Loading": "加载中"
+	"Loading": "加载中",
+  "Account": "账户",
+  "Please select your coin": "请选择币种",
+  "You will gain access to receiving": "您可以查看",
+  "sending selected coin": "发送所选的币种",
+  "Loading account": "正在加载...",
+  "See full transaction history": "查看全部交易记录"
 }
