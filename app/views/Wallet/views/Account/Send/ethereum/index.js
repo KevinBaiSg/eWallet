@@ -251,7 +251,7 @@ class AccountSend extends React.Component<Props> {
       return <Content loader={loader} isLoading />;
     }
 
-    if (!!appState.wallet.buttonRequest_SignTx) {
+    if (!!sendStore.buttonRequest_SignTx) {
       return (
         <ModalContainer>
           <ModalWindow>
@@ -265,7 +265,7 @@ class AccountSend extends React.Component<Props> {
       )
     }
 
-    if (appState.wallet.buttonRequest_ConfirmOutput) {
+    if (!!sendStore.buttonRequest_ConfirmOutput) {
       return (
         <ModalContainer>
           <ModalWindow>

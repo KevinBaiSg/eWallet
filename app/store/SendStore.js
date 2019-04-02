@@ -46,6 +46,12 @@ export default class SendStore {
   @observable
   network = null;
 
+  @observable
+  buttonRequest_ConfirmOutput = false;
+
+  @observable
+  buttonRequest_SignTx = false;
+
   @computed
   get addressInputState(): string {
     let state = '';

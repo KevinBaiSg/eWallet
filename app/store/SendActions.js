@@ -4,7 +4,6 @@ import EthereumjsUtil from "ethereumjs-util";
 import BigNumber from "bignumber.js";
 import { toHex } from 'web3-utils';
 import type { parsedURI } from 'utils/cryptoUriParser';
-import { Logger } from 'utils/logger';
 import {sanitizeHex} from 'utils/ethUtils';
 import type { Session } from 'trezor.js';
 import EthereumjsTx from 'ethereumjs-tx';
@@ -13,6 +12,9 @@ import AppState from './app-state';
 import type { Transaction as EthereumTransaction } from 'utils/types/ethereum';
 import { stripHexPrefix } from 'utils/ethereumUtils';
 import PushTransaction from 'utils/PushTransaction'
+import React from 'react';
+import Link from 'components/Link';
+const Logger = require('utils/logger').default;
 
 const NUMBER_RE: RegExp = new RegExp('^(0|0\\.([0-9]+)?|[1-9][0-9]*\\.?([0-9]+)?|\\.[0-9]+)$');
 const UPPERCASE_RE = new RegExp('^(.*[A-Z].*)$');
@@ -24,9 +26,6 @@ export class SendActions {
   constructor({ appState, sendStore }) {
     this.appStore = appState;
     this.sendStore = sendStore;
-  }
-  @action async fetch() {
-    Logger.info('fetch start');
   }
 
   @action
@@ -163,6 +162,31 @@ export class SendActions {
     const device = this.appStore.eWalletDevice.device;
     if (!!device) {
       device.waitForSessionAndRun(async (session: Session) => {
+        session.on('button', type => {
+          Logger.info(`session.on button ${type}`);
+          switch (type) {
+            case 'ButtonRequest_ConfirmOutput':
+              this.sendStore.buttonRequest_ConfirmOutput = true;
+              break;
+            case 'ButtonRequest_SignTx':
+              this.sendStore.buttonRequest_SignTx = true;
+              break;
+          }
+        });
+
+        session.on('error', e => {
+          Logger.info(`session.on error ${e}`);
+          this.sendStore.buttonRequest_ConfirmOutput = false;
+          this.sendStore.buttonRequest_SignTx = false;
+          this.appStore.addContextNotification({
+            type: 'error',
+            title: 'Session error',
+            message: e.message || e,
+            cancelable: true,
+            actions: [],
+          });
+        });
+
         try {
           const web3Instance = await this.appStore.getWeb3Instance();
           const tx = this.prepareEthereumTxRequest(web3Instance);
@@ -197,28 +221,53 @@ export class SendActions {
           } else {
             txData.v = toHex(signed.v);
           }
-          console.log(txData);
+          Logger.debug('txData: ', txData);
 
           const serializedTx: string = await SendActions.serializeEthereumTx(txData);
-          console.log(`serializedTx = ${serializedTx}`);
+          Logger.debug('serializedTx: ', serializedTx);
 
           const compose = new PushTransaction({
             tx: serializedTx,
             coin: 'ethereum',
           });
           const txid = await compose.run();
-          console.log(txid);
+          Logger.debug('txid: ', txid);
+
+          const externalAddress = `https://etherscan.io/tx/${txid}`;
+          this.appStore.addContextNotification({
+            type: 'success',
+            title: 'Transaction success',
+            message: <Link openExternal={externalAddress} isGray>See transaction detail</Link>,
+            cancelable: true,
+            actions: [],
+          });
+
           this.upgradeNonce();
           this.onClear();
           this.sendStore.isSending = false;
-
+          this.sendStore.buttonRequest_ConfirmOutput = false;
+          this.sendStore.buttonRequest_SignTx = false;
         } catch (e) {
           this.sendStore.isSending = false;
-          console.log(e);
+          this.sendStore.buttonRequest_ConfirmOutput = false;
+          this.sendStore.buttonRequest_SignTx = false;
+          this.appStore.addContextNotification({
+            type: 'error',
+            title: 'Transaction error',
+            message: e.message || e,
+            cancelable: true,
+            actions: [],
+          });
         }
       }).catch((e) => {
         this.sendStore.isSending = false;
-        console.log(e);
+        this.appStore.addContextNotification({
+          type: 'error',
+          title: 'Transaction error',
+          message: e.message || e,
+          cancelable: true,
+          actions: [],
+        });
       })
     }
   }
