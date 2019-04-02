@@ -71,8 +71,8 @@ class AccountSummary extends React.Component<Props> {
 
   componentDidMount(): void {
     const { appState } = this.props;
-    appState.getEthereumAccountInfo();
-    appState.updateRate();
+    appState.getEthereumAccountInfo().then();
+    appState.updateRate().then();
   }
 
   getCurrentNetworkbyShortcut(shortcut: string) {
@@ -102,7 +102,6 @@ class AccountSummary extends React.Component<Props> {
       value: rates.ethereum['usd'],//cny usd
     }] : [];
 
-    // const balance = BigNumber(accountEth.balance).dividedBy(1e8, 10).toString();
     const externalAddress = `https://etherscan.io/address/${accountEth.address}`;
     return (
       <Content>
