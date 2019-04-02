@@ -9,6 +9,7 @@ import ICONS from 'config/icons';
 import { FONT_SIZE, FONT_WEIGHT } from 'config/variables';
 
 import type { Network } from 'flowtype';
+import { withNamespaces } from "react-i18next";
 
 type Props = {
   network: Network,
@@ -106,16 +107,16 @@ class AccountBalance extends PureComponent<Props, State> {
   }
 
   render() {
-    const { network, currency } = this.props;
+    const { network, currency, t } = this.props;
     const fiatRate = this.props.fiat.find(f => f.network.toLowerCase() === network.shortcut.toLowerCase());
     let accountBalance = '';
     let fiatRateValue = '';
-    let fiatRateValueFormated = '';
+    let fiatRateValueFormatted = '';
     let fiat = '';
     if (fiatRate) {
       accountBalance = new BigNumber(this.props.balance);
       fiatRateValue = new BigNumber(fiatRate.value).toFixed(2);
-      fiatRateValueFormated = format(fiatRateValue, { code: currency })
+      fiatRateValueFormatted = format(fiatRateValue, { code: currency })
       fiat = format(accountBalance.times(fiatRateValue).toFixed(2), { code: currency });
     }
 
@@ -135,7 +136,7 @@ class AccountBalance extends PureComponent<Props, State> {
         {!this.state.isHidden && (
           <React.Fragment>
             <BalanceWrapper>
-              <Label>Balance</Label>
+              <Label>{t('Balance')}</Label>
               {fiatRate && (
                 <FiatValue>{fiat}</FiatValue>
               )}
@@ -143,8 +144,8 @@ class AccountBalance extends PureComponent<Props, State> {
             </BalanceWrapper>
             {fiatRate && (
               <BalanceRateWrapper>
-                <Label>Rate</Label>
-                <FiatValueRate>{fiatRateValueFormated}</FiatValueRate>
+                <Label>{t('Rate')}</Label>
+                <FiatValueRate>{fiatRateValueFormatted}</FiatValueRate>
                 <CoinBalance>1.00 {network.shortcut}</CoinBalance>
               </BalanceRateWrapper>
             )}
@@ -155,4 +156,4 @@ class AccountBalance extends PureComponent<Props, State> {
   }
 }
 
-export default AccountBalance;
+export default withNamespaces()(AccountBalance);
