@@ -112,7 +112,7 @@ export default class AppState {
     //
     web3Instance: null,
     //
-    currency: 'cny', // cny or usd...
+    currency: 'usd', // cny or usd...
   };
 
   @observable
