@@ -7883,6 +7883,13 @@ hmac-drbg@^1.0.0:
     minimalistic-assert "^1.0.0"
     minimalistic-crypto-utils "^1.0.1"
 
+hoist-non-react-statics@3.2.1:
+  version "3.2.1"
+  resolved "http://registry.npm.taobao.org/hoist-non-react-statics/download/hoist-non-react-statics-3.2.1.tgz#c09c0555c84b38a7ede6912b61efddafd6e75e1e"
+  integrity sha1-wJwFVchLOKft5pErYe/dr9bnXh4=
+  dependencies:
+    react-is "^16.3.2"
+
 hoist-non-react-statics@^2.3.1, hoist-non-react-statics@^2.5.0:
   version "2.5.5"
   resolved "https://registry.yarnpkg.com/hoist-non-react-statics/-/hoist-non-react-statics-2.5.5.tgz#c5903cf409c0dfd908f388e619d86b9c1174cb47"
@@ -7963,6 +7970,13 @@ html-entities@^1.2.0:
   version "1.2.1"
   resolved "https://registry.npmjs.org/html-entities/-/html-entities-1.2.1.tgz#0df29351f0721163515dfb9e5543e5f6eed5162f"
   integrity sha1-DfKTUfByEWNRXfueVUPl9u7VFi8=
+
+html-parse-stringify2@2.0.1:
+  version "2.0.1"
+  resolved "http://registry.npm.taobao.org/html-parse-stringify2/download/html-parse-stringify2-2.0.1.tgz#dc5670b7292ca158b7bc916c9a6735ac8872834a"
+  integrity sha1-3FZwtyksoVi3vJFsmmc1rIhyg0o=
+  dependencies:
+    void-elements "^2.0.1"
 
 html-tags@^2.0.0:
   version "2.0.0"
@@ -8073,6 +8087,13 @@ hyphenate-style-name@^1.0.2:
   version "1.0.2"
   resolved "https://registry.yarnpkg.com/hyphenate-style-name/-/hyphenate-style-name-1.0.2.tgz#31160a36930adaf1fc04c6074f7eb41465d4ec4b"
   integrity sha1-MRYKNpMK2vH8BMYHT360FGXU7Es=
+
+i18next@^15.0.8:
+  version "15.0.8"
+  resolved "http://registry.npm.taobao.org/i18next/download/i18next-15.0.8.tgz#4a52ba8b422832f334fe2fb464e8ad4785899211"
+  integrity sha1-SlK6i0IoMvM0/i+0ZOitR4WJkhE=
+  dependencies:
+    "@babel/runtime" "^7.3.1"
 
 iconv-lite@0.4.11:
   version "0.4.11"
@@ -12638,6 +12659,15 @@ react-hot-loader@^4.6.5:
     shallowequal "^1.0.2"
     source-map "^0.7.3"
 
+react-i18next@^9.0.10:
+  version "9.0.10"
+  resolved "http://registry.npm.taobao.org/react-i18next/download/react-i18next-9.0.10.tgz#ba596b98e8dd06dbb805cf720147459ad55a3ada"
+  integrity sha1-ullrmOjdBtu4Bc9yAUdFmtVaOto=
+  dependencies:
+    "@babel/runtime" "^7.3.1"
+    hoist-non-react-statics "3.2.1"
+    html-parse-stringify2 "2.0.1"
+
 react-input-autosize@^2.2.1:
   version "2.2.1"
   resolved "http://registry.npm.taobao.org/react-input-autosize/download/react-input-autosize-2.2.1.tgz#ec428fa15b1592994fb5f9aa15bb1eb6baf420f8"
@@ -15836,6 +15866,11 @@ vm-browserify@0.0.4:
   integrity sha1-XX6kW7755Kb/ZflUOOCofDV9WnM=
   dependencies:
     indexof "0.0.1"
+
+void-elements@^2.0.1:
+  version "2.0.1"
+  resolved "http://registry.npm.taobao.org/void-elements/download/void-elements-2.0.1.tgz#c066afb582bb1cb4128d60ea92392e94d5e9dbec"
+  integrity sha1-wGavtYK7HLQSjWDqkjkulNXp2+w=
 
 w3c-hr-time@^1.0.1:
   version "1.0.1"
