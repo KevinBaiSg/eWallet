@@ -489,4 +489,9 @@ export default class AppState {
       })
     }
   }
+
+  @action
+  addContextNotification(notification: any) {
+    this.wallet.notification = notification;
+  }
 }
