@@ -12,6 +12,7 @@ import {
   observer
 } from 'mobx-react';
 import { matchPath } from "react-router";
+import { withNamespaces } from "react-i18next";
 
 const Wrapper = styled.div`
     position: relative;
@@ -77,6 +78,7 @@ class TopNavigationAccount extends React.Component<Props> {
   wrapper: ?HTMLElement;
 
   render() {
+    const { t } = this.props;
     const { eWalletDevice } = this.props.appState;
     if (!eWalletDevice || !eWalletDevice.features || !eWalletDevice.features.device_id) {
       return null;
@@ -100,9 +102,9 @@ class TopNavigationAccount extends React.Component<Props> {
 
     return (
       <Wrapper className="account-tabs" ref={this.wrapperRefCallback}>
-        <StyledNavLink exact to={`${basePath}`}>Summary</StyledNavLink>
-        <StyledNavLink to={`${basePath}/receive`}>Receive</StyledNavLink>
-        <StyledNavLink to={`${basePath}/send`}>Send</StyledNavLink>
+        <StyledNavLink exact to={`${basePath}`}>{t('Summary')}</StyledNavLink>
+        <StyledNavLink to={`${basePath}/receive`}>{t('Receive')}</StyledNavLink>
+        <StyledNavLink to={`${basePath}/send`}>{t('Send')}</StyledNavLink>
         <Indicator pathname={pathname} wrapper={() => this.wrapper}/>
       </Wrapper>
     );
@@ -112,8 +114,8 @@ class TopNavigationAccount extends React.Component<Props> {
 TopNavigationAccount.propTypes = {
 };
 
-export default inject((stores) => {
+export default withNamespaces()(inject((stores) => {
   return {
     appState: stores.appState
   };
-})(observer(TopNavigationAccount));
+})(observer(TopNavigationAccount)));
