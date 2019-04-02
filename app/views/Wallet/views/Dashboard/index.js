@@ -3,10 +3,10 @@ import styled from 'styled-components';
 
 import {
   inject,
-  observer,
-} from 'mobx-react'
+  observer
+} from 'mobx-react';
 
-import PropTypes from 'prop-types'
+import PropTypes from 'prop-types';
 import { AppState } from 'store';
 
 import Content from 'views/Wallet/components/Content';
@@ -55,21 +55,20 @@ const Image = styled.img`
 `;
 
 const Dashboard = () => (
-    <Content>
-        <Wrapper>
-            <Row>
-                <H1>Please select your coin</H1>
-                <StyledP>You will gain access to receiving &amp; sending selected coin</StyledP>
-                <Overlay>
-                  <Image src={BtcIcon} width={25} />
-                  <Image src={EthIcon} width={20} />
-                </Overlay>
-            </Row>
-        </Wrapper>
-    </Content>
+  <Content>
+    <Wrapper>
+      <Row>
+        <H1>Please select your coin</H1>
+        <StyledP>You will gain access to receiving &amp; sending selected coin</StyledP>
+        <Overlay>
+          <Image src={BtcIcon} width={25}/>
+          <Image src={EthIcon} width={20}/>
+        </Overlay>
+      </Row>
+    </Wrapper>
+  </Content>
 );
 
-Dashboard.propTypes = {
-};
+Dashboard.propTypes = {};
 
-export default Dashboard
+export default Dashboard;
