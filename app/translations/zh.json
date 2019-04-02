@@ -12,8 +12,8 @@
   "Send Ethereum(ETH)": "发送以太币(ETH)",
   "Address": "地址",
   "Connected": "已连接",
-  "Bitcoin": "比特币",
-  "Ethereum": "以太币",
+  "Bitcoin": "Bitcoin",
+  "Ethereum": "Ethereum",
   "Summary": "交易",
   "Receive": "接收",
   "Send": "发送",
@@ -28,5 +28,7 @@
   "Scan an address from a QR code": "从二维码扫描地址",
   "Waiting for camera...": "正在开启摄像头...",
   "Connect your Device to verify address.": "请连接设备校验地址.",
-  "Connect your Device to verify it.": "请连接设备校验地址."
+  "Connect your Device to verify it.": "请连接设备校验地址.",
+  "Confirm action on your Device": "请在设备中确认",
+  "See transaction detail": "查看交易详情"
 }

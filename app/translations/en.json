@@ -28,5 +28,7 @@
   "Scan an address from a QR code": "Scan an address from a QR code",
   "Waiting for camera...": "Waiting for camera...",
   "Connect your Device to verify address.": "Connect your Device to verify address.",
-  "Connect your Device to verify it.": "Connect your Device to verify it."
+  "Connect your Device to verify it.": "Connect your Device to verify it.",
+  "Confirm action on your Device": "Confirm action on your Device",
+  "See transaction detail": "See transaction detail"
 }
