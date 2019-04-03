@@ -315,7 +315,6 @@ export default class AppState {
         try {
           const web3Instance = await this.getWeb3Instance();
           if (!web3Instance) {
-            this.wallet.accountEth = null;
             this.wallet.notification = {
               type: 'error',
               title: 'Web3 error',
@@ -328,7 +327,6 @@ export default class AppState {
           const response = await AppState.ethereumGetAddress(session);
           if (!response) {
             // handle error
-            this.wallet.accountEth = null;
             this.wallet.notification = {
               type: 'error',
               title: 'Get Ethereum Address error',
@@ -354,7 +352,6 @@ export default class AppState {
           });
           const info = await compose.run();
           if (!info.success) {
-            this.wallet.accountEth = null;
             this.wallet.notification = {
               type: 'error',
               title: 'Get Ethereum Account error',
@@ -368,7 +365,6 @@ export default class AppState {
           this.wallet.accountEth.addressPath = response.path;
         } catch (e) {
           console.error('Call rejected:', e);
-          this.wallet.accountEth = null;
           this.wallet.notification = {
             type: 'error',
             title: 'Get Ethereum Account error',
@@ -379,7 +375,6 @@ export default class AppState {
         }
       }).catch(function(error) {
         console.error('Call rejected:', error);
-        self.wallet.accountEth = null;
         self.wallet.notification = {
           type: 'error',
           title: 'Get Ethereum Account error',
