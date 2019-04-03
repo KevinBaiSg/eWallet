@@ -14,7 +14,11 @@ class ErrorBoundary extends PureComponent {
 
   render() {
     if (this.state.hasError) {
-      return <RedBox error={this.state.error}/>;
+      if (!process.env.NODE_ENV || process.env.NODE_ENV === 'development') {
+        return <RedBox error={this.state.error}/>;
+      } else {
+        return <div>unknown error</div>;
+      }
     }
     return this.props.children;
   }
