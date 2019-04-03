@@ -1,104 +1,36 @@
 import { observable, computed } from 'mobx';
+import Web3 from "web3";
 
-export default class SendStore {
+export default class Web3Store {
   @observable
-  feeLevels = null;
-
-  @observable
-  selectedFee = null;
+  web3: Web3 = null;
 
   @observable
-  address = '';
+  latestBlock: number = 0;
 
   @observable
-  addressErrors = null;
+  gasPrice: number = 0;
 
-  @observable
-  addressWarnings = null;
+  // @observable
+  DefaultGasPrice: number = 64;
 
-  @observable
-  addressInfos = null;
+  // @observable
+  DefaultGasLimit: number = 21000;
 
-  // for amount
-  @observable
-  amount = '';
-
-  @observable
-  amountErrors = null;
-
-  @observable
-  amountWarnings = null;
-
-  @observable
-  amountInfos = null;
-
-  @observable
-  isSetMax = false;
-
-  //
-  @observable
-  isSending = false;
-
-  // for qr scan
-  @observable
-  isQrScanning = false;
-
-  @observable
-  network = null;
-
-  @observable
-  buttonRequest_ConfirmOutput = false;
-
-  @observable
-  buttonRequest_SignTx = false;
+  DefaultChainId: number = 1;
 
   @computed
-  get addressInputState(): string {
-    let state = '';
-    if (this.address && !this.addressErrors) {
-      state = 'success';
-    }
-    if (this.addressWarnings && !this.addressErrors) {
-      state = 'warning';
-    }
-    if (this.addressErrors) {
-      state = 'error';
-    }
-    return state;
+  get defaultGasLimit(): number {
+    return this.DefaultGasLimit;
   };
 
   @computed
-  get amountInputState(): string {
-    let state = '';
-    if (this.amountWarnings && !this.amountErrors) {
-      state = 'warning';
-    }
-    if (this.amountErrors) {
-      state = 'error';
-    }
-    return state;
+  get defaultGasPrice(): number {
+    return this.DefaultGasPrice;
   };
 
   @computed
-  get addressMessage(): string {
-    return this.addressErrors || this.addressWarnings || this.addressInfos;
-  }
-
-  @computed
-  get amountMessage(): string {
-    return this.amountErrors || this.amountWarnings || this.amountInfos;
-  }
-
-  @computed
-  get selectedFeeLevel() {
-    if (this.feeLevels === null || this.feeLevels.length === 0) {
-      return null;
-    }
-
-    if (this.selectedFee === null) {
-      this.selectedFee = this.feeLevels[0];
-    }
-
-    return this.selectedFee;
-  }
+  get chainId(): number {
+    return this.DefaultChainId;
+  };
 }
