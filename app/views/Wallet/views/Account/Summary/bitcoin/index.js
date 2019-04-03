@@ -123,7 +123,8 @@ class AccountSummary extends React.Component<Props> {
             network={network}
             balance={balance}
             fiat={fiat}
-            currency={wallet.currency.toUpperCase()}
+            currency={wallet.currency}
+            locale={wallet.locale}
           />
         </React.Fragment>
       </Content>
