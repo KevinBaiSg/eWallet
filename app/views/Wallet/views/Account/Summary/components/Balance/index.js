@@ -2,7 +2,6 @@
 import React, { PureComponent } from 'react';
 import BigNumber from 'bignumber.js';
 import styled from 'styled-components';
-import {format} from 'currency-formatter';
 import Icon from 'components/Icon';
 import colors from 'config/colors';
 import ICONS from 'config/icons';
@@ -91,12 +90,20 @@ const Label = styled.div`
 
 
 class AccountBalance extends PureComponent<Props, State> {
+  intlNumberFormat;
+
   constructor(props: Props) {
     super(props);
     this.state = {
       isHidden: false,
       canAnimateHideBalanceIcon: false
     };
+
+    const locale = !!this.props.locale ? this.props.locale : 'en';
+    const currency = !!this.props.currency ? this.props.currency : 'USD';
+
+    const intlOptions = { style: 'currency', currency: currency };
+    this.intlNumberFormat = new Intl.NumberFormat(locale, intlOptions);
   }
 
   handleHideBalanceIconClick() {
@@ -116,8 +123,8 @@ class AccountBalance extends PureComponent<Props, State> {
     if (fiatRate) {
       accountBalance = new BigNumber(this.props.balance);
       fiatRateValue = new BigNumber(fiatRate.value).toFixed(2);
-      fiatRateValueFormatted = format(fiatRateValue, { code: currency })
-      fiat = format(accountBalance.times(fiatRateValue).toFixed(2), { code: currency });
+      fiatRateValueFormatted = this.intlNumberFormat.format(fiatRateValue);
+      fiat = this.intlNumberFormat.format(accountBalance.times(fiatRateValue));
     }
 
     return (
