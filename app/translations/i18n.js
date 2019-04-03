@@ -15,12 +15,12 @@ const resources = {
 };
 
 i18n
-  .use(reactI18nextModule) // passes i18n down to react-i18next
+  .use(reactI18nextModule)
   .init({
     resources,
     lng: "en",
 
-    keySeparator: false, // we do not use keys in form messages.welcome
+    keySeparator: false,
 
     interpolation: {
       escapeValue: false // react already safes from xss
