@@ -7,7 +7,7 @@ import { CreateStoreMap, CreateActionMap } from './index';
 const history = createHashHistory();
 
 function configureStore() {
-  return CreateStoreMap();
+  return CreateStoreMap(history);
 }
 
 function configureAction(stores) {

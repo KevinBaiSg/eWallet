@@ -88,6 +88,10 @@ export type LocalStorage = {
 
 export default class AppState {
 
+  constructor({ history }) {
+    this.history = history;
+  }
+
   @observable
   eWalletDevice: EWalletDevice = {
     firmware: '',

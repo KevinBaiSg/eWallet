@@ -7,9 +7,9 @@ import SendActions from './SendActions';
 import Web3Actions from './Web3Actions';
 import PinActions from './PinActions'
 
-export const CreateStoreMap = () => {
+export const CreateStoreMap = (history) => {
   return {
-    appState: new AppState(),
+    appState: new AppState({history}),
     sendStore: new SendStore(),
     web3Store: new Web3Store(),
     pinStore: new PinStore(),

@@ -12,7 +12,7 @@ const configureStore = () => {
     2.mobx-react-router
     3.logger
   */
-  const store = CreateStoreMap();
+  const store = CreateStoreMap(history);
 
   // Mobx Devtools
   makeInspectable(store);
