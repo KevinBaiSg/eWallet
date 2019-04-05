@@ -60,6 +60,8 @@ export type EWalletDevice = {
   available: boolean,
   device: Device,
   session: Session,
+  pin_request: boolean,
+  pin_request_callback: Function,
 };
 
 export type Wallet = {
@@ -93,6 +95,8 @@ export default class AppState {
     connected: false,
     available: false,
     device: null,
+    pin_request: false,
+    pin_request_callback: null,
   };
 
   @observable
@@ -220,6 +224,12 @@ export default class AppState {
         self.cleanWallet();
         Logger.info('Disconnected an opened device');
       });
+
+      device.on('pin', (type, callback) => {
+        Logger.info(`The device asks for PIN: TYPE = ${type}`);
+        this.eWalletDevice.pin_request = true;
+        this.eWalletDevice.pin_request_callback = callback;
+      })
     });
 
     list.on('connectUnacquired', u => {
