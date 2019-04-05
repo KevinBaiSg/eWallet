@@ -227,8 +227,8 @@ export default class AppState {
 
       device.on('pin', (type, callback) => {
         Logger.info(`The device asks for PIN: TYPE = ${type}`);
-        this.eWalletDevice.pin_request = true;
         this.eWalletDevice.pin_request_callback = callback;
+        this.eWalletDevice.pin_request = true;
       })
     });
 

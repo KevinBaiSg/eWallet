@@ -17,8 +17,10 @@ export class PinActions {
 
   @action
   verifyPin(pin: string) {
+    const callback = this.appStore.eWalletDevice.pin_request_callback;
+    this.appStore.eWalletDevice.pin_request_callback = null;
     this.appStore.eWalletDevice.pin_request = false;
-    this.appStore.eWalletDevice.pin_request_callback(null, pin);
+    callback(null, pin);
   }
 }
 
