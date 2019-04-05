@@ -30,5 +30,7 @@
   "Connect your Device to verify address.": "请连接设备校验地址.",
   "Connect your Device to verify it.": "请连接设备校验地址.",
   "Confirm action on your Device": "请在设备中确认",
-  "See transaction detail": "查看交易详情"
+  "See transaction detail": "查看交易详情",
+  "Enter PIN": "输入 PIN",
+  "The PIN layout is displayed on your Device.": "PIN 码布局显示在您的设备上。"
 }

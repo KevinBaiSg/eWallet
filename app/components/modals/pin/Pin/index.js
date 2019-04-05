@@ -9,6 +9,7 @@ import Button from 'components/Button';
 
 import PinButton from './components/Button';
 import PinInput from './components/Input';
+import { withNamespaces } from "react-i18next";
 
 type Props = {
 }
@@ -128,12 +129,12 @@ class Pin extends PureComponent<Props, State> {
   keyboardHandler: (event: KeyboardEvent) => void;
 
   render() {
-    const { onPinSubmit } = this.props;
+    const { onPinSubmit, t } = this.props;
     const { pin } = this.state;
     return (
       <Wrapper>
-        <H2>Enter PIN</H2>
-        <P isSmaller>The PIN layout is displayed on your Device.</P>
+        <H2>{t('Enter PIN')}</H2>
+        <P isSmaller>{t('The PIN layout is displayed on your Device.')}</P>
         <InputRow>
           <PinInput value={pin} onDeleteClick={() => this.onPinBackspace()}/>
         </InputRow>
@@ -164,4 +165,4 @@ Pin.propTypes = {
   onPinSubmit: PropTypes.func.isRequired
 };
 
-export default Pin;
+export default withNamespaces()(Pin);
