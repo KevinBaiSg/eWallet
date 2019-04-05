@@ -233,7 +233,7 @@ export default class AppState {
         Logger.info(`The device asks for PIN: TYPE = ${type}`);
         this.eWalletDevice.pin_request_callback = callback;
         this.eWalletDevice.pin_request = true;
-      })
+      });
     });
 
     list.on('connectUnacquired', u => {
@@ -284,7 +284,7 @@ export default class AppState {
   @action
   async getAccountInfo() {
     const device = this.eWalletDevice.device;
-
+    const self = this;
     if (!!device) {
       device.waitForSessionAndRun(async (session) => {
         try {
@@ -294,11 +294,25 @@ export default class AppState {
             session: session
           });
           this.wallet.account = await compose.run();
-        } catch (e) {
-          console.error('Call rejected:', e);
+        } catch (error) {
+          console.error('Call rejected:', error);
+          this.addContextNotification({
+            type: 'error',
+            title: 'Device error',
+            message: error.message || error,
+            cancelable: true,
+            actions: [],
+          });
         }
       }).catch(function(error) {
         console.error('Call rejected:', error);
+        self.addContextNotification({
+          type: 'error',
+          title: 'Device error',
+          message: error.message || error,
+          cancelable: true,
+          actions: [],
+        });
       })
     }
   }
