@@ -10,7 +10,7 @@ import P from 'components/Paragraph';
 import type { TrezorDevice } from 'flowtype';
 
 type Props = {
-    device: TrezorDevice;
+  device: TrezorDevice;
 }
 
 const Wrapper = styled.div`
@@ -18,14 +18,14 @@ const Wrapper = styled.div`
 `;
 
 const InvalidPin = (props: Props) => (
-    <Wrapper>
-        <H3>Entered PIN for { props.device.label } is not correct</H3>
-        <P isSmaller>Retrying...</P>
-    </Wrapper>
+  <Wrapper>
+    <H3>Entered PIN for {props.device.label} is not correct</H3>
+    <P isSmaller>Retrying...</P>
+  </Wrapper>
 );
 
 InvalidPin.propTypes = {
-    device: PropTypes.object.isRequired,
+  device: PropTypes.object.isRequired
 };
 
 export default InvalidPin;
