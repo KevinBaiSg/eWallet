@@ -28,8 +28,15 @@ class Root extends Component<Props> {
   render() {
     const { appState } = this.props;
 
-    if (!!appState.eWalletDevice.connected) {
-      this.props.history.replace(`/device/${appState.eWalletDevice.features.device_id}`);
+    if (!!appState.eWalletDevice.connected && !!appState.eWalletDevice.device) {
+      const id = appState.eWalletDevice.features.device_id;
+
+      if (!!appState.eWalletDevice.device.isInitialized()) {
+        this.props.history.replace(`/device/${id}`);
+      } else {
+        this.props.history.replace(`/device/${id}/initialize`);
+      }
+
       return null
     }
 
