@@ -58,6 +58,7 @@ export type EWalletDevice = {
   features: Features,
   connected: boolean, // device is connected
   available: boolean,
+  isInitialized: boolean,
   device: Device,
   session: Session,
   pin_request: boolean,
@@ -98,6 +99,7 @@ export default class AppState {
     features: null,
     connected: false,
     available: false,
+    isInitialized: true,
     device: null,
     pin_request: false,
     pin_request_callback: null,
@@ -134,6 +136,7 @@ export default class AppState {
     this.eWalletDevice.features = null;
     this.eWalletDevice.connected = false;
     this.eWalletDevice.available = false;
+    this.eWalletDevice.isInitialized = true;
     this.eWalletDevice.device = null;
   }
 
@@ -220,6 +223,7 @@ export default class AppState {
       self.eWalletDevice.features = device.features;
       self.eWalletDevice.connected = true;
       self.eWalletDevice.available = true;
+      self.eWalletDevice.isInitialized = device.isInitialized();
       self.eWalletDevice.firmware = device.getVersion();
       Logger.info(`Connected device: ${self.eWalletDevice.features.label}; firmware Version: ${self.eWalletDevice.firmware}`);
 

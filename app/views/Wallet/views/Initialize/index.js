@@ -5,6 +5,10 @@ import Paragraph from 'components/Paragraph';
 import React from 'react';
 import { withNamespaces } from "react-i18next";
 import { inject, observer } from 'mobx-react';
+import ConfirmAction from 'components/modals/confirm/Action';
+import { FADE_IN } from 'config/animations';
+import colors from 'config/colors';
+import Content from 'views/Wallet/components/Content';
 
 const Wrapper = styled.div`
     display: flex;
@@ -33,29 +37,69 @@ const StyledParagraph = styled(Paragraph)`
     text-align: center;
 `;
 
+const ModalContainer = styled.div`
+    position: fixed;
+    z-index: 10000;
+    width: 100%;
+    height: 100%;
+    top: 0px;
+    left: 0px;
+    background: rgba(0, 0, 0, 0.35);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    overflow: auto;
+    padding: 20px;
+    animation: ${FADE_IN} 0.3s;
+`;
+
+const ModalWindow = styled.div`
+    margin: auto;
+    position: relative;
+    border-radius: 4px;
+    background-color: ${colors.WHITE};
+    text-align: center;
+`;
+
 const Initialize = (props) => {
-  const { initializeActions, t } = props;
+  const { initializeActions, initializeStore, appState, t } = props;
+
+  if (!!initializeStore.finished) {
+    initializeActions.reset();
+    const id = appState.eWalletDevice.features.device_id;
+    props.history.replace(`/device/${id}`);
+    return null
+  }
+
   return (
-    <Wrapper>
-      <Column>
-        <H1>{t('Create a new wallet')}</H1>
-        <StyledParagraph>
-          {t('Don\'t worry! We will walk you through the setup process in a few minutes.')}
-        </StyledParagraph>
-        <Button onClick={() => {initializeActions.onCreateWallet()}}>
-          {t('Create a new wallet')}
-        </Button>
-      </Column>
-      <Column>
-        <H1>{t('Recover wallet')}</H1>
-        <StyledParagraph>
-          {t('Own a recovery seed from a different wallet or app? Simply restore the wallet from your backup.')}
-        </StyledParagraph>
-        <Button onClick={() => {initializeActions.onRecoverWallet()}}>
-          {t('Recover wallet')}
-        </Button>
-      </Column>
-    </Wrapper>
+    <Content>
+      {!!initializeStore.buttonRequest &&
+      <ModalContainer>
+        <ModalWindow>
+          <ConfirmAction device={appState.eWalletDevice.device} />
+        </ModalWindow>
+      </ModalContainer>}
+      <Wrapper>
+        <Column>
+          <H1>{t('Create a new wallet')}</H1>
+          <StyledParagraph>
+            {t('Don\'t worry! We will walk you through the setup process in a few minutes.')}
+          </StyledParagraph>
+          <Button onClick={() => {initializeActions.onCreateWallet()}}>
+            {t('Create a new wallet')}
+          </Button>
+        </Column>
+        <Column>
+          <H1>{t('Recover wallet')}</H1>
+          <StyledParagraph>
+            {t('Own a recovery seed from a different wallet or app? Simply restore the wallet from your backup.')}
+          </StyledParagraph>
+          <Button onClick={() => {initializeActions.onRecoverWallet()}}>
+            {t('Recover wallet')}
+          </Button>
+        </Column>
+      </Wrapper>
+    </Content>
   )
 };
 

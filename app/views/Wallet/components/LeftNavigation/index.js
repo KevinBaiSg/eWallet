@@ -208,8 +208,6 @@ class LeftNavigation extends React.Component<Props, State> {
       );
     }
 
-    // const { selectedDevice, dropdownOpened } = props.wallet;
-    // const isDeviceAccessible = deviceUtils.isDeviceAccessible(selectedDevice);
     return (
       <Sidebar isOpen>
         <Header
@@ -240,7 +238,7 @@ class LeftNavigation extends React.Component<Props, State> {
           {...this.props}
         />
         <Body minHeight={this.state.bodyMinHeight}>
-        {menu}
+        {eWalletDevice.isInitialized && menu}
         </Body>
       </Sidebar>
     );

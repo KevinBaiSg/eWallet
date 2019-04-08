@@ -2,10 +2,16 @@ import { observable, computed } from 'mobx';
 
 export default class InitializeStore {
   @observable
-  feeLevels = 'null';
+  finished = false;
+
+  @observable
+  buttonRequest_ProtectCall = false;
+
+  @observable
+  buttonRequest_ConfirmWord = false;
 
   @computed
-  get addressInputState(): string {
-    return this.feeLevels;
+  get buttonRequest(): boolean {
+    return this.buttonRequest_ProtectCall || this.buttonRequest_ConfirmWord;
   };
 }
