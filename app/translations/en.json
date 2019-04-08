@@ -32,5 +32,9 @@
   "Confirm action on your Device": "Confirm action on your Device",
   "See transaction detail": "See transaction detail",
   "Enter PIN": "Enter PIN",
-  "The PIN layout is displayed on your Device.": "The PIN layout is displayed on your Device."
+  "The PIN layout is displayed on your Device.": "The PIN layout is displayed on your Device.",
+  "Don't worry! We will walk you through the setup process in a few minutes.": "Don't worry! We will walk you through the setup process in a few minutes.",
+  "Own a recovery seed from a different wallet or app? Simply restore the wallet from your backup.": "Own a recovery seed from a different wallet or app? Simply restore the wallet from your backup.",
+  "Create a new wallet": "Create a new wallet",
+  "Recover wallet": "Recover wallet"
 }
