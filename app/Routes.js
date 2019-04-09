@@ -13,6 +13,7 @@ import AccountSummary from 'views/Wallet/views/Account/Summary';
 import AccountReceive from 'views/Wallet/views/Account/Receive';
 import AccountSend from 'views/Wallet/views/Account/Send';
 import WalletInitialize from 'views/Wallet/views/Initialize';
+import Recovery from 'views/Wallet/views/Recovery'
 
 export default () => (
   <App>
@@ -23,6 +24,7 @@ export default () => (
           <ImagesPreloader />
           <WalletContainer>
             <Route exact path={getPattern('wallet-initialize')} component={WalletInitialize}/>
+            <Route exact path={getPattern('wallet-recovery')} component={Recovery}/>
             <Route exact path={getPattern('wallet-dashboard')} component={WalletDashboard} />
             <Route exact path={getPattern('wallet-account-summary')} component={AccountSummary} />
             <Route path={getPattern('wallet-account-receive')} component={AccountReceive} />

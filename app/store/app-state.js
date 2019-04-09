@@ -526,4 +526,9 @@ export default class AppState {
   addContextNotification(notification: any) {
     this.wallet.notification = notification;
   }
+
+  @action
+  cleanContextNotification() {
+    this.wallet.notification = null;
+  }
 }
