@@ -94,7 +94,10 @@ const Initialize = (props) => {
           <StyledParagraph>
             {t('Own a recovery seed from a different wallet or app? Simply restore the wallet from your backup.')}
           </StyledParagraph>
-          <Button onClick={() => {initializeActions.onRecoverWallet()}}>
+          <Button onClick={() => {
+            const id = appState.eWalletDevice.features.device_id || 'id';
+            props.history.replace(`/device/${id}/recovery`);
+          }}>
             {t('Recover wallet')}
           </Button>
         </Column>

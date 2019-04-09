@@ -9,32 +9,19 @@ import ConfirmAction from 'components/modals/confirm/Action';
 import { FADE_IN } from 'config/animations';
 import colors from 'config/colors';
 import Content from 'views/Wallet/components/Content';
+import Input from 'components/inputs/Input';
 
-const Wrapper = styled.div`
-    display: flex;
-    flex-direction: row;
-    align-items: center;
-    padding: 40px 35px 40px 35px;
+const InputRow = styled.div`
+    padding-bottom: 28px;
 `;
 
-const Row = styled.div`
-    dsplay: flex;
-    flex-direction: row;
-    align-items: center;
-    padding: 50px 0;
-`;
-
-const Column = styled.div`
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    padding: 50px 0;
-    width: 300px;
+const SendButton = styled(Button)`
+  margin-right: 5px;
 `;
 
 const StyledParagraph = styled(Paragraph)`
     padding: 0 0 15px 0;
-    text-align: center;
+    text-align: left;
 `;
 
 const ModalContainer = styled.div`
@@ -61,47 +48,56 @@ const ModalWindow = styled.div`
     text-align: center;
 `;
 
-const Initialize = (props) => {
-  const { initializeActions, initializeStore, appState, t } = props;
-
-  if (!!initializeStore.finished) {
-    initializeActions.reset();
-    const id = appState.eWalletDevice.features.device_id;
-    props.history.replace(`/device/${id}`);
-    return null
+class Recovery extends React.Component<Props> {
+  componentDidMount(): void {
+    const { initializeActions } = this.props;
+    initializeActions.onRecoverWallet();
   }
 
-  return (
-    <Content>
-      {!!initializeStore.buttonRequest &&
-      <ModalContainer>
-        <ModalWindow>
-          <ConfirmAction device={appState.eWalletDevice.device} />
-        </ModalWindow>
-      </ModalContainer>}
-      <Wrapper>
-        <Column>
-          <H1>{t('Create a new wallet')}</H1>
-          <StyledParagraph>
-            {t('Don\'t worry! We will walk you through the setup process in a few minutes.')}
-          </StyledParagraph>
-          <Button onClick={() => {initializeActions.onCreateWallet()}}>
-            {t('Create a new wallet')}
-          </Button>
-        </Column>
-        <Column>
-          <H1>{t('Recover wallet')}</H1>
-          <StyledParagraph>
-            {t('Own a recovery seed from a different wallet or app? Simply restore the wallet from your backup.')}
-          </StyledParagraph>
-          <Button onClick={() => {initializeActions.onRecoverWallet()}}>
-            {t('Recover wallet')}
-          </Button>
-        </Column>
-      </Wrapper>
-    </Content>
-  )
-};
+  render() {
+    const { initializeActions, initializeStore, appState, t } = this.props;
+
+    if (!!initializeStore.finished) {
+      initializeActions.reset();
+      const id = appState.eWalletDevice.features.device_id;
+      this.props.history.replace(`/device/${id}`);
+      return null
+    }
+
+    return (
+      <Content>
+        {!!initializeStore.buttonRequest &&
+        <ModalContainer>
+          <ModalWindow>
+            <ConfirmAction device={appState.eWalletDevice.device} />
+          </ModalWindow>
+        </ModalContainer>}
+        <H1>{t('Recover your wallet')}</H1>
+        <StyledParagraph>
+          {t('Follow the instructions on your device.')}
+        </StyledParagraph>
+        <InputRow>
+          <Input
+            topLabel={t('You might be asked to retype some words that are not part of your recovery seed.')}
+            autoComplete="off"
+            autoCorrect="off"
+            autoCapitalize="off"
+            spellCheck="false"
+            isDisabled={!!initializeStore.wordInputIsDisable}
+            value={initializeStore.word}
+            onChange={event => initializeActions.onRecoveryWordChange(event.target.value)}
+          />
+        </InputRow>
+        <SendButton
+          isDisabled={!!initializeStore.wordInputIsDisable && !initializeStore.tryAgain}
+          onClick={() => initializeActions.onClickWordConfirm()}
+        >
+          {initializeStore.buttonText}
+        </SendButton>
+      </Content>
+    )
+  }
+}
 
 export default withNamespaces()(inject((stores) => {
   return {
@@ -109,4 +105,4 @@ export default withNamespaces()(inject((stores) => {
     initializeStore: stores.initializeStore,
     initializeActions: stores.initializeActions,
   };
-})(observer(Initialize)));
+})(observer(Recovery)));
