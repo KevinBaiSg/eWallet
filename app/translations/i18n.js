@@ -18,7 +18,7 @@ i18n
   .use(reactI18nextModule)
   .init({
     resources,
-    lng: "en",
+    lng: "zh",
 
     keySeparator: false,
 

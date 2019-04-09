@@ -36,5 +36,8 @@
   "Don't worry! We will walk you through the setup process in a few minutes.": "我们需要几分钟为您创建新的钱包",
   "Own a recovery seed from a different wallet or app? Simply restore the wallet from your backup.": "我们会从备份中为您恢复钱包",
   "Create a new wallet": "创建新钱包",
-  "Recover wallet": "恢复钱包"
+  "Recover wallet": "恢复钱包",
+  "Recover your wallet": "恢复钱包",
+  "Follow the instructions on your device.": "按照设备上的说明操作。",
+  "You might be asked to retype some words that are not part of your recovery seed.": "您可能会被要求输入一些不属于您的恢复种子的单词。"
 }
