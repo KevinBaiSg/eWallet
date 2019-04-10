@@ -104,18 +104,18 @@ app.on('ready', async () => {
     }
   });
 
-  // mainWindow.webContents.session.webRequest.onBeforeSendHeaders(
-  //   (details, callback) => {
-  //     // eslint-disable-next-line
-  //     details.requestHeaders['User-Agent'] =
-  //       `Mozilla/5.0 (Macintosh; Intel Mac OS X 10_14_0)
-  //     AppleWebKit/537.36 (KHTML, like Gecko) Chrome/71.0.3578.98 Safari/537.36`;
-  //     // eslint-disable-next-line
-  //     details.requestHeaders['Origin'] = 'https://wallet.trezor.io';
-  //     // eslint-disable-next-line
-  //     details.requestHeaders['Referer'] = 'https://wallet.trezor.io';
-  //     callback({ requestHeaders: details.requestHeaders })
-  //   });
+  mainWindow.webContents.session.webRequest.onBeforeSendHeaders(
+    (details, callback) => {
+      // eslint-disable-next-line
+      // details.requestHeaders['User-Agent'] =
+      //   `Mozilla/5.0 (Macintosh; Intel Mac OS X 10_14_0)
+      // AppleWebKit/537.36 (KHTML, like Gecko) Chrome/71.0.3578.98 Safari/537.36`;
+      // eslint-disable-next-line
+      details.requestHeaders['Origin'] = 'https://wallet.trezor.io';
+      // eslint-disable-next-line
+      details.requestHeaders['Referer'] = 'https://wallet.trezor.io';
+      callback({ requestHeaders: details.requestHeaders })
+    });
 
   mainWindow.on('closed', () => {
     app.quit();

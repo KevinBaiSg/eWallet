@@ -24,7 +24,7 @@ import { Trans } from 'react-i18next';
 const CoinGecko = require('coingecko-api');
 const CoinGeckoClient = new CoinGecko();
 
-const EWALLETD_URL = `http://127.0.0.1:58567`;
+const EWALLETD_URL = `http://127.0.0.1:21325`;
 const EWALLETD_NEWVERSION = '2.0.25';
 
 Logger.useDefaults();
