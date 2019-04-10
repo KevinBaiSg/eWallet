@@ -225,6 +225,7 @@ export default class AppState {
       self.eWalletDevice.available = true;
       self.eWalletDevice.isInitialized = device.isInitialized();
       self.eWalletDevice.firmware = device.getVersion();
+      self.eWalletDevice.label = self.eWalletDevice.features.label;
       Logger.info(`Connected device: ${self.eWalletDevice.features.label}; firmware Version: ${self.eWalletDevice.firmware}`);
 
       device.on('disconnect', function() {
