@@ -68,6 +68,26 @@ const Wrapper = styled.button`
         }
     `}
 
+    ${props => props.isRed && css`
+      background: ${colors.WARNING_BUTTON};
+      color: ${colors.TEXT_SECONDARY};
+      border: 1px solid ${colors.DIVIDER};
+
+      &:focus {
+          border-color: ${colors.INPUT_FOCUSED_BORDER};
+      }
+
+      &:hover {
+          color: ${colors.TEXT_PRIMARY};
+          background: ${colors.DIVIDER};
+      }
+
+      &:active {
+          color: ${colors.TEXT_PRIMARY};
+          background: ${colors.DIVIDER};
+      }
+    `}
+    
     ${props => props.isTransparent && css`
         background: transparent;
         border: 0px;
@@ -110,7 +130,7 @@ const Wrapper = styled.button`
             left: 18px;
         }
 
-    &:after {
+        &:after {
             width: 2px;
             height: 12px;
             left: 23px;
@@ -144,6 +164,7 @@ const Button = ({
     onFocus,
     isDisabled = false,
     isWhite = false,
+    isRed = false,
     isWebUsb = false,
     isTransparent = false,
 }: Props) => {
@@ -157,6 +178,7 @@ const Button = ({
             onFocus={onFocus}
             isDisabled={isDisabled}
             isWhite={isWhite}
+            isRed={isRed}
             isWebUsb={isWebUsb}
             isTransparent={isTransparent}
         >
@@ -174,6 +196,7 @@ Button.propTypes = {
     onFocus: PropTypes.func,
     isDisabled: PropTypes.bool,
     isWhite: PropTypes.bool,
+    isRed: PropTypes.bool,
     isWebUsb: PropTypes.bool,
     isTransparent: PropTypes.bool,
 };
