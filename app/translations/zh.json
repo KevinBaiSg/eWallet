@@ -32,6 +32,8 @@
   "Confirm action on your Device": "请在设备中确认",
   "See transaction detail": "查看交易详情",
   "Enter PIN": "输入 PIN",
+  "Enter a new PIN": "输入新 PIN",
+  "Re-enter PIN": "重新输入 PIN",
   "The PIN layout is displayed on your Device.": "PIN 码布局显示在您的设备上。",
   "Don't worry! We will walk you through the setup process in a few minutes.": "我们需要几分钟为您创建新的钱包",
   "Own a recovery seed from a different wallet or app? Simply restore the wallet from your backup.": "我们会从备份中为您恢复钱包",
