@@ -149,7 +149,7 @@ export class InitializeActions {
           const features = response.message;
           this.appStore.eWalletDevice.features = features;
           this.appStore.eWalletDevice.label = features.label;
-          
+
           this.initializeStore.buttonRequest_ProtectCall = false;
           this.initializeStore.buttonRequest_ConfirmWord = false;
           this.initializeStore.finished = true;

@@ -7,6 +7,7 @@ import React from 'react';
 import { withNamespaces } from "react-i18next";
 import { inject, observer } from 'mobx-react';
 import ConfirmAction from 'components/modals/confirm/Action';
+import ConfirmActionReconnect from 'components/modals/confirm/ActionReconnect';
 import { FADE_IN } from 'config/animations';
 import colors from 'config/colors';
 import Content from 'views/Wallet/components/Content';
@@ -97,7 +98,7 @@ class DeviceSettings extends React.Component<Props> {
         {!!deviceSettingStore.reconnectRequest_WipeDevice &&
         <ModalContainer>
           <ModalWindow>
-            <ConfirmAction device={appState.eWalletDevice.device} />
+            <ConfirmActionReconnect device={appState.eWalletDevice.device} />
           </ModalWindow>
         </ModalContainer>}
         <Wrapper>
