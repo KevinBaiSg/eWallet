@@ -89,7 +89,7 @@ class Recovery extends React.Component<Props> {
           />
         </InputRow>
         <SendButton
-          isDisabled={!!initializeStore.wordInputIsDisable && !initializeStore.tryAgain}
+          isDisabled={initializeStore.buttonIsDisabled}
           onClick={() => initializeActions.onClickWordConfirm()}
         >
           {initializeStore.buttonText}

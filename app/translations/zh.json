@@ -39,5 +39,13 @@
   "Recover wallet": "恢复钱包",
   "Recover your wallet": "恢复钱包",
   "Follow the instructions on your device.": "按照设备上的说明操作。",
-  "You might be asked to retype some words that are not part of your recovery seed.": "您可能会被要求输入一些不属于您的恢复种子的单词。"
+  "You might be asked to retype some words that are not part of your recovery seed.": "您可能会被要求输入一些不属于您的恢复种子的单词。",
+  "Please Reconnect Your Device": "请重新连接您的设备",
+  "Basic device settings": "设备设置",
+  "Rename": "重命名",
+  "PIN": "密码",
+  "Change PIN": "修改密码",
+  "Wipe Device": "抹去设备",
+  "Wiping the device removes all its information.": "抹除操作会移除您的所有信息.",
+  "Only wipe your device if you have your recovery seed at hand or there are no funds stored on this device.": "请您在有恢复种子情况下才抹除设备."
 }

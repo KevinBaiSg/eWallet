@@ -57,6 +57,11 @@ export class InitializeActions {
             label: 'eWallet',
             skip_backup: false,
           });
+
+          const response = await session.getFeatures();
+          const features = response.message;
+          this.appStore.eWalletDevice.features = features;
+          this.appStore.eWalletDevice.label = features.label;
           this.initializeStore.buttonRequest_ProtectCall = false;
           this.initializeStore.buttonRequest_ConfirmWord = false;
           this.initializeStore.finished = true;
@@ -140,6 +145,11 @@ export class InitializeActions {
             label: 'eWallet',
             dry_run: false,
           });
+          const response = await session.getFeatures();
+          const features = response.message;
+          this.appStore.eWalletDevice.features = features;
+          this.appStore.eWalletDevice.label = features.label;
+
           this.initializeStore.buttonRequest_ProtectCall = false;
           this.initializeStore.buttonRequest_ConfirmWord = false;
           this.initializeStore.finished = true;

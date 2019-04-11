@@ -214,10 +214,15 @@ class LeftNavigation extends React.Component<Props, State> {
           isSelected
           isHoverable={false}
           onClickWrapper={() => {
-            // if (isDeviceAccessible || this.props.devices.length > 1) {
-            //   this.handleOpen();
-            // }
-            console.log('onClickWrapper');
+            if (!eWalletDevice.connected || !eWalletDevice.device ||
+              !eWalletDevice.features.device_id) {
+              return ;
+            }
+
+            if (!!eWalletDevice.device.isInitialized()) {
+              const id = appState.eWalletDevice.features.device_id;
+              this.props.history.replace(`/device/${id}/settings`);
+            }
           }}
           device={eWalletDevice}
           disabled={false}

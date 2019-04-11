@@ -36,4 +36,17 @@ export default class InitializeStore {
   get buttonText(): string {
     return this.tryAgain ? 'Try Again' : 'Continue';
   }
+
+  @computed
+  get buttonIsDisabled(): boolean {
+    if (this.tryAgain) {
+      return false;
+    }
+
+    if (this.wordInputIsDisable) {
+      return true;
+    }
+
+    return this._word.length <= 0;
+  }
 }

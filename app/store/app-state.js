@@ -62,6 +62,7 @@ export type EWalletDevice = {
   device: Device,
   session: Session,
   pin_request: boolean,
+  pin_type: string,
   pin_request_callback: Function,
 };
 
@@ -102,6 +103,7 @@ export default class AppState {
     isInitialized: true,
     device: null,
     pin_request: false,
+    pin_type: '',
     pin_request_callback: null,
   };
 
@@ -225,6 +227,7 @@ export default class AppState {
       self.eWalletDevice.available = true;
       self.eWalletDevice.isInitialized = device.isInitialized();
       self.eWalletDevice.firmware = device.getVersion();
+      self.eWalletDevice.label = self.eWalletDevice.features.label;
       Logger.info(`Connected device: ${self.eWalletDevice.features.label}; firmware Version: ${self.eWalletDevice.firmware}`);
 
       device.on('disconnect', function() {
@@ -235,6 +238,17 @@ export default class AppState {
 
       device.on('pin', (type, callback) => {
         Logger.info(`The device asks for PIN: TYPE = ${type}`);
+        switch (type) {
+          case 'PinMatrixRequestType_NewFirst':
+            this.eWalletDevice.pin_type = 'first';
+            break;
+          case 'PinMatrixRequestType_NewSecond':
+            this.eWalletDevice.pin_type = 'second';
+            break;
+          default:
+            this.eWalletDevice.pin_type = 'current';
+            break
+        }
         this.eWalletDevice.pin_request_callback = callback;
         this.eWalletDevice.pin_request = true;
       });

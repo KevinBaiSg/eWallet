@@ -129,11 +129,13 @@ class Pin extends PureComponent<Props, State> {
   keyboardHandler: (event: KeyboardEvent) => void;
 
   render() {
-    const { onPinSubmit, t } = this.props;
+    const { onPinSubmit, t, type } = this.props;
     const { pin } = this.state;
     return (
       <Wrapper>
-        <H2>{t('Enter PIN')}</H2>
+        {type === 'current' && <H2>{t('Enter PIN')}</H2>}
+        {type === 'first' && <H2>{t('Enter a new PIN')}</H2>}
+        {type === 'second' && <H2>{t('Re-enter PIN')}</H2>}
         <P isSmaller>{t('The PIN layout is displayed on your Device.')}</P>
         <InputRow>
           <PinInput value={pin} onDeleteClick={() => this.onPinBackspace()}/>
@@ -162,7 +164,12 @@ class Pin extends PureComponent<Props, State> {
 }
 
 Pin.propTypes = {
-  onPinSubmit: PropTypes.func.isRequired
+  onPinSubmit: PropTypes.func.isRequired,
+  type: PropTypes.string,
+};
+
+Pin.defaultProps = {
+  type: 'current',
 };
 
 export default withNamespaces()(Pin);
