@@ -32,7 +32,7 @@ const Column = styled.div`
 
 const StyledParagraph = styled(Paragraph)`
     padding: 0 0 15px 0;
-    text-align: center;
+    text-align: left;
 `;
 
 const ModalContainer = styled.div`
@@ -67,7 +67,15 @@ const Label = styled.div`
 
 const InputRow = styled.div`
     padding-bottom: 28px;
-    padding: 30px 10px;
+    max-width: 280px;
+`;
+
+const ButtonChange = styled.div`
+    padding-bottom: 28px;
+`;
+
+const ButtonWipe = styled.div`
+    padding-bottom: 28px;
 `;
 
 class DeviceSettings extends React.Component<Props> {
@@ -80,7 +88,13 @@ class DeviceSettings extends React.Component<Props> {
     const { label } = deviceSettingStore;
     return (
       <Content>
-        {!!deviceSettingStore.buttonRequest_ProtectCall &&
+        {!!deviceSettingStore.buttonRequest &&
+        <ModalContainer>
+          <ModalWindow>
+            <ConfirmAction device={appState.eWalletDevice.device} />
+          </ModalWindow>
+        </ModalContainer>}
+        {!!deviceSettingStore.reconnectRequest_WipeDevice &&
         <ModalContainer>
           <ModalWindow>
             <ConfirmAction device={appState.eWalletDevice.device} />
@@ -111,12 +125,38 @@ class DeviceSettings extends React.Component<Props> {
                 )]}
               />
             </InputRow>
-            <Row>
-
-              {/*<Button onClick={() => {deviceSettingActions.changeLabel()}}>*/}
-              {/*{t('Rename')}*/}
-              {/*</Button>*/}
-            </Row>
+            <H1>
+              {t('PIN')}
+            </H1>
+            <ButtonChange>
+              <Button
+                key="changePinButton"
+                onClick={() => deviceSettingActions.changePIN()}
+              >
+                {t('Change PIN')}
+              </Button>
+            </ButtonChange>
+            <H1>
+              {t('Wipe device')}
+            </H1>
+            <StyledParagraph>
+              {t('Wiping the device removes all its information.')}
+              {t('Only wipe your device if you have your recovery seed at hand or there are no funds stored on this device.')}
+            </StyledParagraph>
+            <ButtonWipe>
+              <Button
+                key="wipeDeviceButton"
+                isRed
+                onClick={() => deviceSettingActions.wipeDevice()}
+              >
+                <Icon
+                  size={25}
+                  color={colors.WHITE}
+                  icon={ICONS.WARNING}
+                />
+                {t('Wipe Device')}
+              </Button>
+            </ButtonWipe>
           </Column>
         </Wrapper>
       </Content>
