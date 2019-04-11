@@ -47,6 +47,7 @@ class App extends React.Component<Props> {
           <ModalContainer>
             <ModalWindow>
               <Pin
+                type={appState.eWalletDevice.pin_type}
                 onPinSubmit={(pin)=>{
                   Logger.debug(`submit pin: ${pin}`);
                   pinActions.verifyPin(pin);

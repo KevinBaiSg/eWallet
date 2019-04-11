@@ -138,7 +138,7 @@ class DeviceSettings extends React.Component<Props> {
               </Button>
             </ButtonChange>
             <H1>
-              {t('Wipe device')}
+              {t('Wipe Device')}
             </H1>
             <StyledParagraph>
               {t('Wiping the device removes all its information.')}
