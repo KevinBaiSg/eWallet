@@ -231,6 +231,9 @@ export default class AppState {
       Logger.info(`Connected device: ${self.eWalletDevice.features.label}; firmware Version: ${self.eWalletDevice.firmware}`);
 
       device.on('disconnect', function() {
+        self.eWalletDevice.pin_request = false;
+        self.eWalletDevice.pin_request_callback = null;
+        self.eWalletDevice.pin_type = '';
         self.cleanDevice();
         self.cleanWallet();
         Logger.info('Disconnected an opened device');
