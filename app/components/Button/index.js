@@ -70,7 +70,7 @@ const Wrapper = styled.button`
 
     ${props => props.isRed && css`
       background: ${colors.WARNING_BUTTON};
-      color: ${colors.TEXT_SECONDARY};
+      color: ${colors.WHITE};
       border: 1px solid ${colors.DIVIDER};
 
       &:focus {
@@ -78,13 +78,13 @@ const Wrapper = styled.button`
       }
 
       &:hover {
-          color: ${colors.TEXT_PRIMARY};
-          background: ${colors.DIVIDER};
+          color: ${colors.WHITE};
+          background: ${colors.WARNING_BUTTON};
       }
 
       &:active {
-          color: ${colors.TEXT_PRIMARY};
-          background: ${colors.DIVIDER};
+          color: ${colors.WHITE};
+          background: ${colors.WARNING_BUTTON};
       }
     `}
     
