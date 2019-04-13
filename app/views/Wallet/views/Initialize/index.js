@@ -8,28 +8,25 @@ import { inject, observer } from 'mobx-react';
 import ConfirmAction from 'components/modals/confirm/Action';
 import { FADE_IN } from 'config/animations';
 import colors from 'config/colors';
-import Content from 'views/Wallet/components/Content';
 
 const Wrapper = styled.div`
     display: flex;
     flex-direction: row;
-    align-items: center;
-    padding: 40px 35px 40px 35px;
 `;
 
-const Row = styled.div`
-    dsplay: flex;
-    flex-direction: row;
-    align-items: center;
-    padding: 50px 0;
-`;
-
-const Column = styled.div`
+const RecoverWrapper = styled.div`
+    flex:1;
     display: flex;
     flex-direction: column;
     align-items: center;
-    padding: 50px 0;
-    width: 300px;
+    justify-content: center;
+    border-bottom:1px solid #e3e3e3;
+    border-right:1px solid #e3e3e3;
+    padding: 30px 10px 30px 10px;
+`;
+
+const CreateWrapper = styled(RecoverWrapper)`
+    background-color: ${colors.BACKGROUND_CREATEWALLET};
 `;
 
 const StyledParagraph = styled(Paragraph)`
@@ -72,7 +69,7 @@ const Initialize = (props) => {
   }
 
   return (
-    <Content>
+    <div>
       {!!initializeStore.buttonRequest &&
       <ModalContainer>
         <ModalWindow>
@@ -80,7 +77,7 @@ const Initialize = (props) => {
         </ModalWindow>
       </ModalContainer>}
       <Wrapper>
-        <Column>
+        <CreateWrapper>
           <H1>{t('Create a new wallet')}</H1>
           <StyledParagraph>
             {t('Don\'t worry! We will walk you through the setup process in a few minutes.')}
@@ -88,21 +85,23 @@ const Initialize = (props) => {
           <Button onClick={() => {initializeActions.onCreateWallet()}}>
             {t('Create a new wallet')}
           </Button>
-        </Column>
-        <Column>
+        </CreateWrapper>
+        <RecoverWrapper>
           <H1>{t('Recover wallet')}</H1>
           <StyledParagraph>
             {t('Own a recovery seed from a different wallet or app? Simply restore the wallet from your backup.')}
           </StyledParagraph>
-          <Button onClick={() => {
-            const id = appState.eWalletDevice.features.device_id || 'id';
-            props.history.replace(`/device/${id}/recovery`);
-          }}>
-            {t('Recover wallet')}
-          </Button>
-        </Column>
+          <div>
+            <Button onClick={() => {
+              const id = appState.eWalletDevice.features.device_id || 'id';
+              props.history.replace(`/device/${id}/recovery`);
+            }}>
+              {t('Recover wallet')}
+            </Button>
+          </div>
+        </RecoverWrapper>
       </Wrapper>
-    </Content>
+    </div>
   )
 };
 

@@ -40,4 +40,6 @@ export default {
   INPUT_FOCUSED_SHADOW: '#d6d7d7',
 
   WALLET_TITLE: "#333333",
+
+  BACKGROUND_CREATEWALLET: '#F6FFF9',
 };
