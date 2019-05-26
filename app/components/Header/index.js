@@ -1,9 +1,10 @@
 /* @flow */
 import React from 'react';
-import styled from 'styled-components';
+import styled, { css } from 'styled-components';
 import colors from 'config/colors';
 import { SCREEN_SIZE } from 'config/variables';
 import type { toggleSidebar as toggleSidebarType } from 'actions/WalletActions';
+import { FONT_SIZE } from 'config/variables';
 
 const Wrapper = styled.header`
     width: 100%;
@@ -83,6 +84,21 @@ const Projects = styled.div`
     }
 `;
 
+const baseStyles = css`
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+    color: ${colors.WHITE};
+    font-weight: bold;
+    margin: 0;
+    padding: 0;
+`;
+
+const H = styled.h1`
+    ${baseStyles};
+    font-size: ${FONT_SIZE.H1};
+    padding-bottom: 10px;
+`;
+
 const A = styled.a`
     color: ${colors.WHITE};
     margin-left: 24px;
@@ -117,7 +133,7 @@ const Header = ({ sidebarEnabled, sidebarOpened, toggleSidebar }: Props) => (
                 { sidebarEnabled && <MenuToggler onClick={toggleSidebar}>{sidebarOpened ? '✕ Close' : '☰ Menu'}</MenuToggler>}
             </Left>
             <Logo>
-              eWallet
+              <H>eWallet</H>
             </Logo>
         </LayoutWrapper>
     </Wrapper>
