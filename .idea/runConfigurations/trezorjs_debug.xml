@@ -1,0 +1,5 @@
+<component name="ProjectRunConfigurationManager">
+  <configuration default="false" name="trezorjs debug" type="NodeJSConfigurationType" path-to-js-file="test/trezorjs.js" working-dir="$PROJECT_DIR$">
+    <method v="2" />
+  </configuration>
+</component>

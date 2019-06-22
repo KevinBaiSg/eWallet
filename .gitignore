@@ -47,7 +47,8 @@ dll
 main.js
 main.js.map
 
-.idea
+.idea/*
+!.idea/runConfigurations/
 npm-debug.log.*
 
 # package-lock.json

@@ -1,0 +1,9 @@
+<component name="ProjectRunConfigurationManager">
+  <configuration default="false" name="Main" type="NodeJSConfigurationType" activateToolWindowBeforeRun="false" singleton="false" application-parameters="--remote-debugging-port=9222 --inspect=5858 --inspect-brk=5858" path-to-node="$PROJECT_DIR$/node_modules/.bin/electron" node-parameters="." working-dir="$PROJECT_DIR$">
+    <envs>
+      <env name="START_HOT" value="1" />
+      <env name="NODE_ENV" value="development" />
+    </envs>
+    <method v="2" />
+  </configuration>
+</component>
