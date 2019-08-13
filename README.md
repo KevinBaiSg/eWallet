@@ -1,9 +1,10 @@
-
 <div align="center">
+eWallet  [![Build Status][travis-image]][travis-url]
+================  
 
 ![eWallet](https://user-images.githubusercontent.com/2813260/54740332-0a65ea00-4bf6-11e9-973d-7270d0c75f6a.gif)
+</div>    
 
-</div>
 
 ## Install
 
@@ -85,3 +86,6 @@ About [Trezor](https://trezor.io/)
 ## License
 
 LGPL © [eWallet](https://github.com/Electron-Wallet/ewallet)
+
+[travis-image]: https://travis-ci.org/KevinBaiSg/eWallet.svg?branch=eWallet
+[travis-url]: https://travis-ci.org/KevinBaiSg/eWallet
