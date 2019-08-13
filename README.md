@@ -1,9 +1,9 @@
-<div align="center">
-eWallet  [![Build Status][travis-image]][travis-url]
-================  
+eWallet  [![Build Status][travis-image]][travis-url]    
+==============    
 
-![eWallet](https://user-images.githubusercontent.com/2813260/54740332-0a65ea00-4bf6-11e9-973d-7270d0c75f6a.gif)
-</div>    
+
+![eWallet](https://user-images.githubusercontent.com/2813260/54740332-0a65ea00-4bf6-11e9-973d-7270d0c75f6a.gif)   
+
 
 
 ## Install
