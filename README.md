@@ -1,10 +1,6 @@
-eWallet  [![Build Status][travis-image]][travis-url]    
-==============    
+# eWallet  [![GitHub Actions][actions-image]][actions-url]
 
-
-![eWallet](https://user-images.githubusercontent.com/2813260/54740332-0a65ea00-4bf6-11e9-973d-7270d0c75f6a.gif)   
-
-
+![eWallet](https://user-images.githubusercontent.com/2813260/54740332-0a65ea00-4bf6-11e9-973d-7270d0c75f6a.gif)
 
 ## Install
 
@@ -79,6 +75,10 @@ DEBUG_PROD=true yarn package
 About [Electron React Boilerplate](https://github.com/electron-react-boilerplate/electron-react-boilerplate)  
 About [Trezor](https://trezor.io/)  
 
+## CI
+
+GitHub Actions: [![GitHub Actions][actions-image]][actions-url]
+
 ## Maintainers
 
 - [Kevin Bai](https://github.com/kevinbaisg)
@@ -87,5 +87,5 @@ About [Trezor](https://trezor.io/)
 
 LGPL © [eWallet](https://github.com/Electron-Wallet/ewallet)
 
-[travis-image]: https://travis-ci.org/KevinBaiSg/eWallet.svg?branch=eWallet
-[travis-url]: https://travis-ci.org/KevinBaiSg/eWallet
+[actions-image]: https://github.com/KevinBaiSg/eWallet/workflows/eWallet%20Package%20CI/badge.svg
+[actions-url]: https://github.com/KevinBaiSg/eWallet/actions
