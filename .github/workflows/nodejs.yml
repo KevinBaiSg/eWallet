@@ -17,10 +17,11 @@ jobs:
       uses: actions/setup-node@v1
       with:
         node-version: ${{ matrix.node-version }}
-    - name: npm install, build, and test
+    - name: install
       run: |
-        npm install
-        npm run build --if-present
-        npm test
+        yarn --ignore-engines
+        yarn package-ci
       env:
         CI: true
+        ELECTRON_CACHE: $HOME/.cache/electron
+        ELECTRON_BUILDER_CACHE: $HOME/.cache/electron-builder
