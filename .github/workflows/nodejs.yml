@@ -8,7 +8,7 @@ on:
     - '!releases/*'
     - '!hotfix/*'
     - '!feature/*'
-    
+
 jobs:
   build:
 
@@ -17,7 +17,7 @@ jobs:
     strategy:
       matrix:
         node-version: [10.4]
-    
+
     steps:
     - uses: actions/checkout@v1
     - name: Use Node.js ${{ matrix.node-version }}
@@ -30,6 +30,4 @@ jobs:
         yarn package-ci
       env:
         CI: true
-        ELECTRON_CACHE: $HOME/.cache/electron
-        ELECTRON_BUILDER_CACHE: $HOME/.cache/electron-builder
         GH_TOKEN: ${{ secrets.GH_TOKEN }}
