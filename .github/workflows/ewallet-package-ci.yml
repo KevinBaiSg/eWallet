@@ -1,4 +1,4 @@
-name: Node CI
+name: eWallet Package CI
 
 on:
   push:
@@ -30,6 +30,4 @@ jobs:
         yarn package-ci
       env:
         CI: true
-        ELECTRON_CACHE: $HOME/.cache/electron
-        ELECTRON_BUILDER_CACHE: $HOME/.cache/electron-builder
         GH_TOKEN: ${{ secrets.GH_TOKEN }}
