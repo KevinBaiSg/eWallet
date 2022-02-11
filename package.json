@@ -224,7 +224,7 @@
     "lint-staged": "^7.2.0",
     "mini-css-extract-plugin": "^0.4.1",
     "mobx-react-devtools": "^6.0.3",
-    "node-sass": "^4.11.0",
+    "node-sass": "^7.0.0",
     "opencollective-postinstall": "^2.0.1",
     "optimize-css-assets-webpack-plugin": "^5.0.0",
     "prettier": "^1.16.3",
